@@ -1,0 +1,23 @@
+{
+  "name": "memories",
+  "version": "1.0.0",
+  "description": "project for portfolio",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruslalsur/memories.git"
+  },
+  "keywords": [
+    "[memories",
+    "remembers]"
+  ],
+  "author": "Sukhorukov RG <suhrugen@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ruslalsur/memories/issues"
+  },
+  "homepage": "https://github.com/ruslalsur/memories#readme"
+}
