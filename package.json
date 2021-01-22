@@ -4,8 +4,8 @@
   "description": "project for portfolio",
   "main": "app.js",
   "scripts": {
-    "start": "cross-env PROD=true node app",
-    "server:dev": "nodemon app",
+    "start": "cross-env PROD=true node app.js",
+    "server:dev": "nodemon app.js",
     "client:dev": "npm run start --prefix client",
     "client:build": "npm run build --prefix client",
     "client:install": "npm install --prefix client",
