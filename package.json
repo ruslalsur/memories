@@ -4,6 +4,8 @@
   "description": "project for portfolio",
   "main": "app.js",
   "scripts": {
+    "start": "node index",
+    "dev": "nodemon index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +21,9 @@
   "bugs": {
     "url": "https://github.com/ruslalsur/memories/issues"
   },
-  "homepage": "https://github.com/ruslalsur/memories#readme"
+  "homepage": "https://github.com/ruslalsur/memories#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7"
+  }
 }
