@@ -1,11 +1,10 @@
 const express = require('express');
 const path = require('path');
+const PORT = require('./config.js').port;
 const isProduction = Boolean(process.env.PROD);
-const PORT = isProduction ? 80 : 5000;
+const port = isProduction ? 80 : PORT;
 
 const app = express();
-
-
 
 if (isProduction) {
   app.use('/', express.static(path.resolve(__dirname, 'client', 'build')));
@@ -15,5 +14,5 @@ if (isProduction) {
 }
 
 app.listen(PORT, () =>
-  console.log(`Сервер запущен на ${PORT} порту!\nProduction: ${isProduction}`)
+  console.log(`Слушаю Вас на ${port} порту. С уважением, Ваш сервер.\nРежим разработки: ${isProduction ? 'Нет' : 'Да'}`)
 );
