@@ -29,11 +29,12 @@ const useStyles = makeStyles((theme) => ({
 export const Navbar = (props) => {
   const { appName } = props;
   const classes = useStyles();
+  document.title = appName;
 
   return (
     <AppBar position='static'>
       <Container>
-        <Toolbar>
+        <Toolbar disableGutters>
           <Link to='/' className={classes.title}>
             {appName}
           </Link>
