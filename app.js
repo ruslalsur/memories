@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const PORT = require('./config.js').port;
 const isProduction = Boolean(process.env.PROD);
-const port = isProduction ? 8088 : PORT;
+const port = isProduction ? 80 : PORT;
 
 const app = express();
 
