@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import {
   Button,
   TextField,
@@ -8,24 +7,18 @@ import {
   Paper,
   Avatar,
 } from '@material-ui/core'
-import LockOpenIcon from '@material-ui/icons/LockOpen'
+import HowToRegIcon from '@material-ui/icons/HowToReg';
 
-export const LoginForm = (props) => {
-  const { regRoute } = props
-
+export const RegForm = () => {
   const classes = {
     paper: {
       minWidth: '20vw',
-      minHeight: '50vh',
+      minHeight: '55vh',
       marginTop: '4rem',
       padding: '3rem',
     },
     avatar: {
       background: '#4E55AC',
-    },
-    link: {
-      textDecoration: 'none',
-      color: 'red',
     },
     buttons: {
       marginTop: '1rem',
@@ -48,12 +41,12 @@ export const LoginForm = (props) => {
         >
           <Grid item>
             <Avatar style={classes.avatar}>
-              <LockOpenIcon />
+              <HowToRegIcon />
             </Avatar>
           </Grid>
           <Grid item>
             <Typography variant='h5' color='primary'>
-              Вход
+              Регистрация
             </Typography>
           </Grid>
           <Grid
@@ -77,23 +70,23 @@ export const LoginForm = (props) => {
                 fullWidth
               />
             </Grid>
+            <Grid item>
+              <TextField
+                id='repassword'
+                label='Повторить пароль'
+                type='password'
+                fullWidth
+              />
+            </Grid> 
           </Grid>
           <Grid
-            item
             container
-            spacing={1}
-            direction='row'
-            justify='space-between'
+            item            
             wrap='nowrap'
+            justify='center'
             style={classes.buttons}
           >
-            <Button color='secondary'>
-              <Link to={regRoute} style={classes.link}>
-                Регистрация
-              </Link>
-            </Button>
-
-            <Button color='primary'>Войти</Button>
+            <Button color='secondary'>Зарегистрироваться</Button>
           </Grid>
         </Grid>
       </Paper>

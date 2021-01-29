@@ -1,14 +1,19 @@
 import React from 'react';
-import { Box, Typography } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
+import { RegForm } from '../components/RegForm'
 
 export const RegPage = () => {
   return (
-    <>
-      <Box sx={{ my: 4 }}>
-        <Typography variant='h4' component='h1' gutterBottom>
-          Страница регистрации
-        </Typography>
-      </Box>
-    </>
+    <Grid
+    container
+    spacing={0}
+    direction='row'
+    justify='center'
+    alignItems='center'
+    alignContent='center'
+    wrap='nowrap'
+  >
+    <RegForm regRoute='/reg' />
+  </Grid>
   );
 };

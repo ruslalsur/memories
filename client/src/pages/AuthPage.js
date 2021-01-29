@@ -13,7 +13,7 @@ export const AuthPage = () => {
       alignContent='center'
       wrap='nowrap'
     >
-      <LoginForm />
+      <LoginForm regRoute='/reg' />
     </Grid>
   )
 }
