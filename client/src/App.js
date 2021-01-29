@@ -18,7 +18,7 @@ function App() {
       <Navbar appName={APP_NAME} />
 
       <Switch>
-        <Container>
+        <Container maxWidth="md">
           <Route path='/' exact>
             <MainPage />
           </Route>

@@ -26,13 +26,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Navbar = (props) => {
+export const Navbar = props => {
   const { appName } = props;
   const classes = useStyles();
   document.title = appName;
 
   return (
-    <AppBar position='static'>
+    <AppBar position='static' color='primary'>
       <Container>
         <Toolbar disableGutters>
           <Link to='/' className={classes.title}>

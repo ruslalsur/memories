@@ -1,16 +1,19 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Box, Typography } from '@material-ui/core';
+import React from 'react'
+import { Grid } from '@material-ui/core'
+import { LoginForm } from '../components/LoginForn'
 
 export const AuthPage = () => {
   return (
-    <Box sx={{ my: 4 }}>
-      <Typography variant='h4' component='h1' gutterBottom>
-        Страница авторизации
-      </Typography>
-      <Box sx={{ my: 4 }}>
-        <Link to='/reg'>Регистрация</Link>
-      </Box>
-    </Box>
-  );
-};
+    <Grid
+      container
+      spacing={0}
+      direction='row'
+      justify='center'
+      alignItems='center'
+      alignContent='center'
+      wrap='nowrap'
+    >
+      <LoginForm />
+    </Grid>
+  )
+}
