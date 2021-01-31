@@ -1,22 +1,44 @@
-const express = require('express');
-const path = require('path');
-const conf = require('./config.js');
+const express = require('express')
+const mongoose = require('mongoose')
+const path = require('path')
+const colors = require('colors')
+const conf = require('./config.js')
 
-const app = express();
+const app = express()
+
+app.use(express.json())
 
 if (process.env.PROD) {
-  app.use('/', express.static(path.join(__dirname, 'client', conf.dirNameToServ)));
+  app.use(
+    '/',
+    express.static(path.join(__dirname, 'client', conf.dirNameToServ))
+  )
   app.use('*', (req, res) =>
     res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
-  );
+  )
 }
 
-app.listen(conf.port, () =>
-  console.log(
-    `Слушаю Вас на ${
-      conf.port
-    } порту. С уважением, Ваш сервер.\nРежим разработки: ${
-      !process.env.PROD ? 'Включен' : 'Выключен'
-    }`
-  )
-);
+const start = async () => {
+  try {
+    await mongoose.connect(conf.mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+    })
+
+    app.listen(conf.port, () =>
+      console.log(
+        `\nСлушаю Вас на ${
+          String(conf.port).yellow
+        } порту.\nСоединение с базой данных установлено.\nРежим разработки ${
+          !process.env.PROD ? 'включен'.green : 'отключен'.blue
+        }.\n`
+      )
+    )
+  } catch (e) {
+    console.log(`Ошибка сервера: `, e.message)
+    process.exit(1)
+  }
+}
+
+start()
