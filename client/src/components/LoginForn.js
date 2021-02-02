@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Button,
@@ -12,6 +12,14 @@ import LockOpenIcon from '@material-ui/icons/LockOpen'
 
 export const LoginForm = (props) => {
   const { regRoute } = props
+  const [form, setForm] = useState({
+    username: '',
+    password: '',
+  })
+
+  const onChangeHandler = (event) => {
+    setForm({ ...form, [event.target.name]: event.target.value })
+  }
 
   const classes = {
     paper: {
@@ -67,11 +75,19 @@ export const LoginForm = (props) => {
             wrap='nowrap'
           >
             <Grid item>
-              <TextField id='login' label='Логин' fullWidth />
+              <TextField
+                value={form.username}
+                onChange={onChangeHandler}
+                name='username'
+                label='Логин'
+                fullWidth
+              />
             </Grid>
             <Grid item>
               <TextField
-                id='password'
+                value={form.password}
+                onChange={onChangeHandler}
+                name='password'
                 label='Пароль'
                 type='password'
                 fullWidth
