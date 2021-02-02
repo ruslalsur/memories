@@ -7,8 +7,7 @@ const conf = require('./config.js')
 const app = express()
 
 app.use(express.json())
-app.use('/api', require('./routes/authRoutes'))
-app.use('/api', require('./routes/userRoutes'))
+app.use('/api/user', require('./routes/userRoutes'))
 
 if (process.env.PROD) {
   app.use(

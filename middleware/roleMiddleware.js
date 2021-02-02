@@ -35,7 +35,7 @@ module.exports = (allowedRoles) => {
 
       next()
     } catch (e) {
-      res.status(401).json({ message: 'Пользователь ${req.user.username} не авторизован' })
+      res.status(401).json({ message: 'Неудачная попытка авторизации' })
     }
   }
 }
