@@ -7,6 +7,8 @@ const conf = require('./config.js')
 const app = express()
 
 app.use(express.json())
+app.use('/api', require('./routes/authRoutes'))
+app.use('/api', require('./routes/userRoutes'))
 
 if (process.env.PROD) {
   app.use(
@@ -28,15 +30,15 @@ const start = async () => {
 
     app.listen(conf.port, () =>
       console.log(
-        `\nСлушаю Вас на ${
+        `\nСлушаю Вас по адресу http://localhost:${
           String(conf.port).yellow
-        } порту.\nСоединение с базой данных установлено.\nРежим разработки ${
+        }\nСоединение с базой данных установлено.\nРежим разработки ${
           !process.env.PROD ? 'включен'.green : 'отключен'.blue
         }.\n`
       )
     )
   } catch (e) {
-    console.log(`Ошибка сервера: `, e.message)
+    console.log(`Ошибка: `, e.message)
     process.exit(1)
   }
 }
