@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { jwtSecret } = require('../config')
 
-module.exports = (allowedRoles = ['USER']) => {
+module.exports = (allowedRoles) => {
   return (req, res, next) => {
     if (req.method === 'OPTIONS') {
       return next()
@@ -11,30 +11,31 @@ module.exports = (allowedRoles = ['USER']) => {
       const token = req.headers.authorization.split(' ')[1]
 
       if (!token) {
-        return res.status(401).json({ message: 'Пользователь не авторизован' })
+        return res.status(401).json({ message: 'Отсутствует токен доступа' })
       }
 
       const {
-        user: { userRoles: roles },
+        user: { roles, _id, username },
       } = jwt.verify(token, jwtSecret)
+      req.user = { roles, _id, username }
+      
+      let isAllowed = false
 
-      let allowedRole = false
-
-      userRoles.forEach((userRole) => {
-        if (allowedRoles.includes(userRole)) {
-          allowedRole = true
+      roles.forEach((role) => {
+        if (allowedRoles.includes(role)) {
+          isAllowed = true
         }
       })
 
-      if (!allowedRole) {
+      if (!isAllowed) {
         return res
           .status(403)
-          .json({ message: 'У пользователя недостаточно привилегий' })
+          .json({ message: `Пользователю ${req.user.username} нужны привилегии: ${allowedRoles + ''}` })
       }
 
       next()
     } catch (e) {
-      res.status(401).json({ message: 'Пользователь не авторизован' })
+      res.status(401).json({ message: 'Пользователь ${req.user.username} не авторизован' })
     }
   }
 }

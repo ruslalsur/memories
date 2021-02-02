@@ -4,6 +4,6 @@ const userController = require('../controllers/UserController')
 const authorizedOnly = require('../middleware/authMiddleware')
 const rolesOnly = require('../middleware/roleMiddleware')
 
-router.get('/users', rolesOnly(['ADMIN']), userController.getUsers)
+router.get('/users', rolesOnly(['USER']), userController.getUsers)
 
 module.exports = router
