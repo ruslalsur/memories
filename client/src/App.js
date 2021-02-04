@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Container } from '@material-ui/core'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { MainPage } from './pages/MainPage'
@@ -8,6 +8,10 @@ import { Navbar } from './components/Navbar'
 import { APP_NAME } from './config.js'
 
 function App() {
+  useEffect(() => {
+    document.title = APP_NAME
+  })
+  
   return (
     <Router>
       <Navbar appName={APP_NAME} />

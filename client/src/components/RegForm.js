@@ -4,21 +4,17 @@ import {
   TextField,
   Typography,
   Grid,
-  Paper,
+  Card,
+  CardContent,
   Avatar,
 } from '@material-ui/core'
-import HowToRegIcon from '@material-ui/icons/HowToReg';
+import HowToRegIcon from '@material-ui/icons/HowToReg'
 
 export const RegForm = () => {
   const classes = {
-    paper: {
-      minWidth: '20vw',
-      minHeight: '55vh',
-      marginTop: '4rem',
-      padding: '3rem',
-    },
     avatar: {
       background: '#4E55AC',
+      marginTop: '1rem',
     },
     buttons: {
       marginTop: '1rem',
@@ -26,8 +22,8 @@ export const RegForm = () => {
   }
 
   return (
-    <>
-      <Paper elevation={4} style={classes.paper}>
+    <Card>
+      <CardContent>
         <Grid
           item
           sx={12}
@@ -38,6 +34,7 @@ export const RegForm = () => {
           alignItems='center'
           alignContent='center'
           wrap='nowrap'
+          className='wrapper'
         >
           <Grid item>
             <Avatar style={classes.avatar}>
@@ -77,19 +74,21 @@ export const RegForm = () => {
                 type='password'
                 fullWidth
               />
-            </Grid> 
+            </Grid>
           </Grid>
+        
           <Grid
             container
-            item            
+            item
             wrap='nowrap'
             justify='center'
             style={classes.buttons}
           >
             <Button color='secondary'>Зарегистрироваться</Button>
           </Grid>
-        </Grid>
-      </Paper>
-    </>
+        
+      </Grid>
+      </CardContent>
+    </Card>
   )
 }
