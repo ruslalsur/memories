@@ -5,13 +5,13 @@ import {
   TextField,
   Typography,
   Grid,
-  Paper,
+  Card,
+  CardContent,
   Avatar,
 } from '@material-ui/core'
 import LockOpenIcon from '@material-ui/icons/LockOpen'
 
-export const LoginForm = (props) => {
-  const { regRoute } = props
+export const LoginForm = () => {
   const [form, setForm] = useState({
     username: '',
     password: '',
@@ -19,15 +19,10 @@ export const LoginForm = (props) => {
 
   const onChangeHandler = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value })
+    console.log(`form: `, form)
   }
 
   const classes = {
-    paper: {
-      minWidth: '20vw',
-      minHeight: '50vh',
-      marginTop: '4rem',
-      padding: '3rem',
-    },
     avatar: {
       background: '#4E55AC',
     },
@@ -41,8 +36,8 @@ export const LoginForm = (props) => {
   }
 
   return (
-    <>
-      <Paper elevation={4} style={classes.paper}>
+    <Card>
+      <CardContent>
         <Grid
           item
           sx={12}
@@ -104,7 +99,7 @@ export const LoginForm = (props) => {
             style={classes.buttons}
           >
             <Button color='secondary'>
-              <Link to={regRoute} style={classes.link}>
+              <Link to='/reg' style={classes.link}>
                 Регистрация
               </Link>
             </Button>
@@ -112,7 +107,7 @@ export const LoginForm = (props) => {
             <Button color='primary'>Войти</Button>
           </Grid>
         </Grid>
-      </Paper>
-    </>
+      </CardContent>
+    </Card>
   )
 }

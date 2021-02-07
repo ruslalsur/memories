@@ -21,12 +21,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const Navbar = (props) => {
+export const Header = (props) => {
   const { appName } = props
   const classes = useStyles()
 
   return (
-    <AppBar position='sticky' color='primary'>
+    <AppBar position='fixed' color='primary'>
       <Container>
         <Toolbar disableGutters>
           <Link to='/' className={classes.title}>

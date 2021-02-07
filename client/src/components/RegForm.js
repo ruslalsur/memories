@@ -34,7 +34,6 @@ export const RegForm = () => {
           alignItems='center'
           alignContent='center'
           wrap='nowrap'
-          className='wrapper'
         >
           <Grid item>
             <Avatar style={classes.avatar}>

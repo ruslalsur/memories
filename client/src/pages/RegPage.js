@@ -20,7 +20,7 @@ export const RegPage = () => {
       alignContent='center'
       wrap='nowrap'
     >
-      <RegForm regRoute='/reg' />
+      <RegForm />
     </Grid>
   )
 }

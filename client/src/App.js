@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { MainPage } from './pages/MainPage'
 import { AuthPage } from './pages/AuthPage'
 import { RegPage } from './pages/RegPage'
-import { Navbar } from './components/Navbar'
+import { Header } from './components/Header'
 import { APP_NAME } from './config.js'
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
   
   return (
     <Router>
-      <Navbar appName={APP_NAME} />
+      <Header appName={APP_NAME} />
       <Container maxWidth='md'>
         <Switch>
           <Route path='/' exact>
