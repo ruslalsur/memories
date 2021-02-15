@@ -22,7 +22,7 @@ const start = async () => {
       useCreateIndex: true,
     })
 
-    app.listen(process.env.PORT, () =>
+    app.listen(process.env.PORT, '0.0.0.0', () =>
       console.log(
         `\nСлушаю Вас по адресу http://localhost:${
           String(process.env.PORT).yellow
