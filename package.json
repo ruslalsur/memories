@@ -18,12 +18,15 @@
   },
   "keywords": [
     "[memories",
-    "remembers]"
+    "remembers, heroku]"
   ],
   "author": "Sukhorukov RG <suhrugen@gmail.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/ruslalsur/memories/issues"
+  },
+  "engines": {
+    "node": "15.x"
   },
   "homepage": "https://github.com/ruslalsur/memories#readme",
   "dependencies": {
