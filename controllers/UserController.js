@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 const { validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
-const { jwtSecret } = require('../config.js')
+const { JWT_SECRET } = require('../config.js')
 const Role = require('../models/Role')
 const User = require('../models/User')
 
@@ -48,7 +48,11 @@ class UserController {
         .json({ message: `Был создан новый пользователь ${username}` })
     } catch (e) {
       console.log(e)
-      res.status(500).json({ message: `Ошибка в процессе создания нового пользователя ${username}` })
+      res
+        .status(500)
+        .json({
+          message: `Ошибка в процессе создания нового пользователя ${username}`,
+        })
     }
   }
 
@@ -67,12 +71,16 @@ class UserController {
         return res.status(400).json({ message: 'Несуществующий пароль' })
       }
 
-      const token = jwt.sign({ user }, jwtSecret, { expiresIn: '1h' })
+      const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h' })
 
       return res.json({ token })
     } catch (e) {
       console.log(e)
-      res.status(500).json({ message: 'Возникли проблемы в процессе авторизации пользователя' })
+      res
+        .status(500)
+        .json({
+          message: 'Возникли проблемы в процессе авторизации пользователя',
+        })
     }
   }
 }
