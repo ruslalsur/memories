@@ -9,7 +9,8 @@
     "client:dev": "npm run start --prefix client",
     "client:build": "npm run build --prefix client",
     "client:install": "npm install --prefix client",
-    "dev": "cross-env concurrently \"npm run server:dev\" \"npm run client:dev\""
+    "dev": "cross-env concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "heroku-postbuild": "npm install && npm run client:install && npm run client:build"
   },
   "repository": {
     "type": "git",
