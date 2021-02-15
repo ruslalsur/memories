@@ -2,7 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
 const colors = require('colors')
-const {port, frontBuildPath, mongoUri} = require('./config.js')
+const { port, frontBuildPath, mongoUri } = require('./config.js')
 
 const app = express()
 
@@ -10,10 +10,7 @@ app.use(express.json())
 app.use('/api/user', require('./routes/userRoutes'))
 
 if (process.env.PROD) {
-  app.use(
-    '/',
-    express.static(frontBuildPath)
-  )
+  app.use('/', express.static(frontBuildPath))
   app.use('*', (req, res) =>
     res.sendFile(path.join(frontBuildPath, 'index.html'))
   )
@@ -27,7 +24,7 @@ const start = async () => {
       useCreateIndex: true,
     })
 
-    app.listen(port, () =>
+    app.listen(process.env.PORT, () =>
       console.log(
         `\nСлушаю Вас по адресу http://localhost:${
           String(port).yellow
