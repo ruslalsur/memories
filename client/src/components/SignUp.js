@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core'
 import HowToRegIcon from '@material-ui/icons/HowToReg'
 
-export const RegForm = () => {
+export const SignUp = () => {
   const classes = {
     avatar: {
       background: '#4E55AC',
@@ -75,7 +75,7 @@ export const RegForm = () => {
               />
             </Grid>
           </Grid>
-        
+
           <Grid
             container
             item
@@ -85,8 +85,7 @@ export const RegForm = () => {
           >
             <Button color='secondary'>Зарегистрироваться</Button>
           </Grid>
-        
-      </Grid>
+        </Grid>
       </CardContent>
     </Card>
   )

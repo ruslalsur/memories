@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core'
 import LockOpenIcon from '@material-ui/icons/LockOpen'
 
-export const LoginForm = () => {
+export const SignIn = () => {
   const [form, setForm] = useState({
     username: '',
     password: '',
