@@ -24,7 +24,7 @@ const start = async () => {
 
     const listener = app.listen(process.env.PORT, () =>
       console.log(
-        `\nСлушаю Вас по адресу ${listener.address().address}:${
+        `\nСлушаю ${listener.address().address}:${
           String(process.env.PORT).yellow
         }\nСоединение с базой данных установлено.\n${
           process.env.NODE_ENV === 'production' ? '' : 'Режим разработки'.yellow

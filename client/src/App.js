@@ -6,16 +6,17 @@ import { AuthPage } from './pages/AuthPage'
 import { RegPage } from './pages/RegPage'
 import { Header } from './components/Header'
 import { APP_NAME } from './config.js'
+import './app.css'
 
 function App() {
   useEffect(() => {
     document.title = APP_NAME
   })
-  
+
   return (
     <Router>
       <Header appName={APP_NAME} />
-      <Container maxWidth='md'>
+      <Container maxWidth='md' className='container'>
         <Switch>
           <Route path='/' exact>
             <MainPage />

@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 400,
     color: 'white',
   },
+  notScrolled: {
+    boxShadow: 'none',
+  },
 }))
 
 export const Header = (props) => {
@@ -26,7 +29,7 @@ export const Header = (props) => {
   const classes = useStyles()
 
   return (
-    <AppBar position='fixed' color='primary'>
+    <AppBar position='static' color='primary'>
       <Container>
         <Toolbar disableGutters>
           <Link to='/' className={classes.title}>
