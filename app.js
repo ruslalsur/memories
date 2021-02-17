@@ -22,9 +22,9 @@ const start = async () => {
       useCreateIndex: true,
     })
 
-    app.listen(8000, () =>
+    const listener = app.listen(process.env.PORT, () =>
       console.log(
-        `\nСлушаю Вас по адресу http://localhost:${
+        `\nСлушаю Вас по адресу ${listener.address().address}:${
           String(process.env.PORT).yellow
         }\nСоединение с базой данных установлено.\n${
           process.env.NODE_ENV === 'production' ? '' : 'Режим разработки'.yellow
