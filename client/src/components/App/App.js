@@ -17,26 +17,22 @@ export const App = () => {
     <Router>
       <Header appName={APP_NAME} />
       <Container maxWidth='md' className='container'>
-        <Grid
-          container
-          spacing={0}
-          direction='row'
-          justify='center'
-          alignItems='center'
-          alignContent='center'
-          wrap='nowrap'
-        >
-          <Switch>
-            <Route path='/' exact>
-              <Main />
-            </Route>
-            <Route path='/auth'>
-              <SignIn />
-            </Route>
-            <Route path='/reg'>
-              <SignUp />
-            </Route>
-          </Switch>
+        <Grid container>
+          <Grid item xs={12}>
+            <Grid container justify='center'>
+              <Switch>
+                <Route path='/' exact>
+                  <Main />
+                </Route>
+                <Route path='/auth'>
+                  <SignIn />
+                </Route>
+                <Route path='/reg'>
+                  <SignUp />
+                </Route>
+              </Switch>
+            </Grid>
+          </Grid>
         </Grid>
       </Container>
     </Router>
