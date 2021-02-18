@@ -25,7 +25,7 @@ export default function MediaCard() {
       <CardActionArea>
         <CardMedia
           className={classes.media}
-          image='/storage-link/pictures/preview/sample_preview.png'
+          image='/img/preview/sample_preview.png'
           title='Sample preview'
         />
         <CardContent>
