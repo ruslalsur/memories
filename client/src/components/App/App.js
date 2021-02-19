@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Container, Grid } from '@material-ui/core'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import { Main } from '../Main'
+import { MainPage } from '../pages/MainPage'
 import { SignIn } from '../SignIn'
 import { SignUp } from '../SignUp'
 import { Header } from '../Header'
@@ -16,13 +16,13 @@ export const App = () => {
   return (
     <Router>
       <Header appName={APP_NAME} />
-      <Container maxWidth='md' className='container'>
+      <Container className='container'>
         <Grid container>
           <Grid item xs={12}>
             <Grid container justify='center'>
               <Switch>
                 <Route path='/' exact>
-                  <Main />
+                  <MainPage />
                 </Route>
                 <Route path='/auth'>
                   <SignIn />

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Typography } from '@material-ui/core'
-import MediaCard from './MediaCard'
+import MediaCard from '../MediaCard'
 
-export const Main = () => {
+export const MainPage = () => {
   const [memories, setMemories] = useState([])
   const [currentMemory, setCurrentMemory] = useState(0)
 
@@ -24,11 +24,11 @@ export const Main = () => {
     if (memories.length) {
       let id = setInterval(() => {
         setCurrentMemory(Math.floor(Math.random() * memories.length))
-      }, 1000)
+      }, 30000)
       console.log(`id: `, id)
       return () => clearInterval(id)
     }
-  }, [])
+  }, [memories.length])
 
   const cardClickHandler = () => {
     if (currentMemory < memories.length - 1) {
@@ -40,7 +40,7 @@ export const Main = () => {
 
   return (
     <Grid container spacing={8}>
-      <Grid item xs={12} sm={5}>
+      <Grid item xs={12} xl={5} md={6}>
         <Typography variant='h5' component='h2' paragraph color='primary'>
           Воспоминания есть у каждого.
         </Typography>
@@ -58,7 +58,7 @@ export const Main = () => {
           разрешенных пользователями для всеобщего просмотра.
         </Typography>
       </Grid>
-      <Grid item xs={12} sm={7}>
+      <Grid item xs={12} xl={7} md={6}>
         {memories.length && (
           <MediaCard
             data={memories[currentMemory]}
