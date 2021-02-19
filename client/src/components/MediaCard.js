@@ -14,7 +14,7 @@ const useStyles = makeStyles({
     maxWidth: '100%',
   },
   media: {
-    height: 350,
+    height: 'calc(100vh - 230px)',
   },
 })
 
@@ -39,11 +39,11 @@ export default function MediaCard(props) {
           </Typography>
         </CardContent>
       </CardActionArea>
-      <CardActions>
+      {/* <CardActions>
         <Button size='small' color='primary'>
           Изменить
         </Button>
-      </CardActions>
+      </CardActions> */}
     </Card>
   )
 }
