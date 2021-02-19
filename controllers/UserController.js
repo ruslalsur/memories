@@ -15,7 +15,7 @@ class UserController {
     }
   }
 
-  async create(req, res) {
+  async register(req, res) {
     try {
       const validationErrors = validationResult(req)
       if (!validationErrors.isEmpty()) {
@@ -48,15 +48,13 @@ class UserController {
         .json({ message: `Был создан новый пользователь ${username}` })
     } catch (e) {
       console.log(e)
-      res
-        .status(500)
-        .json({
-          message: `Ошибка в процессе создания нового пользователя ${username}`,
-        })
+      res.status(500).json({
+        message: `Ошибка в процессе создания нового пользователя ${username}`,
+      })
     }
   }
 
-  async auth(req, res) {
+  async login(req, res) {
     try {
       const { username, password } = req.body
       const user = await User.findOne({ username })
@@ -76,11 +74,9 @@ class UserController {
       return res.json({ token })
     } catch (e) {
       console.log(e)
-      res
-        .status(500)
-        .json({
-          message: 'Возникли проблемы в процессе авторизации пользователя',
-        })
+      res.status(500).json({
+        message: 'Возникли проблемы в процессе авторизации пользователя',
+      })
     }
   }
 }

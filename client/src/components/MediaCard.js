@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import { IMGDIR } from '../config'
 
 const useStyles = makeStyles({
   root: {
@@ -17,23 +18,24 @@ const useStyles = makeStyles({
   },
 })
 
-export default function MediaCard() {
+export default function MediaCard(props) {
   const classes = useStyles()
+  const { data, cardClickHandler } = props
 
   return (
     <Card className={classes.root}>
-      <CardActionArea>
+      <CardActionArea onClick={() => cardClickHandler()}>
         <CardMedia
           className={classes.media}
-          image='/img/preview/sample_preview.png'
+          image={`${IMGDIR}/preview/${data.image}`}
           title='Sample preview'
         />
         <CardContent>
           <Typography gutterBottom variant='h5' component='h5'>
-            На сколько спасена принцесса?
+            {data.title}
           </Typography>
           <Typography variant='body1' color='textSecondary' component='p'>
-            "Доспасём принцессу и вернёмся" - это значит спасти ее до конца ...
+            {data.description}
           </Typography>
         </CardContent>
       </CardActionArea>

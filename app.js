@@ -8,6 +8,7 @@ const app = express()
 
 app.use(express.json())
 app.use('/api/user', require('./routes/userRoutes'))
+app.use('/api/memory', require('./routes/memoryRoutes'))
 
 if (process.env.NODE_ENV === 'production') {
   app.use('/', express.static(BUILD_PATH))
