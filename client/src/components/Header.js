@@ -13,6 +13,8 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbar__left: {
     flexGrow: 1,
+    textShadow: '0 0 4px #fff',
+    letterSpacing: '1px',
   },
   title: {
     textDecoration: 'none',
@@ -24,9 +26,6 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: 410,
     },
   },
-  notScrolled: {
-    boxShadow: 'none',
-  },
 }))
 
 export const Header = (props) => {
@@ -36,7 +35,7 @@ export const Header = (props) => {
   return (
     <AppBar position='static' color='primary'>
       <Container>
-        <Toolbar disableGutters>
+        <Toolbar disableGutters style={{ minHeight: '54px' }}>
           <Box className={classes.toolbar__left}>
             <Link to='/' className={classes.title}>
               {appName}

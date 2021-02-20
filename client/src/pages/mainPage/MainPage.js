@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Typography } from '@material-ui/core'
-import MediaCard from '../MediaCard'
+import MediaCard from '../../components/MediaCard'
+import './mainPage.css'
 
 export const MainPage = () => {
   const [memories, setMemories] = useState([])
