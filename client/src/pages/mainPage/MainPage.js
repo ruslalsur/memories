@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { Grid, Typography } from '@material-ui/core'
+import { CircularProgress, Grid, Typography } from '@material-ui/core'
 import MediaCard from '../../components/MediaCard'
 import './mainPage.css'
 
 export const MainPage = () => {
+  const [loading, setLoading] = useState(false)
   const [memories, setMemories] = useState([])
   const [currentMemory, setCurrentMemory] = useState(0)
 
   async function fetchMemories(url) {
+    setLoading(true)
+
     try {
       const response = await fetch(url)
       const data = await response.json()
       setMemories(data)
+      setLoading(false)
     } catch (error) {
       console.error('Ошибка:', error)
     }
@@ -41,7 +45,15 @@ export const MainPage = () => {
 
   return (
     <Grid container spacing={8}>
-      <Grid item xs={12} xl={5} md={6}>
+      <Grid
+        item
+        xs={12}
+        sm={12}
+        md={5}
+        lg={4}
+        xl={4}
+        className='main-page-left-side'
+      >
         <Typography variant='h5' component='h2' paragraph color='primary'>
           Воспоминания есть у каждого.
         </Typography>
@@ -59,13 +71,24 @@ export const MainPage = () => {
           разрешенных пользователями для всеобщего просмотра.
         </Typography>
       </Grid>
-      <Grid item xs={12} xl={7} md={6}>
-        {memories.length && (
-          <MediaCard
-            data={memories[currentMemory]}
-            cardClickHandler={cardClickHandler}
-          />
-        )}
+      <Grid item xs={12} sm={12} md={7} lg={8} xl={8}>
+        <Grid
+          container
+          justify='center'
+          alignContent='center'
+          className='media-card-container'
+        >
+          {loading ? (
+            <CircularProgress color='secondary' />
+          ) : (
+            memories.length && (
+              <MediaCard
+                data={memories[currentMemory]}
+                cardClickHandler={cardClickHandler}
+              />
+            )
+          )}
+        </Grid>
       </Grid>
     </Grid>
   )

@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 400,
     color: 'white',
     '&:hover': {
-      fontWeight: 410,
+      textShadow: '0 0 10px #0ff',
     },
   },
 }))

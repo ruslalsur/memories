@@ -9,10 +9,10 @@ import { IMGDIR } from '../config'
 
 const useStyles = makeStyles({
   root: {
-    maxWidth: '100%',
+    minWidth: '98%',
   },
   media: {
-    height: 'calc(100vh - 230px)',
+    height: 'calc(100vh - 300px)',
   },
 })
 

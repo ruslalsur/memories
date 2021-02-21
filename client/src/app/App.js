@@ -16,7 +16,7 @@ export const App = () => {
   return (
     <Router>
       <Header appName={APP_NAME} />
-      <Container className='container'>
+      <Container className='container' maxWidth='lg'>
         <Switch>
           <Route path='/' exact>
             <MainPage />
