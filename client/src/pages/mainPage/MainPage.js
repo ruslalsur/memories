@@ -44,7 +44,7 @@ export const MainPage = () => {
   }
 
   return (
-    <Grid container spacing={8}>
+    <Grid container spacing={4}>
       <Grid
         item
         xs={12}
