@@ -3,12 +3,42 @@ const router = Router()
 const { check } = require('express-validator')
 const MemoryController = require('../controllers/MemoryController')
 
-router.get('/memories', MemoryController.getMemories)
+router.get('/', MemoryController.getMemories)
+router.get(
+  '/:id',
+  [
+    check('id', 'Неправильный формат идентификатора документа')
+      .matches(/^[0-9a-fA-F]{24}$/)
+      .trim(),
+  ],
+  MemoryController.getMemory
+)
 
 router.post(
-  '/memories',
+  '/',
   [check('title', 'Название не может быть пустым').trim().notEmpty()],
-  MemoryController.setMemory
+  MemoryController.addMemory
+)
+
+router.patch(
+  '/:id',
+  [
+    check('title', 'Название не может быть пустым').trim().notEmpty(),
+    check('id', 'Неправильный формат идентификатора документа')
+      .matches(/^[0-9a-fA-F]{24}$/)
+      .trim(),
+  ],
+  MemoryController.updateMemory
+)
+
+router.delete(
+  '/:id',
+  [
+    check('id', 'Неправильный формат идентификатора документа')
+      .matches(/^[0-9a-fA-F]{24}$/)
+      .trim(),
+  ],
+  MemoryController.deleteMemory
 )
 
 module.exports = router

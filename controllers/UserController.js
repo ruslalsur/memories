@@ -8,7 +8,7 @@ const User = require('../models/User')
 class UserController {
   async getUsers(req, res) {
     try {
-      const users = await User.find()
+      const users = await User.find().populate('roles')
       return res.status(200).json(users)
     } catch (e) {
       console.log(e)
@@ -36,11 +36,17 @@ class UserController {
 
       const hashPassword = bcrypt.hashSync(password, 5)
       const userRole = await Role.findOne({ role: 'USER' })
+      // const user = new User({
+      //   username,
+      //   password: hashPassword,
+      //   roles: [userRole._id],
+      // })
+
       const user = new User({
         username,
         password: hashPassword,
-        roles: [userRole.role],
       })
+      user.roles.push(userRole)
       await user.save()
 
       return res
