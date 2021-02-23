@@ -15,10 +15,15 @@ class MemoryController {
   async getMemory(req, res) {
     try {
       const { id } = req.params
-      const memory = await Memory.findOne({ _id: id }).populate({
-        path: 'user',
-        select: 'name',
-      })
+      // const memory = await Memory.findOne({ _id: id }).populate({
+      //   path: 'user',
+      //   select: 'username',
+      //   populate: {
+      //     path: 'roles',
+      //   },
+      // })
+
+      const memory = await Memory.findOne({ _id: id })
 
       if (memory === null) {
         throw new Error('Нет воспоминания с идентификатором ${id}`')

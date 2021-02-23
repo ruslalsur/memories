@@ -5,7 +5,8 @@ const Memory = new Schema({
   description: { type: String, default: 'Пока описаниие отсутствует' },
   image: { type: String, default: 'noimage.png' },
   shared: { type: Boolean, default: false },
-  user: { type: Schema.Types.ObjectId, ref: 'User' },
+  user: { type: Schema.Types.ObjectId, ref: 'User', autopopulate: true },
 })
 
+Memory.plugin(require('mongoose-autopopulate'))
 module.exports = model('Memory', Memory)

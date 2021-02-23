@@ -36,17 +36,13 @@ class UserController {
 
       const hashPassword = bcrypt.hashSync(password, 5)
       const userRole = await Role.findOne({ role: 'USER' })
-      // const user = new User({
-      //   username,
-      //   password: hashPassword,
-      //   roles: [userRole._id],
-      // })
 
       const user = new User({
         username,
         password: hashPassword,
       })
       user.roles.push(userRole)
+
       await user.save()
 
       return res
