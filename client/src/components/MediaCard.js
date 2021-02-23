@@ -25,7 +25,7 @@ export default function MediaCard(props) {
       <CardActionArea onClick={() => cardClickHandler()}>
         <CardMedia
           className={classes.media}
-          image={`${IMGDIR}/preview/${data.image}`}
+          image={`${IMGDIR}/memories/preview/${data.image}`}
           title='Sample preview'
         />
         <CardContent>

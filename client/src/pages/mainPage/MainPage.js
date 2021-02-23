@@ -1,46 +1,29 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import { useRequest } from '../../hooks/request'
 import { CircularProgress, Grid, Typography } from '@material-ui/core'
 import MediaCard from '../../components/MediaCard'
 import './mainPage.css'
 
 export const MainPage = () => {
-  const [loading, setLoading] = useState(false)
-  const [memories, setMemories] = useState([])
-  const [currentMemory, setCurrentMemory] = useState(0)
+  const [memory, setmemory] = useState(null)
+  const { request, loading } = useRequest()
 
-  async function fetchMemories(url) {
-    setLoading(true)
-
-    try {
-      const response = await fetch(url)
-      const data = await response.json()
-      setMemories(data)
-      setLoading(false)
-    } catch (error) {
-      console.error('Ошибка:', error)
-    }
-  }
+  const fetchRandomMemory = useCallback(async () => {
+    const data = await request('api/memory/random')
+    setmemory(data)
+  }, [request])
 
   useEffect(() => {
-    fetchMemories('api/memory/memories')
-  }, [])
+    fetchRandomMemory()
+  }, [fetchRandomMemory])
 
   useEffect(() => {
-    if (memories.length) {
-      let id = setInterval(() => {
-        setCurrentMemory(Math.floor(Math.random() * memories.length))
-      }, 30000)
-      console.log(`id: `, id)
-      return () => clearInterval(id)
-    }
-  }, [memories.length])
+    let id = setInterval(() => fetchRandomMemory(), 30000)
+    return () => clearInterval(id)
+  }, [fetchRandomMemory])
 
   const cardClickHandler = () => {
-    if (currentMemory < memories.length - 1) {
-      setCurrentMemory(currentMemory + 1)
-    } else {
-      setCurrentMemory(0)
-    }
+    //TODO: отображение разрещенных воспоминаний пользователя кликнутого воспоминания
   }
 
   return (
@@ -81,10 +64,10 @@ export const MainPage = () => {
           {loading ? (
             <CircularProgress color='secondary' />
           ) : (
-            memories.length && (
+            memory && (
               <MediaCard
-                data={memories[currentMemory]}
-                cardClickHandler={cardClickHandler}
+                data={memory}
+                cardClickHandler={() => cardClickHandler}
               />
             )
           )}

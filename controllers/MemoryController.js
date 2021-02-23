@@ -15,15 +15,15 @@ class MemoryController {
   async getMemory(req, res) {
     try {
       const { id } = req.params
-      // const memory = await Memory.findOne({ _id: id }).populate({
-      //   path: 'user',
-      //   select: 'username',
-      //   populate: {
-      //     path: 'roles',
-      //   },
-      // })
+      let memory = {}
 
-      const memory = await Memory.findOne({ _id: id })
+      if (id === 'random') {
+        const count = await Memory.countDocuments({ shared: true })
+        const rand = Math.floor(Math.random() * count)
+        memory = await Memory.findOne({ shared: true }).skip(rand)
+      } else {
+        memory = await Memory.findOne({ _id: id })
+      }
 
       if (memory === null) {
         throw new Error('Нет воспоминания с идентификатором ${id}`')
@@ -41,6 +41,7 @@ class MemoryController {
   async addMemory(req, res) {
     try {
       const validationErrors = validationResult(req)
+
       if (!validationErrors.isEmpty()) {
         return res.status(400).json({
           validationErrors,
@@ -63,6 +64,7 @@ class MemoryController {
       })
     } catch (e) {
       console.log(e)
+
       res.status(500).json({
         message: `Ошибка в процессе создания нового воспоминания`,
       })

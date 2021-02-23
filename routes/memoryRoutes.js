@@ -9,6 +9,7 @@ router.get(
   [
     check('id', 'Неправильный формат идентификатора документа')
       .matches(/^[0-9a-fA-F]{24}$/)
+      .matches(/^random$/)
       .trim(),
   ],
   MemoryController.getMemory
