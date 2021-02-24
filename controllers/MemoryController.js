@@ -5,7 +5,10 @@ class MemoryController {
   async getMemories(req, res) {
     const { userId } = req.params
     try {
-      const memories = await Memory.find({ user: { _id: userId } })
+      const memories = await Memory.find({
+        user: { _id: userId },
+        shared: true,
+      })
 
       return res.status(200).json(memories)
     } catch (e) {

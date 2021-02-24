@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { useRequest } from '../../hooks/request'
-import {
-  CircularProgress,
-  Typography,
-  Grid,
-  GridList,
-  GridListTile,
-  GridListTileBar,
-} from '@material-ui/core'
+import { CircularProgress, Typography, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { GridList, GridListTile, GridListTileBar } from '@material-ui/core'
 import { IMGDIR } from '../../config'
+import './memoryPage.css'
 
 const useStyles = makeStyles((theme) => ({
   root: {
