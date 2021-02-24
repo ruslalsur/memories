@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { useRequest } from '../../hooks/request'
 import {
   CircularProgress,
@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 export const MemoriesPage = () => {
   const [memories, setMemories] = useState([])
   const { userId } = useParams()
+  const history = useHistory()
   const { request, loading } = useRequest()
   const classes = useStyles()
 
@@ -69,7 +70,7 @@ export const MemoriesPage = () => {
               <GridListTile
                 key={memory._id}
                 className={classes.gridListTile}
-                onClick={() => console.log(`LOG: `, memory._id)}
+                onClick={() => history.push(`/memory/${memory._id}`)}
               >
                 <img
                   src={`${IMGDIR}/memories/${memory.image}`}

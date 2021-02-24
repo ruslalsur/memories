@@ -1,80 +1,120 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { useRequest } from '../../hooks/request'
-import { CircularProgress, Typography, Grid } from '@material-ui/core'
+import {
+  Card,
+  CardHeader,
+  CardMedia,
+  CardContent,
+  CircularProgress,
+  IconButton,
+  Avatar,
+  Typography,
+  Grid,
+} from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add'
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined'
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
+import { red } from '@material-ui/core/colors'
 import { makeStyles } from '@material-ui/core/styles'
-import { GridList, GridListTile, GridListTileBar } from '@material-ui/core'
 import { IMGDIR } from '../../config'
 import './memoryPage.css'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    overflow: 'hidden',
-    backgroundColor: theme.palette.background.paper,
+    minWidth: '93%',
+    marginBottom: 30,
   },
-  gridList: {
-    width: 'auto',
-    height: 'auto',
+  media: {
+    height: 0,
+    paddingTop: '56.25%', // 16:9
   },
-  gridListTile: {
-    cursor: 'pointer',
-    '&:hover': { border: '1px solid #fff' },
-    '&:active': { border: '3px solid #fff' },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
   },
-
-  icon: {
-    color: 'rgba(255, 255, 255, 0.54)',
+  expandOpen: {
+    transform: 'rotate(180deg)',
+  },
+  avatar: {
+    backgroundColor: red[500],
   },
 }))
 
-export const MemoriesPage = () => {
-  const [memories, setMemories] = useState([])
-  const { userId } = useParams()
+export const MemoryPage = () => {
+  const [memory, setMemory] = useState(null)
+  const { id } = useParams()
   const { request, loading } = useRequest()
   const classes = useStyles()
 
-  const fetchMemories = useCallback(async () => {
-    const data = await request(`/api/memory/user/${userId}`)
-    setMemories(data)
-  }, [request, userId])
+  const fetchMemory = useCallback(async () => {
+    const data = await request(`/api/memory/${id}`)
+    setMemory(data)
+  }, [request, id])
 
   useEffect(() => {
-    fetchMemories()
+    fetchMemory()
   }, [])
 
-  return loading || !memories.length ? (
+  return loading || !memory ? (
     <CircularProgress color='secondary' />
   ) : (
-    <Grid container>
-      <Grid item>
-        <Typography variant='h5' component='h2' paragraph color='primary'>
-          Воспоминания пользователя {memories[0].user.username}
-        </Typography>
-        <div className={classes.root}>
-          <GridList
-            spacing={5}
-            cellHeight={200}
-            cols={4}
-            className={classes.gridList}
-          >
-            {memories.map((memory) => (
-              <GridListTile
-                key={memory._id}
-                className={classes.gridListTile}
-                onClick={() => console.log(`LOG: `, memory._id)}
-              >
-                <img
-                  src={`${IMGDIR}/memories/${memory.image}`}
-                  alt={memory.title}
-                />
-                <GridListTileBar title={memory.title} />
-              </GridListTile>
-            ))}
-          </GridList>
-        </div>
+    <Grid container justify='center'>
+      <Grid item xs={12} sm={12} md={11} lg={11} xl={11}>
+        <Grid container justify='center'>
+          <Card className={classes.root} raised>
+            <CardHeader
+              avatar={
+                <Avatar aria-label='recipe' className={classes.avatar}>
+                  R
+                </Avatar>
+              }
+              action={[
+                <IconButton
+                  key={1}
+                  color='primary'
+                  aria-label='settings'
+                  onClick={() => console.log(`LOG: `, 1)}
+                >
+                  <AddIcon />
+                </IconButton>,
+                <IconButton
+                  key={2}
+                  disabled
+                  color='primary'
+                  aria-label='settings'
+                  onClick={() => console.log(`LOG: `, 2)}
+                >
+                  <EditOutlinedIcon />
+                </IconButton>,
+                <IconButton
+                  key={3}
+                  disabled
+                  color='secondary'
+                  aria-label='settings'
+                  onClick={() => console.log(`LOG: `, 3)}
+                >
+                  <DeleteOutlineIcon />
+                </IconButton>,
+              ]}
+              title={memory.title}
+              subheader={`Автор: ${memory.user.username}`}
+            />
+            <CardMedia
+              className={classes.media}
+              image={`${IMGDIR}/memories/${memory.image}`}
+              title='Paella dish'
+            />
+            <CardContent>
+              <Typography variant='body2' color='textSecondary' component='p'>
+                {memory.description}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
     </Grid>
   )

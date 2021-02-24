@@ -3,6 +3,7 @@ import { Container } from '@material-ui/core'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { MainPage } from '../pages/MainPage'
 import { MemoriesPage } from '../pages/MemoriesPage'
+import { MemoryPage } from '../pages/MemoryPage'
 import { SignIn } from '../components/SignIn'
 import { SignUp } from '../components/SignUp'
 import { Header } from '../components/Header'
@@ -24,6 +25,9 @@ export const App = () => {
           </Route>
           <Route path='/memories/:userId'>
             <MemoriesPage />
+          </Route>
+          <Route path='/memory/:id'>
+            <MemoryPage />
           </Route>
           <Route path='/auth'>
             <SignIn />
