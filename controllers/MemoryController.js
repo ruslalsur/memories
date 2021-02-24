@@ -3,8 +3,9 @@ const Memory = require('../models/Memory')
 
 class MemoryController {
   async getMemories(req, res) {
+    const { userId } = req.params
     try {
-      const memories = await Memory.find({ shared: true })
+      const memories = await Memory.find({ user: { _id: userId } })
 
       return res.status(200).json(memories)
     } catch (e) {
@@ -26,7 +27,7 @@ class MemoryController {
       }
 
       if (memory === null) {
-        throw new Error('Нет воспоминания с идентификатором ${id}`')
+        throw new Error(`Нет воспоминания с идентификатором ${id}`)
       }
 
       return res.status(200).json(memory)

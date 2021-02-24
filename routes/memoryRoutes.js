@@ -3,7 +3,7 @@ const router = Router()
 const { check } = require('express-validator')
 const MemoryController = require('../controllers/MemoryController')
 
-router.get('/', MemoryController.getMemories)
+router.get('/user/:userId', MemoryController.getMemories)
 router.get(
   '/:id',
   [

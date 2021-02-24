@@ -1,29 +1,31 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useRequest } from '../../hooks/request'
 import { CircularProgress, Grid, Typography } from '@material-ui/core'
 import MediaCard from '../../components/MediaCard'
 import './mainPage.css'
 
 export const MainPage = () => {
-  const [memory, setmemory] = useState(null)
+  const history = useHistory()
+  const [memory, setMemory] = useState(null)
   const { request, loading } = useRequest()
 
   const fetchRandomMemory = useCallback(async () => {
     const data = await request('api/memory/random')
-    setmemory(data)
+    setMemory(data)
   }, [request])
 
   useEffect(() => {
     fetchRandomMemory()
-  }, [fetchRandomMemory])
+  }, [])
 
   useEffect(() => {
     let id = setInterval(() => fetchRandomMemory(), 30000)
     return () => clearInterval(id)
   }, [fetchRandomMemory])
 
-  const cardClickHandler = () => {
-    //TODO: отображение разрещенных воспоминаний пользователя кликнутого воспоминания
+  const cardClickHandler = (e) => {
+    history.push(`/memories/${e.target.parentElement.id}`)
   }
 
   return (

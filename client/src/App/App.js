@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import { Container } from '@material-ui/core'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import { MainPage } from '../pages/mainPage/MainPage'
+import { MainPage } from '../pages/MainPage'
+import { MemoriesPage } from '../pages/MemoriesPage'
 import { SignIn } from '../components/SignIn'
 import { SignUp } from '../components/SignUp'
 import { Header } from '../components/Header'
@@ -20,6 +21,9 @@ export const App = () => {
         <Switch>
           <Route path='/' exact>
             <MainPage />
+          </Route>
+          <Route path='/memories/:userId'>
+            <MemoriesPage />
           </Route>
           <Route path='/auth'>
             <SignIn />

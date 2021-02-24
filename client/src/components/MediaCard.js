@@ -22,7 +22,7 @@ export default function MediaCard(props) {
 
   return (
     <Card className={classes.root}>
-      <CardActionArea onClick={() => cardClickHandler()}>
+      <CardActionArea onClick={cardClickHandler()} id={data.user._id}>
         <CardMedia
           className={classes.media}
           image={`${IMGDIR}/memories/preview/${data.image}`}
