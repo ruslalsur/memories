@@ -40,7 +40,7 @@ export const MainPage = () => {
         className='main-page-left-side'
       >
         <Typography variant='h5' component='h2' paragraph color='primary'>
-          Воспоминания есть у каждого.
+          Воспоминания есть у каждого
         </Typography>
         <Typography component='h5' paragraph>
           Здесь каждый сможет хранить свои воспоминания, отдельно от

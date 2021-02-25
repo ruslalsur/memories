@@ -11,6 +11,8 @@ import {
   Avatar,
   Typography,
   Grid,
+  ButtonGroup,
+  Button,
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined'
@@ -42,6 +44,10 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
+  btnGroup: {
+    paddingTop: 13,
+    paddingRight: 10,
+  },
 }))
 
 export const MemoryPage = () => {
@@ -72,34 +78,27 @@ export const MemoryPage = () => {
                   R
                 </Avatar>
               }
-              action={[
-                <IconButton
-                  key={1}
+              action={
+                <ButtonGroup
+                  className={classes.btnGroup}
                   color='primary'
-                  aria-label='settings'
-                  onClick={() => console.log(`LOG: `, 1)}
+                  size='small'
+                  aria-label='outlined primary button group'
                 >
-                  <AddIcon />
-                </IconButton>,
-                <IconButton
-                  key={2}
-                  disabled
-                  color='primary'
-                  aria-label='settings'
-                  onClick={() => console.log(`LOG: `, 2)}
-                >
-                  <EditOutlinedIcon />
-                </IconButton>,
-                <IconButton
-                  key={3}
-                  disabled
-                  color='secondary'
-                  aria-label='settings'
-                  onClick={() => console.log(`LOG: `, 3)}
-                >
-                  <DeleteOutlineIcon />
-                </IconButton>,
-              ]}
+                  <Button onClick={() => console.log(`LOG: `, 1)}>
+                    Создать
+                  </Button>
+                  <Button onClick={() => console.log(`LOG: `, 2)}>
+                    Изменить
+                  </Button>
+                  <Button
+                    color='secondary'
+                    onClick={() => console.log(`LOG: `, 3)}
+                  >
+                    Удалить
+                  </Button>
+                </ButtonGroup>
+              }
               title={memory.title}
               subheader={`Автор: ${memory.user.username}`}
             />
