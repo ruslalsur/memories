@@ -34,9 +34,9 @@ export const MainPage = () => {
         item
         xs={12}
         sm={12}
-        md={5}
-        lg={4}
-        xl={4}
+        md={6}
+        lg={6}
+        xl={6}
         className='main-page-left-side'
       >
         <Typography variant='h5' component='h2' paragraph color='primary'>
@@ -56,7 +56,7 @@ export const MainPage = () => {
           разрешенных пользователями для всеобщего просмотра.
         </Typography>
       </Grid>
-      <Grid item xs={12} sm={12} md={7} lg={8} xl={8}>
+      <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
         <Grid
           container
           justify='center'

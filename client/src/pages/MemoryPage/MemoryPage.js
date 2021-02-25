@@ -1,22 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { useRequest } from '../../hooks/request'
 import {
   Card,
   CardHeader,
   CardMedia,
-  CardContent,
+  CardActions,
   CircularProgress,
-  IconButton,
   Avatar,
-  Typography,
   Grid,
   ButtonGroup,
   Button,
+  IconButton,
 } from '@material-ui/core'
-import AddIcon from '@material-ui/icons/Add'
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined'
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
+import ClearRoundedIcon from '@material-ui/icons/ClearRounded'
 import { red } from '@material-ui/core/colors'
 import { makeStyles } from '@material-ui/core/styles'
 import { IMGDIR } from '../../config'
@@ -24,7 +21,7 @@ import './memoryPage.css'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: '93%',
+    minWidth: '60%',
     marginBottom: 30,
   },
   media: {
@@ -44,15 +41,13 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
-  btnGroup: {
-    paddingTop: 13,
-    paddingRight: 10,
-  },
+  btnGroup: {},
 }))
 
 export const MemoryPage = () => {
   const [memory, setMemory] = useState(null)
   const { id } = useParams()
+  const history = useHistory()
   const { request, loading } = useRequest()
   const classes = useStyles()
 
@@ -79,39 +74,41 @@ export const MemoryPage = () => {
                 </Avatar>
               }
               action={
-                <ButtonGroup
-                  className={classes.btnGroup}
-                  color='primary'
-                  size='small'
-                  aria-label='outlined primary button group'
+                <IconButton
+                  color='secondary'
+                  aria-label='add an alarm'
+                  onClick={() => history.push(`/memories/${memory.user._id}`)}
                 >
-                  <Button onClick={() => console.log(`LOG: `, 1)}>
-                    Создать
-                  </Button>
-                  <Button onClick={() => console.log(`LOG: `, 2)}>
-                    Изменить
-                  </Button>
-                  <Button
-                    color='secondary'
-                    onClick={() => console.log(`LOG: `, 3)}
-                  >
-                    Удалить
-                  </Button>
-                </ButtonGroup>
+                  <ClearRoundedIcon />
+                </IconButton>
               }
               title={memory.title}
-              subheader={`Автор: ${memory.user.username}`}
+              subheader={memory.description}
             />
             <CardMedia
               className={classes.media}
               image={`${IMGDIR}/memories/${memory.image}`}
               title='Paella dish'
             />
-            <CardContent>
-              <Typography variant='body2' color='textSecondary' component='p'>
-                {memory.description}
-              </Typography>
-            </CardContent>
+            <CardActions disableSpacing>
+              <ButtonGroup
+                className={classes.btnGroup}
+                color='primary'
+                size='small'
+                aria-label='outlined primary button group'
+              >
+                <Button onClick={() => console.log(`LOG: `, 1)}>Создать</Button>
+                <Button onClick={() => console.log(`LOG: `, 2)}>
+                  Изменить
+                </Button>
+                <Button
+                  color='secondary'
+                  onClick={() => console.log(`LOG: `, 3)}
+                >
+                  Удалить
+                </Button>
+              </ButtonGroup>
+            </CardActions>
           </Card>
         </Grid>
       </Grid>

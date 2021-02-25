@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
   gridList: {
     width: 'auto',
     height: 'auto',
+    margingBottom: 30,
   },
   gridListTile: {
     cursor: 'pointer',
@@ -63,7 +64,7 @@ export const MemoriesPage = () => {
           <GridList
             spacing={5}
             cellHeight={200}
-            cols={4}
+            cols={5}
             className={classes.gridList}
           >
             {memories.map((memory) => (
