@@ -5,7 +5,6 @@ import CardActionArea from '@material-ui/core/CardActionArea'
 import CardContent from '@material-ui/core/CardContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
-import { IMGDIR } from '../config'
 
 const useStyles = makeStyles({
   root: {
@@ -13,7 +12,7 @@ const useStyles = makeStyles({
     marginBottom: 10,
   },
   media: {
-    minHeight: '65vh',
+    height: '50vh',
   },
 })
 
@@ -26,7 +25,7 @@ export default function MediaCard(props) {
       <CardActionArea onClick={cardClickHandler()} id={data.user._id}>
         <CardMedia
           className={classes.media}
-          image={`${IMGDIR}/memories/${data.image}`}
+          image={data.image ?? '/images/memories/noimage.png'}
           title='Sample preview'
         />
         <CardContent>

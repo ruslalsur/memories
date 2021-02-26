@@ -10,7 +10,6 @@ import {
   GridListTileBar,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import { IMGDIR } from '../../config'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,12 +26,8 @@ const useStyles = makeStyles((theme) => ({
   },
   gridListTile: {
     cursor: 'pointer',
-    '&:hover': { border: '1px solid #fff' },
-    '&:active': { border: '3px solid #fff' },
-  },
-
-  icon: {
-    color: 'rgba(255, 255, 255, 0.54)',
+    '&:hover': { border: '2px solid #fff' },
+    '&:active': { border: '4px solid #fff' },
   },
 }))
 
@@ -63,7 +58,7 @@ export const MemoriesPage = () => {
         <div className={classes.root}>
           <GridList
             spacing={5}
-            cellHeight={200}
+            cellHeight={160}
             cols={5}
             className={classes.gridList}
           >
@@ -74,7 +69,7 @@ export const MemoriesPage = () => {
                 onClick={() => history.push(`/memory/${memory._id}`)}
               >
                 <img
-                  src={`${IMGDIR}/memories/${memory.image}`}
+                  src={memory.image ?? '/images/memories/noimage.png'}
                   alt={memory.title}
                 />
                 <GridListTileBar title={memory.title} />
