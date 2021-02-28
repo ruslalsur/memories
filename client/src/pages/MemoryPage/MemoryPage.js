@@ -99,8 +99,6 @@ export const MemoryPage = () => {
         : event.target.value
 
     setFormData({ ...formData, [event.target.name]: value })
-    console.log(`LOG memory: `, memory)
-    console.log(`LOG formData: `, formData)
   }
 
   const handleImageChange = (files) => {
