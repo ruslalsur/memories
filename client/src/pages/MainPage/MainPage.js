@@ -19,10 +19,11 @@ const useStyles = makeStyles({
     textAlign: 'justify',
   },
   mediaCardContainer: {
-    maxHeight: '92%',
+    minHeight: '92%',
   },
   card: {
     minWidth: '100%',
+    minHeight: '100%',
     marginBottom: 10,
   },
   media: {
@@ -51,9 +52,7 @@ export const MainPage = () => {
     history.push(`/memories/${id}`)
   }
 
-  if (loading) {
-    return <CircularProgress color='secondary' />
-  } else if (error) {
+  if (error) {
     return (
       <Alert variant='filled' severity='error'>
         {error}
@@ -96,27 +95,33 @@ export const MainPage = () => {
             alignContent='center'
             className={classes.mediaCardContainer}
           >
-            <Card className={classes.card}>
-              <CardActionArea onClick={() => cardClickHandler(memory.user._id)}>
-                <CardMedia
-                  className={classes.media}
-                  image={memory.image || '/images/memories/noimage.png'}
-                  title='Sample preview'
-                />
-                <CardContent>
-                  <Typography gutterBottom variant='h5' component='h5'>
-                    {memory.title}
-                  </Typography>
-                  <Typography
-                    variant='body1'
-                    color='textSecondary'
-                    component='p'
-                  >
-                    {memory.description}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
+            {loading ? (
+              <CircularProgress color='secondary' />
+            ) : (
+              <Card className={classes.card}>
+                <CardActionArea
+                  onClick={() => cardClickHandler(memory.user._id)}
+                >
+                  <CardMedia
+                    className={classes.media}
+                    image={memory.image || '/images/memories/noimage.png'}
+                    title='Sample preview'
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant='h5' component='h5'>
+                      {memory.title}
+                    </Typography>
+                    <Typography
+                      variant='body1'
+                      color='textSecondary'
+                      component='p'
+                    >
+                      {memory.description}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            )}
           </Grid>
         </Grid>
       </Grid>
