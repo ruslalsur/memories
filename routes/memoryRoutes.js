@@ -5,9 +5,9 @@ const MemoryController = require('../controllers/MemoryController')
 const validate = require('../middleware/validateMiddleware')
 
 router.get(
-  '/user/:userId',
+  '/user/:id',
   [
-    check('userId')
+    check('id')
       .isMongoId()
       .withMessage('Неправильный формат идентификатора документа')
       .trim(),
@@ -20,16 +20,17 @@ router.get(
   '/:id',
   [
     check('id', 'Неправильный формат идентификатора документа')
-      .matches(/^[0-9a-fA-F]{24}$/)
-      .matches(/^random$/)
+      .matches(/^[random]{1}|[0-9a-fA-F]{24}$/)
       .trim(),
   ],
+  validate(),
   MemoryController.getMemory
 )
 
 router.post(
   '/',
   [check('title', 'Название не может быть пустым').trim().notEmpty()],
+  validate(),
   MemoryController.addMemory
 )
 
@@ -41,6 +42,7 @@ router.patch(
       .matches(/^[0-9a-fA-F]{24}$/)
       .trim(),
   ],
+  validate(),
   MemoryController.updateMemory
 )
 
@@ -51,6 +53,7 @@ router.delete(
       .matches(/^[0-9a-fA-F]{24}$/)
       .trim(),
   ],
+  validate(),
   MemoryController.deleteMemory
 )
 

@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 export const MemoryPage = () => {
   const { id } = useParams()
   const history = useHistory()
-  const { request, loading } = useRequest()
+  const { request, loading, error } = useRequest()
   const classes = useStyles()
 
   const [memory, setMemory] = useState(null)
@@ -90,7 +90,7 @@ export const MemoryPage = () => {
     }
 
     fetchMemory()
-  }, [])
+  }, [id, request])
 
   const handleFormChange = (event) => {
     const value =
@@ -99,6 +99,8 @@ export const MemoryPage = () => {
         : event.target.value
 
     setFormData({ ...formData, [event.target.name]: value })
+    console.log(`LOG memory: `, memory)
+    console.log(`LOG formData: `, formData)
   }
 
   const handleImageChange = (files) => {
@@ -147,139 +149,151 @@ export const MemoryPage = () => {
     }
   }
 
-  return loading || !memory ? (
-    <CircularProgress color='secondary' />
-  ) : (
-    <>
-      <Grid container justify='center'>
-        <Grid item xs={12} sm={12} md={11} lg={11} xl={11}>
-          <Grid container justify='center'>
-            <Card className={classes.root} raised>
-              <CardHeader
-                avatar={
-                  <Avatar
-                    alt='avatar'
-                    src={memory.user.avatar}
-                    aria-label='avatar'
-                    className={classes.avatar}
-                  />
-                }
-                action={
-                  <IconButton
-                    color='secondary'
-                    title='Закрыть'
-                    aria-label='Закрыть'
-                    onClick={() => history.push(`/memories/${memory.user._id}`)}
-                  >
-                    <ClearRoundedIcon />
-                  </IconButton>
-                }
-                title={memory.title}
-                subheader={memory.description}
-              />
-              <CardMedia
-                className={classes.media}
-                image={memory.image || '/images/memories/noimage.png'}
-                title='Увеличить'
-                onClick={() => setViewerOpen(true)}
-              />
+  if (loading) {
+    return <CircularProgress color='secondary' />
+  } else if (error) {
+    return (
+      <Alert variant='filled' severity='error'>
+        {error}
+      </Alert>
+    )
+  } else if (!memory) {
+    return null
+  } else {
+    return (
+      <>
+        <Grid container justify='center'>
+          <Grid item xs={12} sm={12} md={11} lg={11} xl={11}>
+            <Grid container justify='center'>
+              <Card className={classes.root} raised>
+                <CardHeader
+                  avatar={
+                    <Avatar
+                      alt='avatar'
+                      src={memory.user.avatar}
+                      aria-label='avatar'
+                      className={classes.avatar}
+                    />
+                  }
+                  action={
+                    <IconButton
+                      color='secondary'
+                      title='Закрыть'
+                      aria-label='Закрыть'
+                      onClick={() =>
+                        history.push(`/memories/${memory.user._id}`)
+                      }
+                    >
+                      <ClearRoundedIcon />
+                    </IconButton>
+                  }
+                  title={memory.title}
+                  subheader={memory.description}
+                />
+                <CardMedia
+                  className={classes.media}
+                  image={memory.image || '/images/memories/noimage.png'}
+                  title='Увеличить'
+                  onClick={() => setViewerOpen(true)}
+                />
 
-              <CardActions disableSpacing>
-                <ButtonGroup
-                  className={classes.btnGroup}
-                  color='primary'
-                  size='small'
-                  aria-label='outlined primary button group'
-                >
-                  <Button onClick={() => handleCreateBtnClick()}>
-                    Создать
-                  </Button>
-                  <Button onClick={() => handleUpdateBtnClick()}>
-                    Изменить
-                  </Button>
-                  <Button
-                    color='secondary'
-                    onClick={() => handleDeleteBtnClick()}
+                <CardActions disableSpacing>
+                  <ButtonGroup
+                    className={classes.btnGroup}
+                    color='primary'
+                    size='small'
+                    aria-label='outlined primary button group'
                   >
-                    Удалить
-                  </Button>
-                </ButtonGroup>
-              </CardActions>
-            </Card>
+                    <Button onClick={() => handleCreateBtnClick()}>
+                      Создать
+                    </Button>
+                    <Button onClick={() => handleUpdateBtnClick()}>
+                      Изменить
+                    </Button>
+                    <Button
+                      color='secondary'
+                      onClick={() => handleDeleteBtnClick()}
+                    >
+                      Удалить
+                    </Button>
+                  </ButtonGroup>
+                </CardActions>
+              </Card>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-      <Backdrop
-        className={classes.backdrop}
-        style={{
-          background: `url(${
-            memory.image || '/images/memories/noimage.png'
-          }) 0 0/cover no-repeat`,
-        }}
-        open={viewerOpen}
-        onClick={() => setViewerOpen(false)}
-      />
-      <div>
-        <Dialog open={open} aria-labelledby='form-dialog-title'>
-          <DialogTitle id='form-dialog-title'>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.shared}
-                  onChange={handleFormChange}
-                  name='shared'
-                />
-              }
-              label='Воспоминание смогут увидеть остальные'
-            />
-          </DialogTitle>
-          <DialogContent>
-            <TextField
-              autoFocus
-              id='title'
-              name='title'
-              label='Название'
-              fullWidth
-              value={formData.title}
-              onChange={handleFormChange}
-            />
-            <TextField
-              id='description'
-              name='description'
-              label='Подробности'
-              multiline
-              rowsMax={4}
-              fullWidth
-              value={formData.description}
-              onChange={handleFormChange}
-            />
-            <DropzoneArea
-              onChange={handleImageChange}
-              dropzoneText='Перетащите картинку сюда '
-              acceptedFiles={['image/*']}
-              filesLimit={1}
-              showAlerts={['error']}
-              showFileNames
-              initialFiles={formData.image ? [formData.image] : []}
-            />
-          </DialogContent>
-          <DialogActions>
-            {formData.hasOwnProperty('user') ? (
-              <Button onClick={() => updateMemory()} color='primary'>
-                Изменить
-              </Button>
-            ) : (
-              <Button onClick={() => createMemory()} color='primary'>
-                Создать
-              </Button>
-            )}
+        <Backdrop
+          className={classes.backdrop}
+          style={{
+            background: `url(${
+              memory.image || '/images/memories/noimage.png'
+            }) 0 0/cover no-repeat`,
+          }}
+          open={viewerOpen}
+          onClick={() => setViewerOpen(false)}
+        />
+        <div>
+          <Dialog open={open} aria-labelledby='form-dialog-title'>
+            <DialogTitle id='form-dialog-title'>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={formData.shared}
+                    onChange={handleFormChange}
+                    name='shared'
+                  />
+                }
+                label='Воспоминание смогут увидеть остальные'
+              />
+            </DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus
+                id='title'
+                name='title'
+                label='Название'
+                fullWidth
+                value={formData.title}
+                onChange={handleFormChange}
+              />
+              <TextField
+                id='description'
+                name='description'
+                label='Подробности'
+                multiline
+                rowsMax={4}
+                fullWidth
+                value={formData.description}
+                onChange={handleFormChange}
+              />
+              <DropzoneArea
+                onChange={handleImageChange}
+                dropzoneText='Перетащите картинку сюда '
+                acceptedFiles={['image/*']}
+                filesLimit={1}
+                showAlerts={['error']}
+                showFileNames
+                initialFiles={formData.image ? [formData.image] : []}
+              />
+            </DialogContent>
+            <DialogActions>
+              {formData.hasOwnProperty('user') ? (
+                <Button onClick={() => updateMemory()} color='primary'>
+                  Изменить
+                </Button>
+              ) : (
+                <Button onClick={() => createMemory()} color='primary'>
+                  Создать
+                </Button>
+              )}
 
-            <Button onClick={() => setOpen(false)} color='primary'>
-              Отмена
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-    </>
-  )
+              <Button onClick={() => setOpen(false)} color='primary'>
+                Отмена
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      </>
+    )
+  }
 }

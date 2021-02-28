@@ -2,14 +2,14 @@
   "name": "memories",
   "version": "1.0.0",
   "description": "project for portfolio",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production PORT=33333 node app.js",
-    "server:dev": "cross-env NODE_ENV=development PORT=5000 nodemon app.js",
+    "start": "cross-env NODE_ENV=production PORT=33333 node index.js",
+    "server:dev": "cross-env NODE_ENV=development PORT=5000 nodemon index.js",
     "client:dev": "npm run start --prefix client",
     "client:build": "npm run build --prefix client",
     "client:install": "npm install --prefix client",
-    "full:dev": "cross-env concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "dev": "cross-env concurrently \"npm run server:dev\" \"npm run client:dev\"",
     "heroku-postbuild": "npm install && npm run client:install && npm run client:build"
   },
   "repository": {
@@ -30,14 +30,12 @@
   },
   "homepage": "https://github.com/ruslalsur/memories#readme",
   "dependencies": {
-    "@material-ui/lab": "^4.0.0-alpha.57",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
     "jsonwebtoken": "^8.5.1",
-    "material-ui-dropzone": "^3.5.0",
     "mongoose": "^5.11.14",
     "mongoose-autopopulate": "^0.12.3"
   },

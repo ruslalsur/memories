@@ -2,15 +2,15 @@ const Memory = require('../models/Memory')
 
 class MemoryController {
   async getMemories(req, res) {
-    const { userId } = req.params
+    const { id } = req.params
 
     try {
       const memories = await Memory.find({
-        user: { _id: userId },
+        user: { _id: id },
         shared: true,
       })
 
-      if (!memories.length) throw new Error(`Нет пользователя с id=${userId}`)
+      if (!memories.length) throw new Error(`Нет пользователя с id=${id}`)
 
       return res.status(200).json(memories)
     } catch (e) {
@@ -22,8 +22,9 @@ class MemoryController {
   }
 
   async getMemory(req, res) {
+    const { id } = req.params
+
     try {
-      const { id } = req.params
       let memory = {}
 
       if (id === 'random') {
@@ -73,8 +74,9 @@ class MemoryController {
   }
 
   async updateMemory(req, res) {
+    const { id } = req.params
+
     try {
-      const { id } = req.params
       const updated = await Memory.updateOne({ _id: id }, { ...req.body })
 
       if (!updated) {
@@ -93,8 +95,9 @@ class MemoryController {
   }
 
   async deleteMemory(req, res) {
+    const { id } = req.params
+
     try {
-      const { id } = req.params
       const result = await Memory.findByIdAndDelete(id)
 
       if (result === null) {

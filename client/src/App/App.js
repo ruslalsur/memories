@@ -23,7 +23,7 @@ export const App = () => {
           <Route path='/' exact>
             <MainPage />
           </Route>
-          <Route path='/memories/:userId'>
+          <Route path='/memories/:id'>
             <MemoriesPage />
           </Route>
           <Route path='/memory/:id'>
