@@ -1,18 +1,23 @@
-const { validationResult } = require('express-validator')
 const Memory = require('../models/Memory')
 
 class MemoryController {
   async getMemories(req, res) {
     const { userId } = req.params
+
     try {
       const memories = await Memory.find({
         user: { _id: userId },
         shared: true,
       })
 
+      if (!memories.length) throw new Error(`Нет пользователя с id=${userId}`)
+
       return res.status(200).json(memories)
     } catch (e) {
       console.log(e)
+      return res.status(400).json({
+        message: e.message || 'Ошибка',
+      })
     }
   }
 
@@ -44,15 +49,6 @@ class MemoryController {
 
   async addMemory(req, res) {
     try {
-      const validationErrors = validationResult(req)
-
-      if (!validationErrors.isEmpty()) {
-        return res.status(400).json({
-          validationErrors,
-          message: 'Ошибки валидации при создании нового воспоминания',
-        })
-      }
-
       const candidate = await Memory.findOne({ title: req.body.title })
       if (candidate) {
         return res.status(400).json({
@@ -60,12 +56,13 @@ class MemoryController {
         })
       }
 
-      const memory = new Memory({ ...req.body })
-      await memory.save()
-
-      return res.status(201).json({
-        message: `Было добавлено новое воспоминание: ${req.body.title}`,
+      const newMemory = new Memory({
+        ...req.body,
+        user: '60330e0de96e077b16b6690e',
       })
+      const result = await newMemory.save()
+
+      return res.status(201).json(result)
     } catch (e) {
       console.log(e)
 
@@ -78,27 +75,15 @@ class MemoryController {
   async updateMemory(req, res) {
     try {
       const { id } = req.params
+      const updated = await Memory.updateOne({ _id: id }, { ...req.body })
 
-      const validationErrors = validationResult(req)
-      if (!validationErrors.isEmpty()) {
-        return res.status(400).json({
-          validationErrors,
-          message: 'Ошибки валидации при изменении старого воспоминания',
-        })
-      }
-
-      const beforUpdateMemory = await Memory.findOneAndUpdate(
-        { _id: id },
-        { ...req.body }
-      )
-
-      if (beforUpdateMemory === null) {
+      if (!updated) {
         return res.status(400).json({
           message: `Не удалось изменить воспоминание с идентификатором ${id}`,
         })
       }
 
-      return res.status(201).json(beforUpdateMemory)
+      return res.status(201).json(updated)
     } catch (e) {
       console.log(e)
       res.status(500).json({

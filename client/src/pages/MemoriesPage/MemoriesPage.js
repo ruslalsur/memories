@@ -9,6 +9,7 @@ import {
   GridListTile,
   GridListTileBar,
 } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme) => ({
@@ -35,20 +36,30 @@ export const MemoriesPage = () => {
   const [memories, setMemories] = useState([])
   const { userId } = useParams()
   const history = useHistory()
-  const { request, loading } = useRequest()
+  const { request, loading, error } = useRequest()
   const classes = useStyles()
 
-  const fetchMemories = useCallback(async () => {
-    const data = await request(`/api/memory/user/${userId}`)
-    setMemories(data)
-  }, [request, userId])
-
   useEffect(() => {
+    const fetchMemories = async () => {
+      try {
+        const data = await request(`/api/memory/user/${userId}`)
+        setMemories(data)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
     fetchMemories()
   }, [])
 
   return loading || !memories.length ? (
-    <CircularProgress color='secondary' />
+    !error ? (
+      <CircularProgress color='secondary' />
+    ) : (
+      <Alert variant='filled' severity='error'>
+        {error}
+      </Alert>
+    )
   ) : (
     <Grid container>
       <Grid item>
@@ -69,7 +80,7 @@ export const MemoriesPage = () => {
                 onClick={() => history.push(`/memory/${memory._id}`)}
               >
                 <img
-                  src={memory.image ?? '/images/memories/noimage.png'}
+                  src={memory.image || '/images/memories/noimage.png'}
                   alt={memory.title}
                 />
                 <GridListTileBar title={memory.title} />

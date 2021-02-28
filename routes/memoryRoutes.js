@@ -2,8 +2,20 @@ const { Router } = require('express')
 const router = Router()
 const { check } = require('express-validator')
 const MemoryController = require('../controllers/MemoryController')
+const validate = require('../middleware/validateMiddleware')
 
-router.get('/user/:userId', MemoryController.getMemories)
+router.get(
+  '/user/:userId',
+  [
+    check('userId')
+      .isMongoId()
+      .withMessage('Неправильный формат идентификатора документа')
+      .trim(),
+  ],
+  validate(),
+  MemoryController.getMemories
+)
+
 router.get(
   '/:id',
   [
