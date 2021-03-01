@@ -32,66 +32,70 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const MemoriesPage = () => {
-  const [memories, setMemories] = useState([])
+export const MemoriesPage = ({ memories, setCurrent }) => {
+  // const [memories, setMemories] = useState([])
   const { id } = useParams()
   const history = useHistory()
-  const { request, loading, error } = useRequest()
+  // const { request, loading, error } = useRequest()
   const classes = useStyles()
 
-  useEffect(() => {
-    const fetchMemories = async () => {
-      try {
-        const data = await request(`/api/memory/user/${id}`)
-        setMemories(data)
-      } catch (e) {
-        console.log(e)
-      }
-    }
+  // useEffect(() => {
+  //   const fetchMemories = async () => {
+  //     try {
+  //       const data = await request(`/api/memory/user/${id}`)
+  //       setMemories(data)
+  //     } catch (e) {
+  //       console.log(e)
+  //     }
+  //   }
 
-    fetchMemories()
-  }, [request, id])
+  //   fetchMemories()
+  // }, [request, id])
 
-  if (loading) {
-    return <CircularProgress color='secondary' />
-  } else if (error) {
-    return (
-      <Alert variant='filled' severity='error'>
-        {error}
-      </Alert>
-    )
-  } else {
-    return (
-      <Grid container>
-        <Grid item>
-          <Typography variant='h5' component='h2' paragraph color='primary'>
-            Воспоминания пользователя{' '}
-            {memories.length ? memories[0].user.username : ''}
-          </Typography>
-          <div className={classes.root}>
-            <GridList
-              spacing={5}
-              cellHeight={160}
-              cols={5}
-              className={classes.gridList}
-            >
-              {memories.map((memory) => (
-                <GridListTile
-                  key={memory._id}
-                  className={classes.gridListTile}
-                  onClick={() => history.push(`/memory/${memory._id}`)}
-                >
-                  <img
-                    src={memory.image || '/images/memories/noimage.png'}
-                    alt={memory.title}
-                  />
-                  <GridListTileBar title={memory.title} />
-                </GridListTile>
-              ))}
-            </GridList>
-          </div>
-        </Grid>
-      </Grid>
-    )
+  // if (loading) {
+  //   return <CircularProgress color='secondary' />
+  // } else if (error) {
+  //   return (
+  //     <Alert variant='filled' severity='error'>
+  //       {error}
+  //     </Alert>
+  //   )
+  // } else {
+  const handleClickMemory = (index) => {
+    setCurrent(index)
+    history.push(`/memory`)
   }
+  return (
+    <Grid container>
+      <Grid item>
+        <Typography variant='h5' component='h2' paragraph color='primary'>
+          Воспоминания пользователя{' '}
+          {memories.length ? memories[0].user.username : ''}
+        </Typography>
+        <div className={classes.root}>
+          <GridList
+            spacing={5}
+            cellHeight={160}
+            cols={5}
+            className={classes.gridList}
+          >
+            {memories.map((memory, index) => (
+              <GridListTile
+                key={memory._id}
+                className={classes.gridListTile}
+                onClick={() => handleClickMemory(index)}
+              >
+                <img
+                  src={memory.image || '/images/memories/noimage.png'}
+                  alt={memory.title}
+                />
+                <GridListTileBar title={memory.title} />
+              </GridListTile>
+            ))}
+          </GridList>
+        </div>
+      </Grid>
+    </Grid>
+  )
 }
+// }

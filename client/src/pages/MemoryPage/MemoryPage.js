@@ -27,6 +27,7 @@ import ClearRoundedIcon from '@material-ui/icons/ClearRounded'
 import { red } from '@material-ui/core/colors'
 import { makeStyles } from '@material-ui/core/styles'
 import './memoryPage.css'
+import { deleteMemory } from '../../../../controllers/MemoryController'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,13 +63,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const MemoryPage = () => {
-  const { id } = useParams()
+export const MemoryPage = ({ memory, deleteMemory }) => {
+  // const { id } = useParams()
   const history = useHistory()
   const { request, loading, error } = useRequest()
   const classes = useStyles()
 
-  const [memory, setMemory] = useState(null)
+  // const [memory, setMemory] = useState(null)
   const [viewerOpen, setViewerOpen] = useState(false)
   const [open, setOpen] = useState(false)
   const createData = {
@@ -79,18 +80,18 @@ export const MemoryPage = () => {
   }
   const [formData, setFormData] = useState(createData)
 
-  useEffect(() => {
-    const fetchMemory = async () => {
-      try {
-        const data = await request(`/api/memory/${id}`)
-        setMemory(data)
-      } catch (e) {
-        console.log(e)
-      }
-    }
+  // useEffect(() => {
+  //   const fetchMemory = async () => {
+  //     try {
+  //       const data = await request(`/api/memory/${id}`)
+  //       setMemory(data)
+  //     } catch (e) {
+  //       console.log(e)
+  //     }
+  //   }
 
-    fetchMemory()
-  }, [id, request])
+  //   fetchMemory()
+  // }, [id, request])
 
   const handleFormChange = (event) => {
     const value =
@@ -117,7 +118,7 @@ export const MemoryPage = () => {
     setOpen(false)
     try {
       const created = await request(`/api/memory`, 'POST', formData)
-      setMemory(created)
+      // setMemory(created)
     } catch (e) {
       console.log(`Ошибка создания или изменения воспоминания: `, e)
     }
@@ -132,19 +133,15 @@ export const MemoryPage = () => {
     setOpen(false)
     try {
       await request(`/api/memory/${formData._id}`, 'PATCH', formData)
-      setMemory(formData)
+      // setMemory(formData)
     } catch (e) {
       console.log(`Ошибка создания или изменения воспоминания: `, e)
     }
   }
 
-  const handleDeleteBtnClick = async () => {
-    try {
-      await request(`/api/memory/${memory._id}`, 'DELETE')
-      history.push(`/memories/${memory.user._id}`)
-    } catch (e) {
-      console.log(`Ошибка удаления воспоминания: `, e)
-    }
+  const handleDeleteBtnClick = () => {
+    deleteMemory()
+    history.push(`/memories`)
   }
 
   if (loading) {
@@ -178,9 +175,7 @@ export const MemoryPage = () => {
                       color='secondary'
                       title='Закрыть'
                       aria-label='Закрыть'
-                      onClick={() =>
-                        history.push(`/memories/${memory.user._id}`)
-                      }
+                      onClick={() => history.push(`/memories`)}
                     >
                       <ClearRoundedIcon />
                     </IconButton>
