@@ -27,7 +27,6 @@ import ClearRoundedIcon from '@material-ui/icons/ClearRounded'
 import { red } from '@material-ui/core/colors'
 import { makeStyles } from '@material-ui/core/styles'
 import './memoryPage.css'
-import { deleteMemory } from '../../../../controllers/MemoryController'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,8 +62,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const MemoryPage = ({ memory, deleteMemory }) => {
-  // const { id } = useParams()
+export const MemoryPage = ({ memories, deleteMemory }) => {
+  const { id } = useParams()
   const history = useHistory()
   const { request, loading, error } = useRequest()
   const classes = useStyles()
@@ -140,8 +139,8 @@ export const MemoryPage = ({ memory, deleteMemory }) => {
   }
 
   const handleDeleteBtnClick = () => {
-    deleteMemory()
     history.push(`/memories`)
+    deleteMemory()
   }
 
   if (loading) {

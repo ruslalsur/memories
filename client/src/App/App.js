@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRequest } from '../hooks/request'
 import { Container } from '@material-ui/core'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  useHistory,
-} from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { MainPage } from '../pages/MainPage'
 import { MemoriesPage } from '../pages/MemoriesPage'
 import { MemoryPage } from '../pages/MemoryPage'
@@ -20,7 +15,6 @@ export const App = () => {
   const [memories, setMemories] = useState([])
   const [current, setCurrent] = useState(0)
   const { request, loading, error } = useRequest()
-  const history = useHistory()
   const userId = '60330e0de96e077b16b6690e'
 
   useEffect(() => {
@@ -36,12 +30,14 @@ export const App = () => {
     }
 
     fetchMemories()
-  }, [])
+  }, [request])
 
   const deleteMemory = async () => {
     try {
-      await request(`/api/memory/${memories[current]._id}`, 'DELETE')
-      memories.splice(current, 1)
+      // await request(`/api/memory/${memories[current]._id}`, 'DELETE')
+      const deleted = memories.splice(current, 1)
+      console.log(`LOG: `, deleted)
+      // setMemories(memories.splice(current, 1))
     } catch (e) {
       console.log(`Ошибка удаления воспоминания: `, e)
     }
@@ -58,11 +54,8 @@ export const App = () => {
           <Route path='/memories'>
             <MemoriesPage memories={memories} setCurrent={setCurrent} />
           </Route>
-          <Route path='/memory'>
-            <MemoryPage
-              memory={memories[current]}
-              deleteMemory={deleteMemory}
-            />
+          <Route path='/memory:id'>
+            <MemoryPage memories={memories} deleteMemory={deleteMemory} />
           </Route>
           <Route path='/auth'>
             <SignIn />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, Link, useHistory } from 'react-router-dom'
 import { useRequest } from '../../hooks/request'
 import {
   CircularProgress,
@@ -26,13 +26,14 @@ const useStyles = makeStyles((theme) => ({
     margingBottom: 30,
   },
   gridListTile: {
+    overflow: 'hidden',
     cursor: 'pointer',
     '&:hover': { border: '2px solid #fff' },
     '&:active': { border: '4px solid #fff' },
   },
 }))
 
-export const MemoriesPage = ({ memories, setCurrent }) => {
+export const MemoriesPage = ({ memories }) => {
   // const [memories, setMemories] = useState([])
   const { id } = useParams()
   const history = useHistory()
@@ -61,10 +62,11 @@ export const MemoriesPage = ({ memories, setCurrent }) => {
   //     </Alert>
   //   )
   // } else {
-  const handleClickMemory = (index) => {
-    setCurrent(index)
-    history.push(`/memory`)
-  }
+  // const handleClickMemory = (index) => {
+  //   setCurrent(index)
+  //   history.push(`/memory`)
+  // }
+
   return (
     <Grid container>
       <Grid item>
@@ -79,18 +81,27 @@ export const MemoriesPage = ({ memories, setCurrent }) => {
             cols={5}
             className={classes.gridList}
           >
-            {memories.map((memory, index) => (
+            {memories.map((memory) => (
+              // <Link to={`/memory/${memory._id}`}>
               <GridListTile
                 key={memory._id}
+                component={Link}
+                to={`/memory/${memory._id}`}
                 className={classes.gridListTile}
-                onClick={() => handleClickMemory(index)}
+                // onClick={() => handleClickMemory(index)}
               >
                 <img
                   src={memory.image || '/images/memories/noimage.png'}
                   alt={memory.title}
+                  // style={{
+                  //   maxWidth: '100%',
+                  //   borderRadius: 5,
+                  // }}
                 />
+
                 <GridListTileBar title={memory.title} />
               </GridListTile>
+              // </Link>
             ))}
           </GridList>
         </div>
@@ -98,4 +109,3 @@ export const MemoriesPage = ({ memories, setCurrent }) => {
     </Grid>
   )
 }
-// }
