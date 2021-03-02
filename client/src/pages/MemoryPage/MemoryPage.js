@@ -62,15 +62,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const MemoryPage = ({ memories, deleteMemory }) => {
-  const { id } = useParams()
+export const MemoryPage = ({ memories }) => {
+  const { index } = useParams()
+  const memory = memories[index]
+
   const history = useHistory()
   const { request, loading, error } = useRequest()
   const classes = useStyles()
 
   // const [memory, setMemory] = useState(null)
   const [viewerOpen, setViewerOpen] = useState(false)
-  const [open, setOpen] = useState(false)
+  const [formOpen, setFormOpen] = useState(false)
   const createData = {
     title: '',
     description: '',
@@ -110,11 +112,11 @@ export const MemoryPage = ({ memories, deleteMemory }) => {
 
   const handleCreateBtnClick = () => {
     setFormData(createData)
-    setOpen(true)
+    setFormOpen(true)
   }
 
   const createMemory = async () => {
-    setOpen(false)
+    setFormOpen(false)
     try {
       const created = await request(`/api/memory`, 'POST', formData)
       // setMemory(created)
@@ -125,11 +127,11 @@ export const MemoryPage = ({ memories, deleteMemory }) => {
 
   const handleUpdateBtnClick = () => {
     setFormData(memory)
-    setOpen(true)
+    setFormOpen(true)
   }
 
   const updateMemory = async () => {
-    setOpen(false)
+    setFormOpen(false)
     try {
       await request(`/api/memory/${formData._id}`, 'PATCH', formData)
       // setMemory(formData)
@@ -138,9 +140,15 @@ export const MemoryPage = ({ memories, deleteMemory }) => {
     }
   }
 
-  const handleDeleteBtnClick = () => {
-    history.push(`/memories`)
-    deleteMemory()
+  const handleDeleteBtnClick = async (index) => {
+    try {
+      await request(`/api/memory/${memory._id}`, 'DELETE')
+      const deleted = memories.splice(index, 1)
+      history.push(`/memories/memory.user._id`)
+      console.log(`LOG: `, deleted)
+    } catch (e) {
+      console.log(`Ошибка удаления воспоминания: `, e)
+    }
   }
 
   if (loading) {
@@ -151,7 +159,7 @@ export const MemoryPage = ({ memories, deleteMemory }) => {
         {error}
       </Alert>
     )
-  } else if (!memory) {
+  } else if (!memories) {
     return null
   } else {
     return (
@@ -204,7 +212,7 @@ export const MemoryPage = ({ memories, deleteMemory }) => {
                     </Button>
                     <Button
                       color='secondary'
-                      onClick={() => handleDeleteBtnClick()}
+                      onClick={() => handleDeleteBtnClick(index)}
                     >
                       Удалить
                     </Button>
@@ -225,7 +233,7 @@ export const MemoryPage = ({ memories, deleteMemory }) => {
           onClick={() => setViewerOpen(false)}
         />
         <div>
-          <Dialog open={open} aria-labelledby='form-dialog-title'>
+          <Dialog open={formOpen} aria-labelledby='form-dialog-title'>
             <DialogTitle id='form-dialog-title'>
               <FormControlLabel
                 control={
@@ -279,7 +287,7 @@ export const MemoryPage = ({ memories, deleteMemory }) => {
                 </Button>
               )}
 
-              <Button onClick={() => setOpen(false)} color='primary'>
+              <Button onClick={() => setFormOpen(false)} color='primary'>
                 Отмена
               </Button>
             </DialogActions>

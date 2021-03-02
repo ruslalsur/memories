@@ -35,8 +35,8 @@ const useStyles = makeStyles((theme) => ({
 
 export const MemoriesPage = ({ memories }) => {
   // const [memories, setMemories] = useState([])
-  const { id } = useParams()
-  const history = useHistory()
+  // const { id } = useParams()
+  // const history = useHistory()
   // const { request, loading, error } = useRequest()
   const classes = useStyles()
 
@@ -81,12 +81,12 @@ export const MemoriesPage = ({ memories }) => {
             cols={5}
             className={classes.gridList}
           >
-            {memories.map((memory) => (
+            {memories.map((memory, index) => (
               // <Link to={`/memory/${memory._id}`}>
               <GridListTile
                 key={memory._id}
                 component={Link}
-                to={`/memory/${memory._id}`}
+                to={`/memory/${index}`}
                 className={classes.gridListTile}
                 // onClick={() => handleClickMemory(index)}
               >

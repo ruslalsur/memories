@@ -32,17 +32,6 @@ export const App = () => {
     fetchMemories()
   }, [request])
 
-  const deleteMemory = async () => {
-    try {
-      // await request(`/api/memory/${memories[current]._id}`, 'DELETE')
-      const deleted = memories.splice(current, 1)
-      console.log(`LOG: `, deleted)
-      // setMemories(memories.splice(current, 1))
-    } catch (e) {
-      console.log(`Ошибка удаления воспоминания: `, e)
-    }
-  }
-
   return (
     <Router>
       <Header appName={APP_NAME} />
@@ -54,8 +43,8 @@ export const App = () => {
           <Route path='/memories'>
             <MemoriesPage memories={memories} setCurrent={setCurrent} />
           </Route>
-          <Route path='/memory:id'>
-            <MemoryPage memories={memories} deleteMemory={deleteMemory} />
+          <Route path='/memory/:index'>
+            <MemoryPage memories={memories} />
           </Route>
           <Route path='/auth'>
             <SignIn />
