@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
-import { useRequest } from '../../hooks/request'
+import React, { useState } from 'react'
 import { DropzoneArea } from 'material-ui-dropzone'
-import { Alert } from '@material-ui/lab'
+
 import {
   Dialog,
   DialogActions,
@@ -15,7 +13,6 @@ import {
   CardHeader,
   CardMedia,
   CardActions,
-  CircularProgress,
   Avatar,
   Grid,
   ButtonGroup,
@@ -26,11 +23,10 @@ import {
 import ClearRoundedIcon from '@material-ui/icons/ClearRounded'
 import { red } from '@material-ui/core/colors'
 import { makeStyles } from '@material-ui/core/styles'
-import './memoryPage.css'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: '60%',
+    minWidth: '100%',
     marginBottom: 30,
   },
   media: {
@@ -62,15 +58,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const MemoryPage = ({ memories }) => {
-  const { index } = useParams()
-  const memory = memories[index]
-
-  const history = useHistory()
-  const { request, loading, error } = useRequest()
+export const Memory = ({
+  memory,
+  select,
+  createMemory,
+  updateMemory,
+  handleDeleteBtnClick,
+}) => {
   const classes = useStyles()
 
-  // const [memory, setMemory] = useState(null)
   const [viewerOpen, setViewerOpen] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
   const createData = {
@@ -80,19 +76,6 @@ export const MemoryPage = ({ memories }) => {
     shared: false,
   }
   const [formData, setFormData] = useState(createData)
-
-  // useEffect(() => {
-  //   const fetchMemory = async () => {
-  //     try {
-  //       const data = await request(`/api/memory/${id}`)
-  //       setMemory(data)
-  //     } catch (e) {
-  //       console.log(e)
-  //     }
-  //   }
-
-  //   fetchMemory()
-  // }, [id, request])
 
   const handleFormChange = (event) => {
     const value =
@@ -106,7 +89,9 @@ export const MemoryPage = ({ memories }) => {
   const handleImageChange = (files) => {
     setFormData({
       ...formData,
-      image: files.length ? `/images/memories/${files[0].name}` : '',
+      image: files.length
+        ? `/images/memories/${files[0].name}`
+        : `/images/memories/noimage${Math.floor(Math.random() * 9)}.png`,
     })
   }
 
@@ -114,15 +99,9 @@ export const MemoryPage = ({ memories }) => {
     setFormData(createData)
     setFormOpen(true)
   }
-
-  const createMemory = async () => {
+  const handleOnCreateMemory = () => {
     setFormOpen(false)
-    try {
-      const created = await request(`/api/memory`, 'POST', formData)
-      // setMemory(created)
-    } catch (e) {
-      console.log(`Ошибка создания или изменения воспоминания: `, e)
-    }
+    createMemory(formData)
   }
 
   const handleUpdateBtnClick = () => {
@@ -130,36 +109,12 @@ export const MemoryPage = ({ memories }) => {
     setFormOpen(true)
   }
 
-  const updateMemory = async () => {
+  const handleOnUpdateMemory = () => {
     setFormOpen(false)
-    try {
-      await request(`/api/memory/${formData._id}`, 'PATCH', formData)
-      // setMemory(formData)
-    } catch (e) {
-      console.log(`Ошибка создания или изменения воспоминания: `, e)
-    }
+    updateMemory(formData)
   }
 
-  const handleDeleteBtnClick = async (index) => {
-    try {
-      await request(`/api/memory/${memory._id}`, 'DELETE')
-      const deleted = memories.splice(index, 1)
-      history.push(`/memories/memory.user._id`)
-      console.log(`LOG: `, deleted)
-    } catch (e) {
-      console.log(`Ошибка удаления воспоминания: `, e)
-    }
-  }
-
-  if (loading) {
-    return <CircularProgress color='secondary' />
-  } else if (error) {
-    return (
-      <Alert variant='filled' severity='error'>
-        {error}
-      </Alert>
-    )
-  } else if (!memories) {
+  if (!memory) {
     return null
   } else {
     return (
@@ -182,7 +137,7 @@ export const MemoryPage = ({ memories }) => {
                       color='secondary'
                       title='Закрыть'
                       aria-label='Закрыть'
-                      onClick={() => history.push(`/memories`)}
+                      onClick={() => select(null)}
                     >
                       <ClearRoundedIcon />
                     </IconButton>
@@ -192,7 +147,7 @@ export const MemoryPage = ({ memories }) => {
                 />
                 <CardMedia
                   className={classes.media}
-                  image={memory.image || '/images/memories/noimage.png'}
+                  image={memory.image}
                   title='Увеличить'
                   onClick={() => setViewerOpen(true)}
                 />
@@ -212,7 +167,7 @@ export const MemoryPage = ({ memories }) => {
                     </Button>
                     <Button
                       color='secondary'
-                      onClick={() => handleDeleteBtnClick(index)}
+                      onClick={() => handleDeleteBtnClick()}
                     >
                       Удалить
                     </Button>
@@ -225,9 +180,7 @@ export const MemoryPage = ({ memories }) => {
         <Backdrop
           className={classes.backdrop}
           style={{
-            background: `url(${
-              memory.image || '/images/memories/noimage.png'
-            }) 0 0/cover no-repeat`,
+            background: `url(${memory.image}) 0 0/cover no-repeat`,
           }}
           open={viewerOpen}
           onClick={() => setViewerOpen(false)}
@@ -278,11 +231,11 @@ export const MemoryPage = ({ memories }) => {
             </DialogContent>
             <DialogActions>
               {formData.hasOwnProperty('user') ? (
-                <Button onClick={() => updateMemory()} color='primary'>
+                <Button onClick={() => handleOnUpdateMemory()} color='primary'>
                   Изменить
                 </Button>
               ) : (
-                <Button onClick={() => createMemory()} color='primary'>
+                <Button onClick={() => handleOnCreateMemory()} color='primary'>
                   Создать
                 </Button>
               )}

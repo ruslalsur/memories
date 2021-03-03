@@ -1,1 +1,0 @@
-export { MemoriesPage } from './MemoriesPage'

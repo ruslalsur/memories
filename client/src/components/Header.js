@@ -7,6 +7,9 @@ import { Container, AppBar, Toolbar, IconButton, Box } from '@material-ui/core'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    height: '58px',
+    justifyContent: 'center',
+    backgroundColor: theme.palette.primary.light,
   },
   button: {
     color: 'white',
@@ -20,22 +23,21 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: 'none',
     fontFamily: 'Roboto',
     fontSize: '1.6rem',
-    fontWeight: 400,
     color: 'white',
     '&:hover': {
-      textShadow: '0 0 10px #0ff',
+      textShadow: '0px 0px 15px #fff',
+      fontWeight: 500,
     },
   },
 }))
 
-export const Header = (props) => {
-  const { appName } = props
+export const Header = ({ appName }) => {
   const classes = useStyles()
 
   return (
-    <AppBar position='static' color='primary'>
+    <AppBar position='static' className={classes.root}>
       <Container>
-        <Toolbar disableGutters style={{ minHeight: '54px' }}>
+        <Toolbar disableGutters variant='dense'>
           <Box className={classes.toolbar__left}>
             <Link to='/' className={classes.title}>
               {appName}
