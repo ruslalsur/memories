@@ -3,6 +3,8 @@ const router = Router()
 const { check } = require('express-validator')
 const MemoryController = require('../controllers/MemoryController')
 const validate = require('../middleware/validateMiddleware')
+const multer = require('multer')
+const upload = multer({ dest: 'client/public/images/memories/' })
 
 router.get(
   '/user/:id',
@@ -31,6 +33,7 @@ router.post(
   '/',
   [check('title', 'Название не может быть пустым').trim().notEmpty()],
   validate(),
+  upload.single('memimg'),
   MemoryController.addMemory
 )
 

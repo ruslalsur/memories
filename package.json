@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/ruslalsur/memories#readme",
   "dependencies": {
+    "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "cross-env": "^7.0.3",
@@ -37,7 +38,8 @@
     "express-validator": "^6.9.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.14",
-    "mongoose-autopopulate": "^0.12.3"
+    "mongoose-autopopulate": "^0.12.3",
+    "multer": "^1.4.2"
   },
   "devDependencies": {
     "concurrently": "^5.3.0",
