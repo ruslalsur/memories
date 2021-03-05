@@ -48,7 +48,7 @@ class MemoryController {
     }
   }
 
-  async addMemory(req, res) {
+  async createMemory(req, res) {
     try {
       const candidate = await Memory.findOne({ title: req.body.title })
       if (candidate) {
@@ -62,7 +62,6 @@ class MemoryController {
         user: '60330e0de96e077b16b6690e',
       })
       const result = await newMemory.save()
-      console.log(`LOG: reg.files`, req.file)
 
       return res.status(201).json(result)
     } catch (e) {
@@ -93,6 +92,10 @@ class MemoryController {
         message: `Ошибка в процессе изменения старого воспоминания`,
       })
     }
+  }
+
+  async uploadImage(req, res) {
+    console.log(`LOG response of upload: `, req.file)
   }
 
   async deleteMemory(req, res) {

@@ -6,7 +6,9 @@ const { MONGO_URI, BUILD_PATH } = require('./config.js')
 
 const app = express()
 
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+
 app.use('/api/user', require('./routes/userRoutes'))
 app.use('/api/memory', require('./routes/memoryRoutes'))
 

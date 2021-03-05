@@ -30,7 +30,6 @@
   },
   "homepage": "https://github.com/ruslalsur/memories#readme",
   "dependencies": {
-    "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "cross-env": "^7.0.3",

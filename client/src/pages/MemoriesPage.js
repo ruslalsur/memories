@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useRequest } from '../hooks/request'
+import axios from 'axios'
 import { Memory } from '../components/Memory'
 import {
   Typography,
@@ -59,11 +60,22 @@ export const MemoriesPage = ({ setInfo }) => {
   }, [])
 
   const createMemory = async (formData) => {
+    const data = { ...formData }
+    data.image = `/images/memories/${formData.image.name}`
+
     try {
-      const created = await request(`/api/memory`, 'POST', formData)
+      const created = await request(`/api/memory`, 'POST', data)
+
+      let fd = new FormData()
+      fd.append('file', formData.image)
+      const uploaded = await axios.post('/api/memory/upload', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+
       setMemories((memories) => {
         return [...memories, created]
       })
+
       select(memories.length)
     } catch (e) {
       console.log(`Ошибка создания или изменения воспоминания: `, e)

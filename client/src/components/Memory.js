@@ -72,7 +72,7 @@ export const Memory = ({
   const createData = {
     title: '',
     description: '',
-    image: '',
+    image: {},
     shared: false,
   }
   const [formData, setFormData] = useState(createData)
@@ -89,9 +89,7 @@ export const Memory = ({
   const handleImageChange = (files) => {
     setFormData({
       ...formData,
-      image: files.length
-        ? `/images/memories/${files[0].name}`
-        : `/images/memories/noimage${Math.floor(Math.random() * 9)}.png`,
+      image: files[0],
     })
   }
 
@@ -226,7 +224,15 @@ export const Memory = ({
                 filesLimit={1}
                 showAlerts={['error']}
                 showFileNames
-                initialFiles={formData.image ? [formData.image] : []}
+                initialFiles={
+                  formData.image
+                    ? [formData.image]
+                    : [
+                        `/images/memories/noimage${Math.floor(
+                          Math.random() * 9
+                        )}.png`,
+                      ]
+                }
               />
             </DialogContent>
             <DialogActions>

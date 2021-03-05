@@ -33,9 +33,10 @@ router.post(
   '/',
   [check('title', 'Название не может быть пустым').trim().notEmpty()],
   validate(),
-  upload.single('memimg'),
-  MemoryController.addMemory
+  MemoryController.createMemory
 )
+
+router.post('/upload', upload.single('file'), MemoryController.uploadImage)
 
 router.patch(
   '/:id',
