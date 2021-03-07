@@ -15,7 +15,7 @@ export const useRequest = () => {
       setLoading(true)
 
       try {
-        const { data } = await axios({
+        const response = await axios({
           url,
           method,
           data: body,
@@ -25,7 +25,7 @@ export const useRequest = () => {
 
         setLoading(false)
 
-        return data
+        return response.data
       } catch (e) {
         setLoading(false)
         throw e

@@ -105,7 +105,6 @@ export const Memory = ({
   const handleUpdateBtnClick = () => {
     setFormData(memory)
     setFormOpen(true)
-    console.log(`LOG formData: `, formData.image)
   }
 
   const handleOnUpdateMemory = () => {

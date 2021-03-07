@@ -52,7 +52,6 @@ router.post(
   '/',
   [check('title', 'Название не может быть пустым').trim().notEmpty()],
   validate(),
-  upload.single('file'),
   MemoryController.createMemory
 )
 

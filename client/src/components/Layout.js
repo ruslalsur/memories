@@ -19,7 +19,8 @@ const useStyles = makeStyles((theme) => ({
   },
   footer: {
     height: '3rem',
-    marginBottom: 20,
+    marginTop: 10,
+    marginBottom: 10,
   },
 }))
 

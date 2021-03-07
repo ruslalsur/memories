@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useRequest } from '../hooks/request'
-import axios from 'axios'
 import { nanoid } from 'nanoid'
 import { Memory } from '../components/Memory'
 import {
@@ -61,21 +60,18 @@ export const MemoriesPage = ({ setInfo }) => {
     fetchMemories()
   }, [])
 
+  const handlerMemoryChoise = (index) => {
+    setInfo(null)
+    select(index)
+  }
+
   const createMemory = async (formData) => {
     setInfo(null)
     let document = {}
+
     try {
       if (formData.image) {
-        let fd = new FormData()
-
-        fd.append(
-          'nameOfFile',
-          `${nanoid()}.${formData.image.type.split('/')[1]}`
-        )
-        fd.append('file', formData.image)
-        const { data } = await axios.post('/api/memory/upload', fd)
-
-        document = { ...formData, image: data }
+        document = { ...formData, image: await uploadImage(formData) }
       } else {
         document = { ...formData, image: NO_IMAGE }
       }
@@ -94,21 +90,11 @@ export const MemoriesPage = ({ setInfo }) => {
 
   const updateMemory = async (formData) => {
     setInfo(null)
+    let document = {}
 
     try {
-      let document = {}
-
       if (formData.image) {
-        let fd = new FormData()
-
-        fd.append(
-          'nameOfFile',
-          `${nanoid()}.${formData.image.type.split('/')[1]}`
-        )
-        fd.append('file', formData.image)
-        const { data } = await axios.post('/api/memory/upload', fd)
-
-        document = { ...formData, image: data }
+        document = { ...formData, image: await uploadImage(formData) }
       } else {
         document = { ...formData, image: NO_IMAGE }
       }
@@ -125,6 +111,10 @@ export const MemoriesPage = ({ setInfo }) => {
 
   const deleteMemory = async () => {
     setInfo(null)
+    if (memories.length <= 1) {
+      setInfo('Не стирайте совсем все воспоминания ...')
+      return null
+    }
     try {
       setMemories((memories) => {
         const deleted = memories.filter((_, i) => i !== selected)
@@ -134,6 +124,24 @@ export const MemoriesPage = ({ setInfo }) => {
     } catch (e) {
       setInfo(e)
     }
+  }
+
+  const uploadImage = async (formData) => {
+    const fd = new FormData()
+    fd.append('nameOfFile', `${nanoid()}.${formData.image.type.split('/')[1]}`)
+    fd.append('file', formData.image)
+
+    const uploadedSrc = await request(
+      '/api/memory/upload',
+      'POST',
+      fd,
+      {
+        'Content-Type': 'multipart/form-data',
+      },
+      'text'
+    )
+
+    return uploadedSrc
   }
 
   return (
@@ -158,7 +166,7 @@ export const MemoriesPage = ({ setInfo }) => {
             {memories.map((memory, index) => (
               <GridListTile
                 key={memory._id}
-                onClick={() => select(index)}
+                onClick={() => handlerMemoryChoise(index)}
                 className={classes.gridListTile}
               >
                 <img src={memory.image} alt={memory.title} />

@@ -109,7 +109,6 @@ class MemoryController {
   async upload(req, res) {
     const { nameOfFile } = req.body
     const imgPath = path.join('/images', 'memories', 'upload', nameOfFile)
-
     return res.status(201).send(imgPath)
   }
 

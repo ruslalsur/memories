@@ -11,6 +11,7 @@ import {
   CardMedia,
   CardContent,
 } from '@material-ui/core'
+import { RND_MEMORY_INTERVAL } from '../config.js'
 
 const useStyles = makeStyles((theme) => ({
   mainPageLeftSide: {
@@ -35,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const MainPage = () => {
   const [memory, setMemory] = useState({})
-  const { request, loading, error } = useRequest()
+  const { request, loading } = useRequest()
   const classes = useStyles()
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export const MainPage = () => {
     }
 
     fetchRandomMemory()
-    let id = setInterval(() => fetchRandomMemory(), 30000)
+    let id = setInterval(() => fetchRandomMemory(), RND_MEMORY_INTERVAL)
     return () => clearInterval(id)
   }, [request])
 
