@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useRequest } from '../hooks/request'
 import axios from 'axios'
+import { nanoid } from 'nanoid'
 import { Memory } from '../components/Memory'
 import {
   Typography,
@@ -12,6 +13,7 @@ import {
   CircularProgress,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { NO_IMAGE } from '../config'
 
 const useStyles = makeStyles((theme) => ({
   memList: {
@@ -42,17 +44,17 @@ export const MemoriesPage = ({ setInfo }) => {
   const classes = useStyles()
   const [memories, setMemories] = useState([])
   const [selected, select] = useState(null)
-  const { request, loading, error } = useRequest()
+  const { request, loading } = useRequest()
   const { userId } = useParams()
 
   useEffect(() => {
     const fetchMemories = async () => {
+      setInfo(null)
       try {
         const data = await request(`/api/memory/user/${userId}`)
         setMemories(data)
       } catch (e) {
-        setInfo(error)
-        console.log(e)
+        setInfo(e)
       }
     }
 
@@ -60,17 +62,25 @@ export const MemoriesPage = ({ setInfo }) => {
   }, [])
 
   const createMemory = async (formData) => {
-    const data = { ...formData }
-    data.image = `/images/memories/${formData.image.name}`
-
+    setInfo(null)
+    let document = {}
     try {
-      const created = await request(`/api/memory`, 'POST', data)
+      if (formData.image) {
+        let fd = new FormData()
 
-      let fd = new FormData()
-      fd.append('file', formData.image)
-      const uploaded = await axios.post('/api/memory/upload', fd, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+        fd.append(
+          'nameOfFile',
+          `${nanoid()}.${formData.image.type.split('/')[1]}`
+        )
+        fd.append('file', formData.image)
+        const { data } = await axios.post('/api/memory/upload', fd)
+
+        document = { ...formData, image: data }
+      } else {
+        document = { ...formData, image: NO_IMAGE }
+      }
+
+      const created = await request(`/api/memory`, 'POST', document)
 
       setMemories((memories) => {
         return [...memories, created]
@@ -78,31 +88,51 @@ export const MemoriesPage = ({ setInfo }) => {
 
       select(memories.length)
     } catch (e) {
-      console.log(`Ошибка создания или изменения воспоминания: `, e)
+      setInfo(e)
     }
   }
 
   const updateMemory = async (formData) => {
+    setInfo(null)
+
     try {
-      await request(`/api/memory/${formData._id}`, 'PATCH', formData)
+      let document = {}
+
+      if (formData.image) {
+        let fd = new FormData()
+
+        fd.append(
+          'nameOfFile',
+          `${nanoid()}.${formData.image.type.split('/')[1]}`
+        )
+        fd.append('file', formData.image)
+        const { data } = await axios.post('/api/memory/upload', fd)
+
+        document = { ...formData, image: data }
+      } else {
+        document = { ...formData, image: NO_IMAGE }
+      }
+
+      await request(`/api/memory/${formData._id}`, 'PATCH', document)
+
       setMemories(
-        memories.map((item, index) => (index === selected ? formData : item))
+        memories.map((item, index) => (index === selected ? document : item))
       )
     } catch (e) {
-      console.log(`Ошибка создания или изменения воспоминания: `, e)
+      setInfo(e)
     }
   }
 
-  const handleDeleteBtnClick = async () => {
+  const deleteMemory = async () => {
+    setInfo(null)
     try {
       setMemories((memories) => {
         const deleted = memories.filter((_, i) => i !== selected)
         return deleted
       })
       await request(`/api/memory/${memories[selected]._id}`, 'DELETE')
-      // select(null)
     } catch (e) {
-      console.log(`Ошибка удаления воспоминания: `, e)
+      setInfo(e)
     }
   }
 
@@ -146,7 +176,7 @@ export const MemoriesPage = ({ setInfo }) => {
             loading={loading}
             createMemory={createMemory}
             updateMemory={updateMemory}
-            handleDeleteBtnClick={handleDeleteBtnClick}
+            handleDeleteBtnClick={deleteMemory}
           />
         </Grid>
       )}

@@ -1,4 +1,6 @@
 const Memory = require('../models/Memory')
+const path = require('path')
+const { unlink } = require('fs')
 
 class MemoryController {
   async getMemories(req, res) {
@@ -59,7 +61,7 @@ class MemoryController {
 
       const newMemory = new Memory({
         ...req.body,
-        user: '60330e0de96e077b16b6690e',
+        user: '60330e0de96e077b16b6690e', //TODO: заменить на текущего пользователя
       })
       const result = await newMemory.save()
 
@@ -77,6 +79,16 @@ class MemoryController {
     const { id } = req.params
 
     try {
+      const willUpdate = await Memory.findById(id)
+      unlink(
+        path.join(__dirname, '..', 'upload', path.basename(willUpdate.image)),
+        (err) => {
+          if (err) {
+            console.error(err)
+          }
+        }
+      )
+
       const updated = await Memory.updateOne({ _id: id }, { ...req.body })
 
       if (!updated) {
@@ -94,23 +106,37 @@ class MemoryController {
     }
   }
 
-  async uploadImage(req, res) {
-    console.log(`LOG response of upload: `, req.file)
+  async upload(req, res) {
+    const { nameOfFile } = req.body
+    const imgPath = path.join('/images', 'memories', 'upload', nameOfFile)
+
+    return res.status(201).send(imgPath)
   }
 
   async deleteMemory(req, res) {
     const { id } = req.params
 
     try {
-      const result = await Memory.findByIdAndDelete(id)
+      const deleted = await Memory.findByIdAndDelete(id)
 
-      if (result === null) {
+      if (deleted === null) {
         return res.status(400).json({
           message: `Не удалось удалить воспоминание с идентификатором ${id}`,
         })
       }
 
-      return res.status(200).json(result)
+      unlink(
+        path.join(__dirname, '..', 'upload', path.basename(deleted.image)),
+        (err) => {
+          if (err) {
+            console.error(
+              `картинка \"${path.basename(deleted.image)}\" не была удалена`
+            )
+          }
+        }
+      )
+
+      return res.status(200).json(deleted)
     } catch (e) {
       console.log(e)
     }

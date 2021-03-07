@@ -4,7 +4,26 @@ const { check } = require('express-validator')
 const MemoryController = require('../controllers/MemoryController')
 const validate = require('../middleware/validateMiddleware')
 const multer = require('multer')
-const upload = multer({ dest: 'client/public/images/memories/' })
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'upload/')
+  },
+  filename: (req, file, cb) => {
+    const { nameOfFile } = req.body
+    cb(null, nameOfFile)
+  },
+})
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true)
+  } else {
+    cb('Только jpeg и png файлы разрешены ...', false)
+  }
+}
+
+const upload = multer({ storage, fileFilter, limits: 1024 * 1024 * 3 })
 
 router.get(
   '/user/:id',
@@ -36,7 +55,7 @@ router.post(
   MemoryController.createMemory
 )
 
-router.post('/upload', upload.single('file'), MemoryController.uploadImage)
+router.post('/upload', upload.single('file'), MemoryController.upload)
 
 router.patch(
   '/:id',

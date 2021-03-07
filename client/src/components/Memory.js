@@ -72,7 +72,7 @@ export const Memory = ({
   const createData = {
     title: '',
     description: '',
-    image: {},
+    image: undefined,
     shared: false,
   }
   const [formData, setFormData] = useState(createData)
@@ -89,7 +89,7 @@ export const Memory = ({
   const handleImageChange = (files) => {
     setFormData({
       ...formData,
-      image: files[0],
+      image: files ? files[0] : undefined,
     })
   }
 
@@ -105,6 +105,7 @@ export const Memory = ({
   const handleUpdateBtnClick = () => {
     setFormData(memory)
     setFormOpen(true)
+    console.log(`LOG formData: `, formData.image)
   }
 
   const handleOnUpdateMemory = () => {
@@ -219,20 +220,11 @@ export const Memory = ({
               />
               <DropzoneArea
                 onChange={handleImageChange}
-                dropzoneText='Перетащите картинку сюда '
+                dropzoneText='Перетащите картинку сюда'
                 acceptedFiles={['image/*']}
                 filesLimit={1}
                 showAlerts={['error']}
-                showFileNames
-                initialFiles={
-                  formData.image
-                    ? [formData.image]
-                    : [
-                        `/images/memories/noimage${Math.floor(
-                          Math.random() * 9
-                        )}.png`,
-                      ]
-                }
+                initialFiles={formData.image ? [formData.image] : []}
               />
             </DialogContent>
             <DialogActions>

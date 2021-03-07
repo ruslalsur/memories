@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 const { validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
-const { JWT_SECRET } = require('../config.js')
+const { jvtSecret } = require('config')
 const Role = require('../models/Role')
 const User = require('../models/User')
 
@@ -71,7 +71,9 @@ class UserController {
         return res.status(400).json({ message: 'Несуществующий пароль' })
       }
 
-      const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '1h' })
+      const token = jwt.sign({ user }, jvtSecret, {
+        expiresIn: '1h',
+      })
 
       return res.json({ token })
     } catch (e) {

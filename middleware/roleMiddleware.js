@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const { JWT_SECRET } = require('../config')
+const { jvtSecret } = require('config')
 
 module.exports = (allowedRoles) => {
   return (req, res, next) => {
@@ -16,7 +16,7 @@ module.exports = (allowedRoles) => {
 
       const {
         user: { roles, _id, username },
-      } = jwt.verify(token, JWT_SECRET)
+      } = jwt.verify(token, jvtSecret)
       req.user = { roles, _id, username }
 
       let isAllowed = false
@@ -28,13 +28,11 @@ module.exports = (allowedRoles) => {
       })
 
       if (!isAllowed) {
-        return res
-          .status(403)
-          .json({
-            message: `Пользователю ${req.user.username} нужны привилегии: ${
-              allowedRoles + ''
-            }`,
-          })
+        return res.status(403).json({
+          message: `Пользователю ${req.user.username} нужны привилегии: ${
+            allowedRoles + ''
+          }`,
+        })
       }
 
       next()
