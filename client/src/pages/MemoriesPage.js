@@ -43,17 +43,17 @@ export const MemoriesPage = ({ setInfo }) => {
   const classes = useStyles()
   const [memories, setMemories] = useState([])
   const [selected, select] = useState(null)
-  const { request, loading } = useRequest()
+  const { request, loading, error, resetError } = useRequest()
   const { userId } = useParams()
 
   useEffect(() => {
     const fetchMemories = async () => {
-      setInfo(null)
       try {
+        resetError()
         const data = await request(`/api/memory/user/${userId}`)
         setMemories(data)
       } catch (e) {
-        setInfo(e)
+        setInfo(error)
       }
     }
 
@@ -61,12 +61,12 @@ export const MemoriesPage = ({ setInfo }) => {
   }, [])
 
   const handlerMemoryChoise = (index) => {
-    setInfo(null)
+    resetError()
     select(index)
   }
 
   const createMemory = async (formData) => {
-    setInfo(null)
+    // resetError()
     let document = {}
 
     try {
@@ -84,12 +84,14 @@ export const MemoriesPage = ({ setInfo }) => {
 
       select(memories.length)
     } catch (e) {
-      setInfo(e)
+      console.log(`LOG: e`, e)
+      setInfo(e.message)
+      console.log(`LOG error: `, error)
     }
   }
 
   const updateMemory = async (formData) => {
-    setInfo(null)
+    resetError()
     let document = {}
 
     try {
@@ -105,7 +107,7 @@ export const MemoriesPage = ({ setInfo }) => {
         memories.map((item, index) => (index === selected ? document : item))
       )
     } catch (e) {
-      setInfo(e)
+      setInfo(error)
     }
   }
 
@@ -122,7 +124,7 @@ export const MemoriesPage = ({ setInfo }) => {
       })
       await request(`/api/memory/${memories[selected]._id}`, 'DELETE')
     } catch (e) {
-      setInfo(e)
+      setInfo(error)
     }
   }
 

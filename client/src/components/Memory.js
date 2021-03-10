@@ -56,6 +56,17 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff',
   },
+  form: {
+    '& > *': {
+      marginTop: theme.spacing(1.5),
+      marginBottom: theme.spacing(1.5),
+    },
+  },
+  dropZone: {},
+  dropParagrarh: {
+    color: '#777',
+    fontSize: '1.3rem',
+  },
 }))
 
 export const Memory = ({
@@ -186,6 +197,46 @@ export const Memory = ({
         <div>
           <Dialog open={formOpen} aria-labelledby='form-dialog-title'>
             <DialogTitle id='form-dialog-title'>
+              {formData.hasOwnProperty('user')
+                ? 'Изменить старое '
+                : 'Создать новое '}
+              воспоминание
+            </DialogTitle>
+            <DialogContent className={classes.form}>
+              <TextField
+                required
+                error={!formData.title}
+                autoFocus
+                id='title'
+                name='title'
+                label='Название'
+                fullWidth
+                variant='outlined'
+                value={formData.title}
+                onChange={handleFormChange}
+                helperText={!formData.title && 'Не может быть пустым'}
+              />
+              <TextField
+                id='description'
+                name='description'
+                label='Подробности'
+                multiline
+                rowsMax={4}
+                variant='outlined'
+                fullWidth
+                value={formData.description}
+                onChange={handleFormChange}
+              />
+              <DropzoneArea
+                onChange={handleImageChange}
+                dropzoneText='Добавить изображение'
+                acceptedFiles={['image/*']}
+                filesLimit={1}
+                showAlerts={['error']}
+                initialFiles={formData.image ? [formData.image] : []}
+                dropzoneClass={classes.dropZone}
+                dropzoneParagraphClass={classes.dropParagrarh}
+              />
               <FormControlLabel
                 control={
                   <Checkbox
@@ -196,43 +247,22 @@ export const Memory = ({
                 }
                 label='Воспоминание смогут увидеть остальные'
               />
-            </DialogTitle>
-            <DialogContent>
-              <TextField
-                autoFocus
-                id='title'
-                name='title'
-                label='Название'
-                fullWidth
-                value={formData.title}
-                onChange={handleFormChange}
-              />
-              <TextField
-                id='description'
-                name='description'
-                label='Подробности'
-                multiline
-                rowsMax={4}
-                fullWidth
-                value={formData.description}
-                onChange={handleFormChange}
-              />
-              <DropzoneArea
-                onChange={handleImageChange}
-                dropzoneText='Перетащите картинку сюда'
-                acceptedFiles={['image/*']}
-                filesLimit={1}
-                showAlerts={['error']}
-                initialFiles={formData.image ? [formData.image] : []}
-              />
             </DialogContent>
             <DialogActions>
               {formData.hasOwnProperty('user') ? (
-                <Button onClick={() => handleOnUpdateMemory()} color='primary'>
+                <Button
+                  onClick={() => handleOnUpdateMemory()}
+                  disabled={!formData.title}
+                  color='primary'
+                >
                   Изменить
                 </Button>
               ) : (
-                <Button onClick={() => handleOnCreateMemory()} color='primary'>
+                <Button
+                  onClick={() => handleOnCreateMemory()}
+                  disabled={!formData.title}
+                  color='primary'
+                >
                   Создать
                 </Button>
               )}
