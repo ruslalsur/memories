@@ -15,27 +15,23 @@ export const useRequest = () => {
     setLoading(true)
 
     try {
-      const res = await axios({
+      const response = await axios({
         url,
         method,
         data: body,
         headers,
         responseType,
-        validateStatus: function (status) {
-          return status < 500 // Resolve only if the status code is less than 500
-        },
       })
-      if (res.statusText !== 'OK') {
-        throw new Error(res.data.message || 'Что-то пошло не так')
+
+      if (response.status === 251) {
+        throw new Error(response.data.message || 'Что-то пошло не так')
       }
 
       setLoading(false)
-
-      return res.data
+      return response.data
     } catch (err) {
       setLoading(false)
       setError(err.message)
-      console.log(`LOG: errorREQ`, error)
       throw err
     }
   }

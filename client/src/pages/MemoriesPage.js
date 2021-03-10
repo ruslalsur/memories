@@ -66,7 +66,6 @@ export const MemoriesPage = ({ setInfo }) => {
   }
 
   const createMemory = async (formData) => {
-    // resetError()
     let document = {}
 
     try {
@@ -84,9 +83,8 @@ export const MemoriesPage = ({ setInfo }) => {
 
       select(memories.length)
     } catch (e) {
-      console.log(`LOG: e`, e)
       setInfo(e.message)
-      console.log(`LOG error: `, error)
+      resetError()
     }
   }
 
@@ -125,6 +123,7 @@ export const MemoriesPage = ({ setInfo }) => {
       await request(`/api/memory/${memories[selected]._id}`, 'DELETE')
     } catch (e) {
       setInfo(error)
+      resetError()
     }
   }
 

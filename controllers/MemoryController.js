@@ -54,7 +54,7 @@ class MemoryController {
     try {
       const candidate = await Memory.findOne({ title: req.body.title })
       if (candidate) {
-        return res.status(400).json({
+        return res.status(251).json({
           message: `Воспоминание с нзванием ${req.body.title} уже существует`,
         })
       }
