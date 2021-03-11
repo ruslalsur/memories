@@ -38,14 +38,28 @@ export const MainPage = ({ setInfo }) => {
   const classes = useStyles()
 
   useEffect(() => {
-    let id = setInterval(() => {
-      axios
+    const cleanUp = () => {
+      clearInterval(id)
+      id = false
+    }
+
+    const getRandomMemory = async () => {
+      await axios
         .get('api/memory/random')
-        .then((response) => setMemory(response.data))
-        .catch((error) => setInfo(error.message))
+        .then((response) => {
+          id && setMemory(response.data)
+        })
+        .catch((error) => id && setInfo(error.message))
+    }
+
+    getRandomMemory()
+
+    let id = setInterval(() => {
+      getRandomMemory()
     }, RND_MEMORY_INTERVAL)
 
-    return () => clearInterval(id)
+    id && setInfo(null)
+    return cleanUp
   }, [])
 
   return (

@@ -114,12 +114,6 @@ export const MemoriesPage = ({ setInfo }) => {
       }
 
       const response = await axios.post(`/api/memory`, document)
-      console.log(`LOG res: `, response)
-      if (response.status !== 201) {
-        throw new Error(
-          `Воспоминание с нзванием ${formData.title} уже существует`
-        )
-      }
       setMemories((memories) => {
         return [...memories, response.data]
       })

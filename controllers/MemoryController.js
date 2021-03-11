@@ -55,8 +55,8 @@ class MemoryController {
       const candidate = await Memory.findOne({ title: req.body.title })
 
       if (candidate) {
-        return res.status(400).json({
-          message: `Воспоминание с нзванием ${req.body.title} уже существует`,
+        return res.status(409).json({
+          message: `Воспоминание с названием ${req.body.title} уже существует`,
         })
       }
 
@@ -69,7 +69,6 @@ class MemoryController {
       return res.status(201).json(result)
     } catch (error) {
       console.log(error)
-
       res.status(500).json({
         message: `Ошибка в процессе создания нового воспоминания`,
       })
