@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
-import { useRequest } from '../hooks/request'
+import axios from 'axios'
 import {
-  CircularProgress,
   Grid,
   Typography,
   Card,
@@ -34,21 +33,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const MainPage = () => {
+export const MainPage = ({ setInfo }) => {
   const [memory, setMemory] = useState({})
-  const { request, loading } = useRequest()
   const classes = useStyles()
 
   useEffect(() => {
-    const fetchRandomMemory = async () => {
-      const data = await request('api/memory/random')
-      setMemory(data)
-    }
+    let id = setInterval(() => {
+      axios
+        .get('api/memory/random')
+        .then((response) => setMemory(response.data))
+        .catch((error) => setInfo(error.message))
+    }, RND_MEMORY_INTERVAL)
 
-    fetchRandomMemory()
-    let id = setInterval(() => fetchRandomMemory(), RND_MEMORY_INTERVAL)
     return () => clearInterval(id)
-  }, [request])
+  }, [])
 
   return (
     <Grid container spacing={4}>
@@ -62,10 +60,7 @@ export const MainPage = () => {
         className={classes.mainPageLeftSide}
       >
         <Typography variant='h5' component='h2' paragraph color='primary'>
-          Воспоминания есть у каждого{' '}
-          {loading && (
-            <CircularProgress size={17} className={classes.loading} />
-          )}
+          Воспоминания есть у каждого
         </Typography>
         <Typography component='h5' paragraph>
           Здесь каждый сможет хранить свои воспоминания, отдельно от

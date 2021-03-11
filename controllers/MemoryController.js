@@ -53,8 +53,9 @@ class MemoryController {
   async createMemory(req, res) {
     try {
       const candidate = await Memory.findOne({ title: req.body.title })
+
       if (candidate) {
-        return res.status(251).json({
+        return res.status(400).json({
           message: `Воспоминание с нзванием ${req.body.title} уже существует`,
         })
       }
@@ -66,8 +67,8 @@ class MemoryController {
       const result = await newMemory.save()
 
       return res.status(201).json(result)
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      console.log(error)
 
       res.status(500).json({
         message: `Ошибка в процессе создания нового воспоминания`,
@@ -80,11 +81,12 @@ class MemoryController {
 
     try {
       const willUpdate = await Memory.findById(id)
+
       unlink(
         path.join(__dirname, '..', 'upload', path.basename(willUpdate.image)),
-        (err) => {
-          if (err) {
-            console.error(err)
+        (error) => {
+          if (erorr) {
+            console.error(error)
           }
         }
       )
@@ -99,7 +101,7 @@ class MemoryController {
 
       return res.status(201).json(updated)
     } catch (e) {
-      console.log(e)
+      console.log(error)
       res.status(500).json({
         message: `Ошибка в процессе изменения старого воспоминания`,
       })
@@ -109,6 +111,7 @@ class MemoryController {
   async upload(req, res) {
     const { nameOfFile } = req.body
     const imgPath = path.join('/images', 'memories', 'upload', nameOfFile)
+
     return res.status(201).send(imgPath)
   }
 
@@ -136,8 +139,8 @@ class MemoryController {
       )
 
       return res.status(200).json(deleted)
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      console.log(error)
     }
   }
 }
