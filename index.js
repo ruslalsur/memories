@@ -31,13 +31,9 @@ const start = async () => {
       useCreateIndex: true,
     })
 
-    app.listen(30550 || 30003, () =>
-      console.log(
-        `\nСлушаю на ${String(port).yellow} порту\nВ режиме ${
-          String(process.env.NODE_ENV).yellow
-        }\n`
-      )
-    )
+    const PORT = process.env.PORT || 30003
+    const MODE = process.env.NODE_ENV
+    app.listen(PORT, () => console.log(`PORT = ${PORT}\nMODE = ${MODE}`))
   } catch (e) {
     console.log(`Ошибка: `, e.message)
     process.exit(1)
