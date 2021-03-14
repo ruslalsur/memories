@@ -1,4 +1,6 @@
 {
+  "static_dir": "client/public",
+  "noimage": "noimage.png",
   "port": 5000,
   "mongoUri": "mongodb+srv://rusla:0o9i8u7y@cluster0.c4yxa.mongodb.net/memories?retryWrites=true&w=majority",
   "jvtSecret": "R604658ANsfD78OM"

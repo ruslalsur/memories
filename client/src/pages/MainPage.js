@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
 export const MainPage = ({ setInfo }) => {
   const [memory, setMemory] = useState({})
   const classes = useStyles()
+  const IMG_PATH = process.env.PUBLIC_URL + 'img/'
 
   useEffect(() => {
     const cleanUp = () => {
@@ -102,7 +103,10 @@ export const MainPage = ({ setInfo }) => {
             <Link to={`/memories/${memory.user._id}`} className={classes.card}>
               <Card>
                 <CardActionArea>
-                  <CardMedia className={classes.media} image={memory.image} />
+                  <CardMedia
+                    className={classes.media}
+                    image={IMG_PATH + memory.imgName}
+                  />
                   <CardContent>
                     <Typography gutterBottom variant='h5' component='h5'>
                       {memory.title}

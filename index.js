@@ -9,7 +9,7 @@ const app = express()
 
 app.use(cors())
 app.use(express.urlencoded({ extended: true }))
-app.use(express.json({ extended: true }))
+app.use(express.json())
 
 app.use('/api/user', require('./routes/userRoutes'))
 app.use('/api/memory', require('./routes/memoryRoutes'))
@@ -21,6 +21,8 @@ if (process.env.NODE_ENV === 'production') {
       path.join(path.join(__dirname, 'client', 'build'), 'index.html')
     )
   )
+} else {
+  app.use(express.static(path.join(__dirname, 'client', 'public')))
 }
 
 const start = async () => {

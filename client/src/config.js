@@ -1,3 +1,2 @@
-export const NO_IMAGE = '/images/memories/noimage.png'
-export const APP_NAME = 'Воспоминания'
-export const RND_MEMORY_INTERVAL = 3000
+export const NO_IMAGE = 'noimage.png'
+export const RND_MEMORY_INTERVAL = 7000

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-import { nanoid } from 'nanoid'
 import { MemoryCrudForm } from '../components/MemoryCrudForm'
 import {
+  Paper,
   Typography,
   Grid,
   GridList,
@@ -24,18 +24,33 @@ import { NO_IMAGE } from '../config'
 const useStyles = makeStyles((theme) => ({
   memList: {
     backgroundColor: theme.palette.background.paper,
-    marginBottom: 10,
+    padding: 5,
+    // marginBottom: 10,
   },
   gridList: {
     width: 'auto',
     height: 'auto',
-    margingBottom: 30,
+    // margingBottom: 30,
+    // boxShadow: '0px 0px 2px #555',
+    // borderRadius: 5,
+    // padding: 3,
   },
+
   gridListTile: {
     overflow: 'hidden',
     cursor: 'pointer',
-    '&:hover': { border: '2px solid #fff' },
-    '&:active': { border: '4px solid #fff' },
+    '& .MuiGridListTile-tile': {
+      borderRadius: 5,
+    },
+
+    // transform: 'scale(0.97)',
+    // boxShadow: '0px 0px 1px #555',
+    '&:hover': {
+      // boxShadow: '0px 0px 5px #aaa',
+      // borderRadius: 5,
+      transform: 'scale(0.99)',
+    },
+    '&:active': { transform: 'scale(0.97)' },
   },
   memsUserName: {
     color: theme.palette.secondary.light,
@@ -48,8 +63,9 @@ const useStyles = makeStyles((theme) => ({
     height: 0,
     paddingTop: '56.25%', // 16:9
     cursor: 'pointer',
+    filter: 'sepia(70%)',
     '&:hover': {
-      filter: 'grayscale(1)',
+      filter: 'sepia(0%)',
       transition: '0.5s ease-in-out',
     },
   },
@@ -71,12 +87,20 @@ const useStyles = makeStyles((theme) => ({
 
 export const MemoriesPage = ({ setInfo }) => {
   const classes = useStyles()
+  const initFormData = {
+    title: '',
+    description: '',
+    imgName: NO_IMAGE,
+    shared: true,
+  }
   const [memories, setMemories] = useState([])
-  const [formData, setFormData] = useState({})
+  const [formData, setFormData] = useState(initFormData)
+  const [imgFile, setImgFile] = useState(undefined)
   const [selected, select] = useState(0)
   const [backdropOpen, setBackdropOpen] = useState(false)
   const [crudFormOpen, setCrudFormOpen] = useState(false)
   const { userId } = useParams()
+  const IMG_PATH = process.env.PUBLIC_URL + '/img/'
 
   useEffect(() => {
     axios
@@ -91,29 +115,29 @@ export const MemoriesPage = ({ setInfo }) => {
       })
   }, [])
 
+  // useEffect(() => {
+  //   setFormData({ ...formData, imgName: uploadedImgName })
+  // }, [uploadedImgName])
+
   const handleCreateBtnClick = () => {
-    setFormData({
-      title: '',
-      description: '',
-      image: undefined,
-      shared: false,
-    })
+    setFormData(initFormData)
     setInfo(null)
+    setImgFile(undefined)
     setCrudFormOpen(true)
   }
 
   const createMemory = async () => {
     setCrudFormOpen(false)
-    let document = {}
+    let newState = formData
 
     try {
-      if (formData.image) {
-        document = { ...formData, image: await uploadImage() }
-      } else {
-        document = { ...formData, image: NO_IMAGE }
-      }
+      if (formData.imgName && formData.imgName !== NO_IMAGE) {
+        const uploadedImgName = await uploadImage(imgFile)
+        newState = { ...formData, imgName: uploadedImgName }
 
-      const response = await axios.post(`/api/memory`, document)
+        setFormData(newState)
+      }
+      const response = await axios.post(`/api/memory`, newState)
       setMemories((memories) => {
         return [...memories, response.data]
       })
@@ -137,19 +161,19 @@ export const MemoriesPage = ({ setInfo }) => {
   const updateMemory = async () => {
     setInfo(null)
     setCrudFormOpen(false)
-    let document = {}
+    let newState = formData
 
     try {
-      if (formData.image) {
-        document = { ...formData, image: await uploadImage() }
-      } else {
-        document = { ...formData, image: NO_IMAGE }
+      if (formData.imgName && formData.imgName !== NO_IMAGE) {
+        const uploadedImgName = await uploadImage(imgFile)
+        newState = { ...formData, imgName: uploadedImgName }
+
+        setFormData(newState)
       }
 
-      await axios.patch(`/api/memory/${formData._id}`, document)
-
+      await axios.patch(`/api/memory/${formData._id}`, newState)
       setMemories(
-        memories.map((item, index) => (index === selected ? document : item))
+        memories.map((item, index) => (index === selected ? newState : item))
       )
     } catch (error) {
       if (error.response) {
@@ -172,7 +196,6 @@ export const MemoriesPage = ({ setInfo }) => {
     }
     try {
       await axios.delete(`/api/memory/${memories[selected]._id}`)
-
       select(selected - 1)
       setMemories((memories) => memories.filter((_, i) => i !== selected))
     } catch (error) {
@@ -180,19 +203,23 @@ export const MemoriesPage = ({ setInfo }) => {
     }
   }
 
-  const uploadImage = async () => {
+  const uploadImage = async (file) => {
     const fd = new FormData()
-    fd.append('nameOfFile', `${nanoid()}.${formData.image.type.split('/')[1]}`)
-    fd.append('file', formData.image)
+    fd.append('file', file)
 
-    const response = await axios({
-      url: '/api/memory/upload',
-      method: 'POST',
-      data: fd,
-      headers: { 'Content-Type': 'multipart/form-data' },
-      responseType: 'text',
-    })
-    return response.data
+    try {
+      const response = await axios({
+        url: '/api/memory/upload',
+        method: 'POST',
+        data: fd,
+        headers: { 'Content-Type': 'multipart/form-data' },
+        responseType: 'text',
+      })
+
+      return response.data
+    } catch (err) {
+      console.log(`Попытка загрузки файла не удалась: `, err.response)
+    }
   }
 
   if (!memories.length) return null
@@ -208,25 +235,28 @@ export const MemoriesPage = ({ setInfo }) => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={5}>
-          <div className={classes.memList}>
+          <Paper className={classes.memList}>
             <GridList
-              spacing={4}
-              cellHeight={180}
+              spacing={5}
+              cellHeight={160}
               cols={3}
               className={classes.gridList}
             >
               {memories.map((memory, index) => (
                 <GridListTile
                   key={memory._id}
-                  onClick={() => select(index)}
+                  onClick={() => {
+                    setInfo(null)
+                    select(index)
+                  }}
                   className={classes.gridListTile}
                 >
-                  <img src={memory.image} alt={memory.title} />
+                  <img src={IMG_PATH + memory.imgName} alt={memory.imgName} />
                   <GridListTileBar title={memory.title} />
                 </GridListTile>
               ))}
             </GridList>
-          </div>
+          </Paper>
         </Grid>
 
         <Grid item xs={12} md={7}>
@@ -236,7 +266,7 @@ export const MemoriesPage = ({ setInfo }) => {
                 avatar={
                   <Avatar
                     alt='avatar'
-                    src={memories[selected].user.avatar}
+                    src={IMG_PATH + memories[selected].user.avatar}
                     aria-label='avatar'
                     className={classes.avatar}
                   />
@@ -246,7 +276,7 @@ export const MemoriesPage = ({ setInfo }) => {
               />
               <CardMedia
                 className={classes.media}
-                image={memories[selected].image}
+                image={IMG_PATH + memories[selected].imgName}
                 title='Увеличить'
                 onClick={() => setBackdropOpen(true)}
               />
@@ -275,13 +305,17 @@ export const MemoriesPage = ({ setInfo }) => {
               setOpen={setCrudFormOpen}
               data={formData}
               setData={setFormData}
+              imgFile={imgFile}
+              setImgFile={setImgFile}
               handleCreateBntClick={createMemory}
               handleUpdateBntClick={updateMemory}
             />
             <Backdrop
               className={classes.backdrop}
               style={{
-                background: `url(${memories[selected].image}) 0 0/cover no-repeat`,
+                background: `url(${
+                  IMG_PATH + memories[selected].imgName
+                }) 0 0/cover no-repeat`,
               }}
               open={backdropOpen}
               onClick={() => setBackdropOpen(false)}

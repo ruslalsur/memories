@@ -1,8 +1,7 @@
 import React, { useState, cloneElement } from 'react'
-import { Container, Grid, Box } from '@material-ui/core'
+import { Container } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
 import { Header } from './Header'
-import { APP_NAME } from '../config.js'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme) => ({
@@ -29,11 +28,11 @@ export const Layout = ({ children }) => {
 
   return (
     <div className={classes.root}>
-      <Header appName={APP_NAME} />
+      <Header appName={process.env.REACT_APP_NAME} />
       <Container className={classes.content}>{childrenClone}</Container>
       {info && (
         <Alert className={classes.footer} severity='warning'>
-          <AlertTitle>Уведомление</AlertTitle>
+          <AlertTitle>Внимание!</AlertTitle>
           {info}
         </Alert>
       )}

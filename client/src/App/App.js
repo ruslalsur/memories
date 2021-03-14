@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { MainPage } from '../pages/MainPage'
@@ -6,15 +6,10 @@ import { MemoriesPage } from '../pages/MemoriesPage'
 import { SignIn } from '../components/SignIn'
 import { SignUp } from '../components/SignUp'
 import { Layout } from '../components/Layout'
-import { APP_NAME } from '../config.js'
 
 import './app.css'
 
 export const App = () => {
-  useEffect(() => {
-    document.title = APP_NAME
-  }, [])
-
   return (
     <Router>
       <Switch>

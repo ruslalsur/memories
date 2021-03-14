@@ -1,6 +1,7 @@
 const Memory = require('../models/Memory')
 const path = require('path')
-const { unlink } = require('fs')
+const { unlink, rename } = require('fs')
+const { static_dir, noimage } = require('config')
 
 class MemoryController {
   async getMemories(req, res) {
@@ -51,10 +52,19 @@ class MemoryController {
   }
 
   async createMemory(req, res) {
+    const { imgName } = req.body
+
     try {
       const candidate = await Memory.findOne({ title: req.body.title })
-
       if (candidate) {
+        if (imgName !== noimage) {
+          unlink(path.join(static_dir, 'img', imgName), (err) => {
+            if (err) {
+              console.log(err)
+            }
+          })
+        }
+
         return res.status(409).json({
           message: `Воспоминание с названием ${req.body.title} уже существует`,
         })
@@ -64,6 +74,7 @@ class MemoryController {
         ...req.body,
         user: '60330e0de96e077b16b6690e', //TODO: заменить на текущего пользователя
       })
+
       const result = await newMemory.save()
 
       return res.status(201).json(result)
@@ -81,14 +92,14 @@ class MemoryController {
     try {
       const willUpdate = await Memory.findById(id)
 
-      unlink(
-        path.join(__dirname, '..', 'upload', path.basename(willUpdate.image)),
-        (error) => {
-          if (erorr) {
-            console.error(error)
+      const { imgName } = willUpdate
+      if (imgName !== noimage) {
+        unlink(path.join(static_dir, 'img', imgName), (err) => {
+          if (err) {
+            console.log(err)
           }
-        }
-      )
+        })
+      }
 
       const updated = await Memory.updateOne({ _id: id }, { ...req.body })
 
@@ -98,20 +109,13 @@ class MemoryController {
         })
       }
 
-      return res.status(201).json(updated)
+      return res.status(200).json(updated)
     } catch (e) {
       console.log(error)
       res.status(500).json({
         message: `Ошибка в процессе изменения старого воспоминания`,
       })
     }
-  }
-
-  async upload(req, res) {
-    const { nameOfFile } = req.body
-    const imgPath = path.join('/images', 'memories', 'upload', nameOfFile)
-
-    return res.status(201).send(imgPath)
   }
 
   async deleteMemory(req, res) {
@@ -126,21 +130,29 @@ class MemoryController {
         })
       }
 
-      unlink(
-        path.join(__dirname, '..', 'upload', path.basename(deleted.image)),
-        (err) => {
+      const { imgName } = deleted
+      if (imgName !== noimage) {
+        unlink(path.join(static_dir, 'img', imgName), (err) => {
           if (err) {
-            console.error(
-              `картинка \"${path.basename(deleted.image)}\" не была удалена`
-            )
+            console.log(err)
           }
-        }
-      )
+        })
+      }
 
       return res.status(200).json(deleted)
     } catch (error) {
       console.log(error)
     }
+  }
+
+  async upload(req, res) {
+    const { filename, path } = req.file
+
+    rename(path, `${static_dir}/img/${filename}`, (err) => {
+      if (err) throw err
+    })
+
+    return res.status(201).end(filename)
   }
 }
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import { DropzoneArea } from 'material-ui-dropzone'
 import { makeStyles } from '@material-ui/core/styles'
+import { NO_IMAGE } from '../config'
 import {
   Dialog,
   DialogActions,
@@ -23,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   dropZone: {},
   dropParagrarh: {
     color: '#777',
-    fontSize: '1.3rem',
+    fontSize: '1.2rem',
   },
 }))
 
@@ -32,10 +33,13 @@ export const MemoryCrudForm = ({
   setOpen,
   data,
   setData,
+  imgFile,
+  setImgFile,
   handleCreateBntClick,
   handleUpdateBntClick,
 }) => {
   const classes = useStyles()
+  const IMG_PATH = process.env.PUBLIC_URL + '/img/'
 
   const handleFormChange = (event) => {
     const value =
@@ -47,17 +51,26 @@ export const MemoryCrudForm = ({
   }
 
   const handleImageChange = (files) => {
+    setImgFile(files.length ? files[0] : undefined)
     setData({
       ...data,
-      image: files.length ? files[0] : undefined,
+      imgName: files.length ? files[0].name : NO_IMAGE,
     })
   }
 
   return (
     <Dialog open={open} aria-labelledby='form-dialog-title'>
       <DialogTitle id='form-dialog-title'>
-        {data.hasOwnProperty('user') ? 'Изменить старое ' : 'Создать новое '}
-        воспоминание
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={data.shared}
+              onChange={handleFormChange}
+              name='shared'
+            />
+          }
+          label='Воспоминание смогут увидеть остальные'
+        />
       </DialogTitle>
       <DialogContent className={classes.form}>
         <TextField
@@ -90,19 +103,9 @@ export const MemoryCrudForm = ({
           acceptedFiles={['image/*']}
           filesLimit={1}
           showAlerts={['error']}
-          initialFiles={data.image ? [data.image] : []}
+          initialFiles={data.imgName ? [IMG_PATH + data.imgName] : []}
           dropzoneClass={classes.dropZone}
           dropzoneParagraphClass={classes.dropParagrarh}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={data.shared}
-              onChange={handleFormChange}
-              name='shared'
-            />
-          }
-          label='Воспоминание смогут увидеть остальные'
         />
       </DialogContent>
       <DialogActions>
