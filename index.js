@@ -31,7 +31,7 @@ const start = async () => {
       useCreateIndex: true,
     })
 
-    app.listen(port || 30003, () =>
+    app.listen(30550 || 30003, () =>
       console.log(
         `\nСлушаю на ${String(port).yellow} порту\nВ режиме ${
           String(process.env.NODE_ENV).yellow
