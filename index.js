@@ -21,8 +21,6 @@ if (process.env.NODE_ENV === 'production') {
       path.join(path.join(__dirname, 'client', 'build'), 'index.html')
     )
   )
-} else {
-  app.use(express.static(path.join(__dirname, 'client', 'public')))
 }
 
 const start = async () => {
@@ -33,12 +31,10 @@ const start = async () => {
       useCreateIndex: true,
     })
 
-    const listener = app.listen(port, () =>
+    app.listen(port, () =>
       console.log(
-        `\nСлушаю ${listener.address().address}:${
-          String(port).yellow
-        }\nСоединение с базой данных установлено.\n${
-          process.env.NODE_ENV === 'production' ? '' : 'Режим разработки'.yellow
+        `\nСлушаю на ${String(port).yellow} порту\nВ режиме ${
+          String(process.env.NODE_ENV).yellow
         }\n`
       )
     )
