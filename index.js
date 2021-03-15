@@ -30,7 +30,7 @@ const start = async () => {
       useCreateIndex: true,
     })
 
-    const PORT = 5000
+    const PORT = 30000
     const MODE = process.env.NODE_ENV
     app.listen(PORT, () => console.log(`PORT = ${PORT}\nMODE = ${MODE}`))
   } catch (e) {
