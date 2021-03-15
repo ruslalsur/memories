@@ -2,7 +2,6 @@ const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
 const cors = require('cors')
-const colors = require('colors')
 const { port, mongoUri } = require('config')
 
 const app = express()
@@ -31,7 +30,7 @@ const start = async () => {
       useCreateIndex: true,
     })
 
-    const PORT = process.env.PORT || 30003
+    const PORT = 5000
     const MODE = process.env.NODE_ENV
     app.listen(PORT, () => console.log(`PORT = ${PORT}\nMODE = ${MODE}`))
   } catch (e) {

@@ -10,7 +10,7 @@ import {
   CardMedia,
   CardContent,
 } from '@material-ui/core'
-import { RND_MEMORY_INTERVAL } from '../config.js'
+import { NO_IMAGE, RND_MEMORY_INTERVAL } from '../config.js'
 
 const useStyles = makeStyles((theme) => ({
   mainPageLeftSide: {
@@ -105,7 +105,7 @@ export const MainPage = ({ setInfo }) => {
                 <CardActionArea>
                   <CardMedia
                     className={classes.media}
-                    image={IMG_PATH + memory.imgName}
+                    image={IMG_PATH + (memory.imgName || NO_IMAGE)}
                   />
                   <CardContent>
                     <Typography gutterBottom variant='h5' component='h5'>

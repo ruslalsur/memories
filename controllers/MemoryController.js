@@ -1,7 +1,7 @@
 const Memory = require('../models/Memory')
 const path = require('path')
-const { unlink, rename } = require('fs')
-const { static_dir, noimage } = require('config')
+const { unlink, rename } = require('fs').promises
+const { static_dir } = require('config')
 
 class MemoryController {
   async getMemories(req, res) {
@@ -57,10 +57,10 @@ class MemoryController {
     try {
       const candidate = await Memory.findOne({ title: req.body.title })
       if (candidate) {
-        if (imgName !== noimage) {
-          unlink(path.join(static_dir, 'img', imgName), (err) => {
+        if (imgName) {
+          await unlink(path.join(static_dir, 'img', imgName), (err) => {
             if (err) {
-              console.log(err)
+              console.log(`Ошибка при удалении ${imgName}: `, err)
             }
           })
         }
@@ -93,10 +93,10 @@ class MemoryController {
       const willUpdate = await Memory.findById(id)
 
       const { imgName } = willUpdate
-      if (imgName !== noimage) {
-        unlink(path.join(static_dir, 'img', imgName), (err) => {
+      if (imgName) {
+        await unlink(path.join(static_dir, 'img', imgName), (err) => {
           if (err) {
-            console.log(err)
+            console.log(`Ошибка при удалении ${imgName}: `, err)
           }
         })
       }
@@ -110,8 +110,8 @@ class MemoryController {
       }
 
       return res.status(200).json(updated)
-    } catch (e) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
       res.status(500).json({
         message: `Ошибка в процессе изменения старого воспоминания`,
       })
@@ -131,28 +131,32 @@ class MemoryController {
       }
 
       const { imgName } = deleted
-      if (imgName !== noimage) {
-        unlink(path.join(static_dir, 'img', imgName), (err) => {
+      if (imgName) {
+        await unlink(path.join(static_dir, 'img', imgName), (err) => {
           if (err) {
-            console.log(err)
+            console.log(`Ошибка при удалении ${imgName}: `, err)
           }
         })
       }
 
       return res.status(200).json(deleted)
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
     }
   }
 
   async upload(req, res) {
     const { filename, path } = req.file
 
-    rename(path, `${static_dir}/img/${filename}`, (err) => {
-      if (err) throw err
-    })
+    try {
+      await rename(path, `${static_dir}/img/${filename}`, (err) => {
+        if (err) throw err
+      })
 
-    return res.status(201).end(filename)
+      return res.status(201).end(filename)
+    } catch (err) {
+      console.log(`Ошибка при премешении ${filename} в ${part}: `, err)
+    }
   }
 }
 

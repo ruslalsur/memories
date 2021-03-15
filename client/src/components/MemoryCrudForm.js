@@ -1,7 +1,6 @@
 import React from 'react'
 import { DropzoneArea } from 'material-ui-dropzone'
 import { makeStyles } from '@material-ui/core/styles'
-import { NO_IMAGE } from '../config'
 import {
   Dialog,
   DialogActions,
@@ -33,7 +32,6 @@ export const MemoryCrudForm = ({
   setOpen,
   data,
   setData,
-  imgFile,
   setImgFile,
   handleCreateBntClick,
   handleUpdateBntClick,
@@ -54,7 +52,7 @@ export const MemoryCrudForm = ({
     setImgFile(files.length ? files[0] : undefined)
     setData({
       ...data,
-      imgName: files.length ? files[0].name : NO_IMAGE,
+      imgName: files.length ? files[0].name : '',
     })
   }
 

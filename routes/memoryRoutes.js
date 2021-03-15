@@ -1,11 +1,9 @@
 const { Router } = require('express')
-const path = require('path')
 const router = Router()
 const { check } = require('express-validator')
 const MemoryController = require('../controllers/MemoryController')
 const validate = require('../middleware/validateMiddleware')
 const upload = require('../middleware/uploadMiddleware')
-const { static_dir } = require('config')
 
 router.get(
   '/user/:id',

@@ -25,15 +25,10 @@ const useStyles = makeStyles((theme) => ({
   memList: {
     backgroundColor: theme.palette.background.paper,
     padding: 5,
-    // marginBottom: 10,
   },
   gridList: {
     width: 'auto',
     height: 'auto',
-    // margingBottom: 30,
-    // boxShadow: '0px 0px 2px #555',
-    // borderRadius: 5,
-    // padding: 3,
   },
 
   gridListTile: {
@@ -42,12 +37,7 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiGridListTile-tile': {
       borderRadius: 5,
     },
-
-    // transform: 'scale(0.97)',
-    // boxShadow: '0px 0px 1px #555',
     '&:hover': {
-      // boxShadow: '0px 0px 5px #aaa',
-      // borderRadius: 5,
       transform: 'scale(0.99)',
     },
     '&:active': { transform: 'scale(0.97)' },
@@ -90,7 +80,7 @@ export const MemoriesPage = ({ setInfo }) => {
   const initFormData = {
     title: '',
     description: '',
-    imgName: NO_IMAGE,
+    imgName: '',
     shared: true,
   }
   const [memories, setMemories] = useState([])
@@ -115,10 +105,6 @@ export const MemoriesPage = ({ setInfo }) => {
       })
   }, [])
 
-  // useEffect(() => {
-  //   setFormData({ ...formData, imgName: uploadedImgName })
-  // }, [uploadedImgName])
-
   const handleCreateBtnClick = () => {
     setFormData(initFormData)
     setInfo(null)
@@ -131,12 +117,13 @@ export const MemoriesPage = ({ setInfo }) => {
     let newState = formData
 
     try {
-      if (formData.imgName && formData.imgName !== NO_IMAGE) {
+      if (formData.imgName) {
         const uploadedImgName = await uploadImage(imgFile)
         newState = { ...formData, imgName: uploadedImgName }
 
         setFormData(newState)
       }
+
       const response = await axios.post(`/api/memory`, newState)
       setMemories((memories) => {
         return [...memories, response.data]
@@ -198,8 +185,8 @@ export const MemoriesPage = ({ setInfo }) => {
       await axios.delete(`/api/memory/${memories[selected]._id}`)
       select(selected - 1)
       setMemories((memories) => memories.filter((_, i) => i !== selected))
-    } catch (error) {
-      setInfo(error.message)
+    } catch (err) {
+      setInfo(err.message)
     }
   }
 
@@ -251,7 +238,10 @@ export const MemoriesPage = ({ setInfo }) => {
                   }}
                   className={classes.gridListTile}
                 >
-                  <img src={IMG_PATH + memory.imgName} alt={memory.imgName} />
+                  <img
+                    src={IMG_PATH + (memory.imgName || NO_IMAGE)}
+                    alt={memory.imgName}
+                  />
                   <GridListTileBar title={memory.title} />
                 </GridListTile>
               ))}
@@ -276,7 +266,7 @@ export const MemoriesPage = ({ setInfo }) => {
               />
               <CardMedia
                 className={classes.media}
-                image={IMG_PATH + memories[selected].imgName}
+                image={IMG_PATH + (memories[selected].imgName || NO_IMAGE)}
                 title='Увеличить'
                 onClick={() => setBackdropOpen(true)}
               />
@@ -305,7 +295,6 @@ export const MemoriesPage = ({ setInfo }) => {
               setOpen={setCrudFormOpen}
               data={formData}
               setData={setFormData}
-              imgFile={imgFile}
               setImgFile={setImgFile}
               handleCreateBntClick={createMemory}
               handleUpdateBntClick={updateMemory}
@@ -314,7 +303,7 @@ export const MemoriesPage = ({ setInfo }) => {
               className={classes.backdrop}
               style={{
                 background: `url(${
-                  IMG_PATH + memories[selected].imgName
+                  IMG_PATH + (memories[selected].imgName || NO_IMAGE)
                 }) 0 0/cover no-repeat`,
               }}
               open={backdropOpen}
