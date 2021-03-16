@@ -6,7 +6,6 @@ import { MemoriesPage } from '../pages/MemoriesPage'
 import { SignIn } from '../components/SignIn'
 import { SignUp } from '../components/SignUp'
 import { Layout } from '../components/Layout'
-
 import './app.css'
 
 export const App = () => {

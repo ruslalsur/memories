@@ -24,21 +24,24 @@ import { NO_IMAGE } from '../config'
 const useStyles = makeStyles((theme) => ({
   memList: {
     backgroundColor: theme.palette.background.paper,
-    padding: 5,
   },
   gridList: {
     width: 'auto',
     height: 'auto',
+    padding: 7,
   },
 
   gridListTile: {
     overflow: 'hidden',
     cursor: 'pointer',
+    filter: 'grayscale(100%) opacity(80%) sepia(0%)',
+    transition: '0.3s ease-in-out',
     '& .MuiGridListTile-tile': {
       borderRadius: 5,
     },
     '&:hover': {
-      transform: 'scale(0.99)',
+      transform: 'scale(1.03)',
+      filter: 'grayscale(0%) opacity(80%) sepia(100%)',
     },
     '&:active': { transform: 'scale(0.97)' },
   },
@@ -53,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
     height: 0,
     paddingTop: '56.25%', // 16:9
     cursor: 'pointer',
-    filter: 'sepia(70%)',
+    filter: 'sepia(100%)',
     '&:hover': {
       filter: 'sepia(0%)',
       transition: '0.5s ease-in-out',
