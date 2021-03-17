@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const MemoryCrudForm = ({
+export const MemoryCrud = ({
   open,
   setOpen,
   data,

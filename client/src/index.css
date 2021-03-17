@@ -13,8 +13,3 @@ body {
   font-size: 1rem;
   text-shadow: 1px 1px 1px #ccc;
 }
-
-#root {
-  min-height: 100vh;
-  overflow-y: hidden;
-}

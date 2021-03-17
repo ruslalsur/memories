@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
     display: 'grid',
     gridTemplateRows: 'auto 1fr auto',
+    overflowY: 'hidden',
   },
   content: {
     overflowX: 'auto',
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 export const Layout = ({ children }) => {
   const classes = useStyles()
   const [info, setInfo] = useState(null)
-  const childrenClone = cloneElement(children, { setInfo: setInfo })
+  const childrenClone = cloneElement(children, { setInfo })
 
   return (
     <div className={classes.root}>

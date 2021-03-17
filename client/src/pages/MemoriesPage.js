@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-import { MemoryCrudForm } from '../components/MemoryCrudForm'
+import { MemoryCrud } from '../components/MemoryCrud'
 import {
   Paper,
   Typography,
@@ -293,7 +293,7 @@ export const MemoriesPage = ({ setInfo }) => {
                 </ButtonGroup>
               </CardActions>
             </Card>
-            <MemoryCrudForm
+            <MemoryCrud
               open={crudFormOpen}
               setOpen={setCrudFormOpen}
               data={formData}
