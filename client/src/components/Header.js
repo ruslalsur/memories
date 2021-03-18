@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { AccountCircle } from '@material-ui/icons'
 import { Container, AppBar, Toolbar, IconButton, Box } from '@material-ui/core'
+import { blueGrey } from '@material-ui/core/colors'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     height: '58px',
     justifyContent: 'center',
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: blueGrey[500],
   },
   button: {
     color: 'white',

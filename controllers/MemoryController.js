@@ -13,13 +13,13 @@ class MemoryController {
         shared: true,
       })
 
-      if (!memories.length) throw new Error(`Нет пользователя с id=${id}`)
+      if (!memories.length) throw new Error(`Нет воспоминаний!`)
 
       return res.status(200).json(memories)
-    } catch (e) {
-      console.log(e)
+    } catch (err) {
+      console.log(err)
       return res.status(400).json({
-        message: e.message || 'Ошибка',
+        message: err.message || 'Ошибка',
       })
     }
   }
@@ -43,10 +43,10 @@ class MemoryController {
       }
 
       return res.status(200).json(memory)
-    } catch (e) {
-      console.log(e)
+    } catch (err) {
+      console.log(err)
       return res.status(400).json({
-        message: e.message || 'Ошибка',
+        message: err.message || 'Ошибка',
       })
     }
   }

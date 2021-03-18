@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import axios from 'axios'
 import {
   Grid,
@@ -50,7 +50,10 @@ export const MainPage = ({ setInfo }) => {
         .then((response) => {
           id && setMemory(response.data)
         })
-        .catch((error) => id && setInfo(error.message))
+        .catch((err) => {
+          setMemory(null)
+          id && setInfo(err.message)
+        })
     }
 
     getRandomMemory()
@@ -63,68 +66,75 @@ export const MainPage = ({ setInfo }) => {
     return cleanUp
   }, [])
 
-  return (
-    <Grid container spacing={4}>
-      <Grid
-        item
-        xs={12}
-        sm={12}
-        md={6}
-        lg={6}
-        xl={6}
-        className={classes.mainPageLeftSide}
-      >
-        <Typography variant='h5' component='h2' paragraph color='primary'>
-          Воспоминания есть у каждого
-        </Typography>
-        <Typography component='h5' paragraph>
-          Здесь каждый сможет хранить свои воспоминания, отдельно от
-          воспоминаний остальных, под видом картотеки состоящей из карточек, в
-          которых могут быть фотографии и связанные с ними высказывания.
-        </Typography>
-        <Typography component='h5' paragraph>
-          Найти нужное воспоминание можно будет указав фразу, которая может быть
-          в его описании или названии.
-        </Typography>
-        <Typography component='h5' paragraph>
-          Здесь, для примера, показано одно случайное воспоминание, из набора
-          разрешенных пользователями для всеобщего просмотра.
-        </Typography>
-      </Grid>
-
-      <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+  if (memory === null) {
+    return <Redirect to='/memories/60330e0de96e077b16b6690e' />
+  } else {
+    return (
+      <Grid container spacing={4}>
         <Grid
-          container
-          justify='center'
-          alignContent='center'
-          className={classes.mediaCardContainer}
+          item
+          xs={12}
+          sm={12}
+          md={6}
+          lg={6}
+          xl={6}
+          className={classes.mainPageLeftSide}
         >
-          {memory.user && (
-            <Link to={`/memories/${memory.user._id}`} className={classes.card}>
-              <Card>
-                <CardActionArea>
-                  <CardMedia
-                    className={classes.media}
-                    image={IMG_PATH + (memory.imgName || NO_IMAGE)}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant='h5' component='h5'>
-                      {memory.title}
-                    </Typography>
-                    <Typography
-                      variant='body1'
-                      color='textSecondary'
-                      component='p'
-                    >
-                      {memory.description}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Link>
-          )}
+          <Typography variant='h5' component='h2' paragraph color='primary'>
+            Воспоминания есть у каждого
+          </Typography>
+          <Typography component='h5' paragraph>
+            Здесь каждый сможет хранить свои воспоминания, отдельно от
+            воспоминаний остальных, под видом картотеки состоящей из карточек, в
+            которых могут быть фотографии и связанные с ними высказывания.
+          </Typography>
+          <Typography component='h5' paragraph>
+            Найти нужное воспоминание можно будет указав фразу, которая может
+            быть в его описании или названии.
+          </Typography>
+          <Typography component='h5' paragraph>
+            Здесь, для примера, показано одно случайное воспоминание, из набора
+            разрешенных пользователями для всеобщего просмотра.
+          </Typography>
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+          <Grid
+            container
+            justify='center'
+            alignContent='center'
+            className={classes.mediaCardContainer}
+          >
+            {memory.user && (
+              <Link
+                to={`/memories/${memory.user._id}`}
+                className={classes.card}
+              >
+                <Card>
+                  <CardActionArea>
+                    <CardMedia
+                      className={classes.media}
+                      image={IMG_PATH + (memory.imgName || NO_IMAGE)}
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant='h5' component='h5'>
+                        {memory.title}
+                      </Typography>
+                      <Typography
+                        variant='body1'
+                        color='textSecondary'
+                        component='p'
+                      >
+                        {memory.description}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </Link>
+            )}
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
-  )
+    )
+  }
 }
