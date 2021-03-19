@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
 const cors = require('cors')
+const appMode = process.env.NODE_ENV
 const { port, mongoUri } = require('config')
 
 const app = express()
@@ -30,9 +31,7 @@ const start = async () => {
       useCreateIndex: true,
     })
 
-    const PORT = 30000
-    const MODE = process.env.NODE_ENV
-    app.listen(PORT, () => console.log(`PORT = ${PORT}\nMODE = ${MODE}`))
+    app.listen(port, () => console.log(`PORT = ${port}\nMODE = ${appMode}`))
   } catch (e) {
     console.log(`Ошибка: `, e.message)
     process.exit(1)

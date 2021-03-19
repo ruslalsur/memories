@@ -22,8 +22,8 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     textDecoration: 'none',
-    fontFamily: 'Roboto',
-    fontSize: '1.6rem',
+    fontFamily: 'Marck Script',
+    fontSize: '2rem',
     color: 'white',
     '&:hover': {
       textShadow: '0px 0px 15px #fff',

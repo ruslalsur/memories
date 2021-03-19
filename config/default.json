@@ -1,6 +1,6 @@
 {
   "static_dir": "client/public",
-  "port": 5005,
-  "mongoUri": "mongodb+srv://rusla:0o9i8u7y@cluster0.c4yxa.mongodb.net/memories?retryWrites=true&w=majority",
+  "port": 5001,
+  "mongoUri": "mongodb://localhost:27017/memories",
   "jvtSecret": "R604658ANsfD78OM"
 }

@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 30,
   },
   media: {
-    height: 0,
+    height: '50vh',
     paddingTop: '56.25%', // 16:9
     cursor: 'pointer',
     filter: 'sepia(100%)',
@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff',
+    cursor: 'pointer',
   },
   btnGroup: {},
   form: {
@@ -114,7 +115,7 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
     setOpen(true)
   }
 
-  const createMemory = async () => {
+  const createUpdateMemory = async (isCreate) => {
     setInfo(null)
     setOpen(false)
     let newState = formData
@@ -123,33 +124,15 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
       if (formData.imgName) {
         const uploadedImgName = await uploadImage(imgFile)
         newState = { ...formData, imgName: uploadedImgName }
-        setFormData(newState)
       }
 
-      const response = await axios.post(`/api/memory`, newState)
-      setCrudedData('create', response.data)
-    } catch (err) {
-      if (err.response) {
-        setInfo(err.response.data.message)
+      if (isCreate) {
+        const response = await axios.post(`/api/memory`, newState)
+        setCrudedData('create', response.data)
       } else {
-        setInfo(err.message)
+        await axios.patch(`/api/memory/${formData._id}`, newState)
+        setCrudedData('update', newState)
       }
-    }
-  }
-
-  const updateMemory = async () => {
-    setInfo(null)
-    setOpen(false)
-    let newState = formData
-
-    try {
-      if (formData.imgName) {
-        const uploadedImgName = await uploadImage(imgFile)
-        newState = { ...formData, imgName: uploadedImgName }
-      }
-
-      await axios.patch(`/api/memory/${formData._id}`, newState)
-      setCrudedData('update', newState)
     } catch (err) {
       if (err.response) {
         setInfo(err.response.data.message)
@@ -295,23 +278,17 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
           />
         </DialogContent>
         <DialogActions>
-          {formData.hasOwnProperty('user') ? (
-            <Button
-              onClick={() => updateMemory()}
-              disabled={!formData.title}
-              color='primary'
-            >
-              Изменить
-            </Button>
-          ) : (
-            <Button
-              onClick={() => createMemory()}
-              disabled={!formData.title}
-              color='primary'
-            >
-              Создать
-            </Button>
-          )}
+          <Button
+            onClick={() =>
+              formData.hasOwnProperty('user')
+                ? createUpdateMemory(false)
+                : createUpdateMemory(true)
+            }
+            disabled={!formData.title}
+            color='primary'
+          >
+            {formData.hasOwnProperty('user') ? 'Изменить' : 'Создать'}
+          </Button>
 
           <Button onClick={() => setOpen(false)} color='primary'>
             Отмена

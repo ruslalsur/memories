@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { MemoryCrud } from '../components/MemoryCrud'
 import { makeStyles } from '@material-ui/core/styles'
+import { blueGrey } from '@material-ui/core/colors'
 import { NO_IMAGE } from '../config'
 import {
   Paper,
@@ -16,6 +17,15 @@ import {
 const useStyles = makeStyles((theme) => ({
   memList: {
     backgroundColor: theme.palette.background.paper,
+  },
+  memListTitle: {
+    color: blueGrey[700],
+    fontFamily: 'Yanone Kaffeesatz',
+    fontSize: '1.3rem',
+  },
+  memsUserName: {
+    color: theme.palette.secondary.light,
+    fontFamily: 'Comfortaa',
   },
   gridList: {
     width: 'auto',
@@ -36,9 +46,6 @@ const useStyles = makeStyles((theme) => ({
       filter: 'grayscale(0%) opacity(80%) sepia(100%)',
     },
     '&:active': { transform: 'scale(0.97)' },
-  },
-  memsUserName: {
-    color: theme.palette.secondary.light,
   },
 }))
 
@@ -101,7 +108,12 @@ export const MemoriesPage = ({ setInfo }) => {
       ) : (
         <>
           <Grid item xs={12}>
-            <Typography variant='h6' component='h2' paragraph color='primary'>
+            <Typography
+              variant='h6'
+              component='h2'
+              paragraph
+              className={classes.memListTitle}
+            >
               Воспоминания пользователя{' '}
               <span className={classes.memsUserName}>
                 {memories[0].user.username}
