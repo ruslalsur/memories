@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { DropzoneArea } from 'material-ui-dropzone'
 import { makeStyles } from '@material-ui/core/styles'
-import { NO_IMAGE } from '../config'
+import { IMAGES_PATH, NO_IMAGE, NO_AVATAR } from '../config'
 import {
   Dialog,
   DialogActions,
@@ -67,7 +67,6 @@ const useStyles = makeStyles((theme) => ({
 
 export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
   const classes = useStyles()
-  const IMG_PATH = process.env.PUBLIC_URL + '/img/'
   const initFormData = {
     title: '',
     description: '',
@@ -184,7 +183,7 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
             avatar={
               <Avatar
                 alt='avatar'
-                src={IMG_PATH + data.user.avatar}
+                src={IMAGES_PATH + (data.user.avatar || NO_AVATAR)}
                 aria-label='avatar'
                 className={classes.avatar}
               />
@@ -194,7 +193,7 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
           />
           <CardMedia
             className={classes.media}
-            image={IMG_PATH + (data.imgName || NO_IMAGE)}
+            image={IMAGES_PATH + (data.imgName || NO_IMAGE)}
             title='Увеличить'
             onClick={() => setBackdropOpen(true)}
           />
@@ -220,7 +219,7 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
           className={classes.backdrop}
           style={{
             background: `url(${
-              IMG_PATH + (data.imgName || NO_IMAGE)
+              IMAGES_PATH + (data.imgName || NO_IMAGE)
             }) 0 0/cover no-repeat`,
           }}
           open={backdropOpen}
@@ -272,7 +271,9 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
             acceptedFiles={['image/*']}
             filesLimit={1}
             showAlerts={['error']}
-            initialFiles={formData.imgName ? [IMG_PATH + formData.imgName] : []}
+            initialFiles={
+              formData.imgName ? [IMAGES_PATH + formData.imgName] : []
+            }
             dropzoneClass={classes.dropZone}
             dropzoneParagraphClass={classes.dropParagrarh}
           />

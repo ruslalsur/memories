@@ -4,7 +4,7 @@ import axios from 'axios'
 import { MemoryCrud } from '../components/MemoryCrud'
 import { makeStyles } from '@material-ui/core/styles'
 import { blueGrey } from '@material-ui/core/colors'
-import { NO_IMAGE } from '../config'
+import { IMAGES_PATH, NO_IMAGE } from '../config'
 import {
   Paper,
   Typography,
@@ -56,7 +56,6 @@ export const MemoriesPage = ({ setInfo }) => {
   const [memories, setMemories] = useState([])
   const [selected, select] = useState(0)
   const { userId } = useParams()
-  const IMG_PATH = process.env.PUBLIC_URL + '/img/'
 
   useEffect(() => {
     const fetchMemories = async () => {
@@ -140,7 +139,7 @@ export const MemoriesPage = ({ setInfo }) => {
                     className={classes.gridListTile}
                   >
                     <img
-                      src={IMG_PATH + (memory.imgName || NO_IMAGE)}
+                      src={IMAGES_PATH + (memory.imgName || NO_IMAGE)}
                       alt={memory.imgName}
                     />
                     <GridListTileBar title={memory.title} />

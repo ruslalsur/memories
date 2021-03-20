@@ -1,5 +1,5 @@
 {
-  "static_dir": "client/public",
+  "storage_dir": "storage",
   "port": 5001,
   "mongoUri": "mongodb://localhost:27017/memories",
   "jvtSecret": "R604658ANsfD78OM"

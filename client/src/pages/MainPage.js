@@ -18,7 +18,7 @@ import {
 } from '@material-ui/core'
 import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications'
 import { blueGrey } from '@material-ui/core/colors'
-import { NO_IMAGE, RND_MEMORY_INTERVAL } from '../config.js'
+import { IMAGES_PATH, NO_IMAGE, RND_MEMORY_INTERVAL } from '../config.js'
 
 const useStyles = makeStyles((theme) => ({
   mainPageLeftSide: {
@@ -249,7 +249,7 @@ export const MainPage = ({ setInfo }) => {
                   <CardActionArea>
                     <CardMedia
                       className={classes.media}
-                      image={IMG_PATH + (memory.imgName || NO_IMAGE)}
+                      image={IMAGES_PATH + (memory.imgName || NO_IMAGE)}
                     />
                     <CardContent>
                       <Typography

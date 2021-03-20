@@ -1,7 +1,7 @@
 const Memory = require('../models/Memory')
 const path = require('path')
-const { unlink, rename } = require('fs').promises
-const { static_dir } = require('config')
+const { unlink } = require('fs').promises
+const { storage_dir } = require('config')
 
 class MemoryController {
   async getMemories(req, res) {
@@ -58,10 +58,8 @@ class MemoryController {
       const candidate = await Memory.findOne({ title: req.body.title })
       if (candidate) {
         if (imgName) {
-          await unlink(path.join(static_dir, 'img', imgName), (err) => {
-            if (err) {
-              console.log(`Ошибка при удалении ${imgName}: `, err)
-            }
+          await unlink(path.join(storage_dir, imgName), (err) => {
+            if (err) console.log(`Ошибка при удалении ${imgName}: `, err)
           })
         }
 
@@ -94,10 +92,8 @@ class MemoryController {
 
       const { imgName } = willUpdate
       if (imgName) {
-        await unlink(path.join(static_dir, 'img', imgName), (err) => {
-          if (err) {
-            console.log(`Ошибка при удалении ${imgName}: `, err)
-          }
+        await unlink(path.join(storage_dir, imgName), (err) => {
+          if (err) console.log(`Ошибка при удалении ${imgName}: `, err)
         })
       }
 
@@ -132,10 +128,8 @@ class MemoryController {
 
       const { imgName } = deleted
       if (imgName) {
-        await unlink(path.join(static_dir, 'img', imgName), (err) => {
-          if (err) {
-            console.log(`Ошибка при удалении ${imgName}: `, err)
-          }
+        await unlink(path.join(storage_dir, imgName), (err) => {
+          if (err) console.log(`Ошибка при удалении ${imgName}: `, err)
         })
       }
 
@@ -146,17 +140,7 @@ class MemoryController {
   }
 
   async upload(req, res) {
-    const { filename, path } = req.file
-
-    try {
-      await rename(path, `${static_dir}/img/${filename}`, (err) => {
-        if (err) throw err
-      })
-
-      return res.status(201).end(filename)
-    } catch (err) {
-      console.log(`Ошибка при премешении ${filename} в ${part}: `, err)
-    }
+    return res.status(201).end(req.file.filename)
   }
 }
 
