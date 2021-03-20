@@ -77,6 +77,11 @@ export const MemoriesPage = ({ setInfo }) => {
     fetchMemories()
   }, [])
 
+  const handlleMemoryClick = (index) => {
+    setInfo(null)
+    select(index)
+  }
+
   const updateMemoriesState = (crudOps, crudedData) => {
     switch (crudOps) {
       case 'create':
@@ -131,10 +136,7 @@ export const MemoriesPage = ({ setInfo }) => {
                 {memories.map((memory, index) => (
                   <GridListTile
                     key={memory._id}
-                    onClick={() => {
-                      setInfo(null)
-                      select(index)
-                    }}
+                    onClick={() => handlleMemoryClick(index)}
                     className={classes.gridListTile}
                   >
                     <img
