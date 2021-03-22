@@ -6,7 +6,7 @@ const validate = require('../middleware/validateMiddleware')
 const upload = require('../middleware/uploadMiddleware')
 
 router.get(
-  '/user/:id',
+  '/user/:id/page/:page/perPage/:perPage',
   [
     check('id')
       .isMongoId()

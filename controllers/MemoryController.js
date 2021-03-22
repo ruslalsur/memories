@@ -5,17 +5,25 @@ const { storage_dir } = require('config')
 
 class MemoryController {
   async getMemories(req, res) {
-    const { id } = req.params
+    const { id, page, perPage } = req.params
 
     try {
       const memories = await Memory.find({
         user: { _id: id },
         shared: true,
       })
+        .limit(+perPage)
+        .skip((+page - 1) * +perPage)
+
+      const totalMemories = await Memory.countDocuments()
+      const totalPages = Math.ceil(totalMemories / +perPage)
 
       if (!memories.length) throw new Error(`Нет воспоминаний!`)
 
-      return res.status(200).json(memories)
+      return res.status(200).json({
+        memories,
+        totalPages,
+      })
     } catch (err) {
       console.log(err)
       return res.status(400).json({

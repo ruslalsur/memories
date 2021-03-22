@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link, Redirect } from 'react-router-dom'
 import axios from 'axios'
+import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications'
+import { blueGrey } from '@material-ui/core/colors'
+import { IMAGES_PATH, NO_IMAGE, RND_MEMORY_INTERVAL } from '../config.js'
+import { Context } from '../context'
 import {
   Grid,
   Box,
@@ -16,9 +20,6 @@ import {
   ListItem,
   ListItemText,
 } from '@material-ui/core'
-import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications'
-import { blueGrey } from '@material-ui/core/colors'
-import { IMAGES_PATH, NO_IMAGE, RND_MEMORY_INTERVAL } from '../config.js'
 
 const useStyles = makeStyles((theme) => ({
   mainPageLeftSide: {
@@ -69,10 +70,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const MainPage = ({ setInfo }) => {
+export const MainPage = () => {
   const [memory, setMemory] = useState({})
   const classes = useStyles()
-  const IMG_PATH = process.env.PUBLIC_URL + 'img/'
+  const { setInfo } = useContext(Context)
 
   useEffect(() => {
     const cleanUp = () => {

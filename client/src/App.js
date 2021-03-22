@@ -1,12 +1,10 @@
 import React from 'react'
-
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import { MainPage } from '../pages/MainPage'
-import { MemoriesPage } from '../pages/MemoriesPage'
-import { SignIn } from '../components/SignIn'
-import { SignUp } from '../components/SignUp'
-import { Layout } from '../components/Layout'
-import './app.css'
+import { MainPage } from './pages/MainPage'
+import { MemoriesPage } from './pages/MemoriesPage'
+import { SignIn } from './components/SignIn'
+import { SignUp } from './components/SignUp'
+import { Layout } from './components/Layout'
 
 export const App = () => {
   return (

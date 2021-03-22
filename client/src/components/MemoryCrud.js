@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
+import { Context } from '../context'
 import { DropzoneArea } from 'material-ui-dropzone'
 import { makeStyles } from '@material-ui/core/styles'
 import { IMAGES_PATH, NO_IMAGE, NO_AVATAR } from '../config'
@@ -50,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff',
     cursor: 'pointer',
+    margin: 20,
   },
   btnGroup: {},
   form: {
@@ -65,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
+export const MemoryCrud = ({ data, setCrudedData }) => {
   const classes = useStyles()
   const initFormData = {
     title: '',
@@ -78,6 +80,7 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState(initFormData)
   const [imgFile, setImgFile] = useState(undefined)
+  const { setInfo } = useContext(Context)
 
   useEffect(() => {
     if (!data) {
@@ -125,13 +128,16 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
         newState = { ...formData, imgName: uploadedImgName }
       }
 
+      let todo = 'создано'
       if (isCreate) {
         const response = await axios.post(`/api/memory`, newState)
         setCrudedData('create', response.data)
       } else {
         await axios.patch(`/api/memory/${formData._id}`, newState)
         setCrudedData('update', newState)
+        todo = 'изменено'
       }
+      setInfo(`Воспоминание с заголовком "${newState.title}" было ${todo}`)
     } catch (err) {
       if (err.response) {
         setInfo(err.response.data.message)
@@ -149,7 +155,8 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
     setInfo(null)
 
     try {
-      await axios.delete(`/api/memory/${data._id}`)
+      const deleted = await axios.delete(`/api/memory/${data._id}`)
+      setInfo(`Воспоминание с заголовком "${deleted.data.title}" было удалено`)
       setCrudedData('delete')
     } catch (err) {
       setInfo(err.message)
@@ -216,11 +223,12 @@ export const MemoryCrud = ({ data, setCrudedData, setInfo }) => {
 
       {data && (
         <Backdrop
+          transitionDuration={1000}
           className={classes.backdrop}
           style={{
             background: `url(${
               IMAGES_PATH + (data.imgName || NO_IMAGE)
-            }) 0 0/cover no-repeat`,
+            }) center/contain no-repeat`,
           }}
           open={backdropOpen}
           onClick={() => setBackdropOpen(false)}

@@ -3,6 +3,7 @@ import { Container } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
 import { Header } from './Header'
 import { makeStyles } from '@material-ui/core/styles'
+import { Context } from '../context'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     overflowX: 'auto',
     alignSelf: 'stretch,',
-    marginTop: '2rem',
+    marginTop: '1.3rem',
   },
   footer: {
     marginTop: 10,
@@ -28,15 +29,17 @@ export const Layout = ({ children }) => {
   const childrenClone = cloneElement(children, { setInfo })
 
   return (
-    <div className={classes.root}>
-      <Header appName={process.env.REACT_APP_NAME} />
-      <Container className={classes.content}>{childrenClone}</Container>
-      {info && (
-        <Alert className={classes.footer} severity='warning'>
-          <AlertTitle>Внимание!</AlertTitle>
-          {info}
-        </Alert>
-      )}
-    </div>
+    <Context.Provider value={{ setInfo }}>
+      <div className={classes.root}>
+        <Header appName={process.env.REACT_APP_NAME} />
+        <Container className={classes.content}>{childrenClone}</Container>
+        {info && (
+          <Alert className={classes.footer} severity='warning'>
+            <AlertTitle>Внимание!</AlertTitle>
+            {info}
+          </Alert>
+        )}
+      </div>
+    </Context.Provider>
   )
 }

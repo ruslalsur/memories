@@ -8,7 +8,7 @@ import { blueGrey } from '@material-ui/core/colors'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    height: '58px',
+    height: '48px',
     justifyContent: 'center',
     backgroundColor: blueGrey[500],
   },

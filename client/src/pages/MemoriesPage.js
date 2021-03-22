@@ -1,22 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { MemoryCrud } from '../components/MemoryCrud'
+import { Memories } from '../components/Memories'
 import { makeStyles } from '@material-ui/core/styles'
 import { blueGrey } from '@material-ui/core/colors'
-import { IMAGES_PATH, NO_IMAGE } from '../config'
-import {
-  Paper,
-  Typography,
-  Grid,
-  GridList,
-  GridListTile,
-  GridListTileBar,
-} from '@material-ui/core'
+import { Typography, Grid, Paper } from '@material-ui/core'
+import { Pagination } from '@material-ui/lab'
+import { MEM_PER_PAGE } from '../config.js'
+import { Context } from '../context'
 
 const useStyles = makeStyles((theme) => ({
   memList: {
     backgroundColor: theme.palette.background.paper,
+    paddingBottom: 10,
   },
   memListTitle: {
     color: blueGrey[700],
@@ -49,44 +46,43 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export const MemoriesPage = ({ setInfo }) => {
+export const MemoriesPage = () => {
   const classes = useStyles()
+  const { setInfo } = useContext(Context)
 
   const [loading, setLoading] = useState(true)
   const [memories, setMemories] = useState([])
   const [selected, select] = useState(0)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(5)
   const { userId } = useParams()
 
-  useEffect(() => {
-    const fetchMemories = async () => {
-      try {
-        const response = await axios.get(`/api/memory/user/${userId}`)
-        setMemories(response.data)
-        setLoading(false)
-      } catch (err) {
-        if (err.response) {
-          setInfo(err.response.data.message)
-        } else {
-          setInfo(err.message)
-        }
-        setLoading(false)
+  const fetchMemories = async (p) => {
+    select(0)
+    try {
+      const response = await axios.get(
+        `/api/memory/user/${userId}/page/${p}/perPage/${MEM_PER_PAGE}`
+      )
+      setMemories(response.data.memories)
+      setTotalPages(response.data.totalPages)
+      setLoading(false)
+    } catch (err) {
+      if (err.response) {
+        setInfo(err.response.data.message)
+      } else {
+        setInfo(err.message)
       }
+      setLoading(false)
+      setMemories([])
     }
-
-    fetchMemories()
-  }, [])
-
-  const handlleMemoryClick = (index) => {
-    setInfo(null)
-    select(index)
   }
+
+  useEffect(() => {
+    fetchMemories(page)
+  }, [page])
 
   const updateMemoriesState = (crudOps, crudedData) => {
     switch (crudOps) {
-      case 'create':
-        setMemories([...memories, crudedData])
-        select(memories.length)
-        break
       case 'update':
         setMemories(
           memories.map((item, index) =>
@@ -94,11 +90,13 @@ export const MemoriesPage = ({ setInfo }) => {
           )
         )
         break
+      case 'create':
       case 'delete':
-        if (memories.length) {
-          select(0)
-        }
-        setMemories((memories) => memories.filter((_, i) => i !== selected))
+        // if (page != 1) {
+        //   setPage(1)
+        // } else {
+        fetchMemories(1)
+        // }
         break
       default:
         break
@@ -115,7 +113,6 @@ export const MemoriesPage = ({ setInfo }) => {
             <Typography
               variant='h6'
               component='h2'
-              paragraph
               className={classes.memListTitle}
             >
               Воспоминания пользователя{' '}
@@ -126,26 +123,25 @@ export const MemoriesPage = ({ setInfo }) => {
           </Grid>
           <Grid item xs={12} md={5}>
             <Paper className={classes.memList}>
-              <GridList
-                spacing={5}
-                cellHeight={160}
-                cols={3}
-                className={classes.gridList}
-              >
-                {memories.map((memory, index) => (
-                  <GridListTile
-                    key={memory._id}
-                    onClick={() => handlleMemoryClick(index)}
-                    className={classes.gridListTile}
-                  >
-                    <img
-                      src={IMAGES_PATH + (memory.imgName || NO_IMAGE)}
-                      alt={memory.imgName}
-                    />
-                    <GridListTileBar title={memory.title} />
-                  </GridListTile>
-                ))}
-              </GridList>
+              <Grid container justify='center' spacing={1}>
+                <Grid item xs={12}>
+                  <Memories select={select} memories={memories} />
+                </Grid>
+                <Grid item>
+                  <Grid container justify='center'>
+                    {totalPages > 1 && (
+                      <Pagination
+                        count={totalPages}
+                        page={page}
+                        onChange={(event, value) => setPage(value)}
+                        variant='outlined'
+                        color='secondary'
+                        size='small'
+                      />
+                    )}
+                  </Grid>
+                </Grid>
+              </Grid>
             </Paper>
           </Grid>
         </>
@@ -155,7 +151,6 @@ export const MemoriesPage = ({ setInfo }) => {
         <Grid container justify='center'>
           {!loading && (
             <MemoryCrud
-              setInfo={setInfo}
               data={memories[selected]}
               setCrudedData={updateMemoriesState}
             />
