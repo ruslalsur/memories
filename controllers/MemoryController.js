@@ -15,14 +15,13 @@ class MemoryController {
         .limit(+perPage)
         .skip((+page - 1) * +perPage)
 
-      const totalMemories = await Memory.countDocuments()
-      const totalPages = Math.ceil(totalMemories / +perPage)
+      const allMemoriesCount = await Memory.countDocuments()
 
       if (!memories.length) throw new Error(`Нет воспоминаний!`)
 
       return res.status(200).json({
         memories,
-        totalPages,
+        allMemoriesCount,
       })
     } catch (err) {
       console.log(err)

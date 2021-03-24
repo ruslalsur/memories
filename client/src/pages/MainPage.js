@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: 'none',
   },
   media: {
-    height: '45vh',
+    height: '55vh',
     filter: 'opacity(0.9)',
     '&:hover': {
       filter: 'opacity(1)',

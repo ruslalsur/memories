@@ -51,6 +51,7 @@ export const MemoriesPage = () => {
   const { setInfo } = useContext(Context)
 
   const [loading, setLoading] = useState(true)
+  const [allMemoriesCount, setAllMemoriesCount] = useState(0)
   const [memories, setMemories] = useState([])
   const [selected, select] = useState(0)
   const [page, setPage] = useState(1)
@@ -58,13 +59,13 @@ export const MemoriesPage = () => {
   const { userId } = useParams()
 
   const fetchMemories = async (p) => {
-    select(0)
     try {
       const response = await axios.get(
         `/api/memory/user/${userId}/page/${p}/perPage/${MEM_PER_PAGE}`
       )
       setMemories(response.data.memories)
-      setTotalPages(response.data.totalPages)
+      setAllMemoriesCount(response.data.allMemoriesCount)
+      setTotalPages(Math.ceil(response.data.allMemoriesCount / MEM_PER_PAGE))
       setLoading(false)
     } catch (err) {
       if (err.response) {
@@ -79,9 +80,17 @@ export const MemoriesPage = () => {
 
   useEffect(() => {
     fetchMemories(page)
-  }, [page])
+    select(0)
+  }, [])
+
+  const handlePagination = (value) => {
+    select(0)
+    fetchMemories(value)
+    setPage(value)
+  }
 
   const updateMemoriesState = (crudOps, crudedData) => {
+    const balance = allMemoriesCount % MEM_PER_PAGE
     switch (crudOps) {
       case 'update':
         setMemories(
@@ -91,12 +100,21 @@ export const MemoriesPage = () => {
         )
         break
       case 'create':
+        if (balance) {
+          handlePagination(totalPages)
+          select(balance - 1)
+        } else {
+          handlePagination(totalPages + 1)
+        }
+        select(0)
+        break
       case 'delete':
-        // if (page != 1) {
-        //   setPage(1)
-        // } else {
-        fetchMemories(1)
-        // }
+        if (memories.length !== 1) {
+          handlePagination(page)
+        } else {
+          handlePagination(page - 1)
+        }
+        select(0)
         break
       default:
         break
@@ -133,7 +151,7 @@ export const MemoriesPage = () => {
                       <Pagination
                         count={totalPages}
                         page={page}
-                        onChange={(event, value) => setPage(value)}
+                        onChange={(event, value) => handlePagination(value)}
                         variant='outlined'
                         color='secondary'
                         size='small'
