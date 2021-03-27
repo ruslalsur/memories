@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { MainPage } from './pages/MainPage'
 import { MemoriesPage } from './pages/MemoriesPage'
 import { Sign } from './components/Sign'
-import { SignUp } from './components/SignUp'
 import { Layout } from './components/Layout'
+import { Box } from '@material-ui/core'
 
 export const App = () => {
   return (
@@ -21,14 +21,14 @@ export const App = () => {
           </Layout>
         </Route>
         <Route path='/signup'>
-          <Layout>
+          <Box height='100vh'>
             <Sign signup />
-          </Layout>
+          </Box>
         </Route>
         <Route path='/signin'>
-          <Layout>
+          <Box height='100vh'>
             <Sign />
-          </Layout>
+          </Box>
         </Route>
       </Switch>
     </Router>

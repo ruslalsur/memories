@@ -9,14 +9,17 @@ const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
     height: '100vh',
-    display: 'grid',
-    gridTemplateRows: 'auto 1fr auto',
+    display: 'flex',
+    flexDirection: 'column',
     overflowY: 'hidden',
+  },
+  header: {
+    flex: '0 0 auto',
   },
   content: {
     overflowX: 'auto',
-    alignSelf: 'stretch,',
-    marginTop: '1.3rem',
+    flex: '1 1 100%',
+    paddingTop: '1rem',
   },
   footer: {
     marginTop: 10,
@@ -27,7 +30,8 @@ export const Layout = ({ children }) => {
   const classes = useStyles()
   const [info, setInfo] = useState(null)
   const childrenClone = cloneElement(children, { setInfo })
-  const authorizedUser = { _id: '60330e0de96e077b16b6690e' }
+  // const authorizedUser = { _id: '60330e0de96e077b16b6690e' }
+  const authorizedUser = null
 
   return (
     <Context.Provider value={{ setInfo, authorizedUser }}>

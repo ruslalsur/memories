@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles, withStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import signin from '../assets/images/signin.jpg'
 import signup from '../assets/images/signup.jpg'
 import { teal } from '@material-ui/core/colors'
@@ -12,14 +12,20 @@ import {
   ButtonGroup,
   Grid,
   Box,
+  Hidden,
 } from '@material-ui/core'
 import axios from 'axios'
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minHeight: '97%',
+    minHeight: '100%',
+    overflowX: 'hidden',
   },
-
+  leftSide: {
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: '100%',
+  },
   rightSide: {
     minWidth: '100%',
     minHeight: '100%',
@@ -43,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const Sign = (props) => {
   const classes = useStyles()
+  let history = useHistory()
 
   const SignInButton = withStyles((theme) => ({
     root: {
@@ -74,7 +81,7 @@ export const Sign = (props) => {
     },
   }))(Button)
 
-  const [isSignUp, setIsSignUp] = useState(props.hasOwnProperty('signup'))
+  // const [isSignUp, setIsSignUp] = useState(props.hasOwnProperty('signup'))
   const [form, setForm] = useState({
     username: '',
     password: '',
@@ -84,50 +91,74 @@ export const Sign = (props) => {
 
   useEffect(() => {
     setForm({ ...form, password: '', repassword: '' })
-  }, [isSignUp])
+    setErrors(null)
+  }, [])
+
+  const validate = () => {
+    let errorMsg = {
+      username: [],
+      password: [],
+      repassword: [],
+    }
+
+    if (!form.username) errorMsg.username.push('не может быть пустым')
+    if (form.username.length < 3) errorMsg.username.push('не менее 3 символов')
+
+    if (!form.password) errorMsg.password.push('не может быть пустым')
+    if (form.password.length < 3) errorMsg.password.push('не менее 3 символов')
+
+    if (props?.signup) {
+      if (!form.repassword) errorMsg.repassword.push('не может быть пустым')
+      if (form.repassword.length < 3)
+        errorMsg.repassword.push('не менее 3 символов')
+      if (form.password !== form.repassword)
+        errorMsg.repassword.push('пароли не совпадают')
+    }
+
+    if (Object.values(errorMsg).every((item) => item.length === 0)) {
+      setErrors(null)
+      return true
+    } else {
+      setErrors(errorMsg)
+      return false
+    }
+  }
 
   const HandleFormDataChange = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value })
   }
 
-  const HandleOnBlur = (event) => {
-    setErrors(null)
-    const name = event.target.name
-    if (form.name === '')
-      setErrors({ ...errors, [name]: 'поле не может быть пустым' })
-    if (form[name].length < 3)
-      setErrors({ ...errors, [name]: 'длинна должна быть не менее 3 символов' })
-  }
-
   const handleSign = () => {
-    const url = isSignUp ? `/api/user/signup` : `/api/user/signin`
-    axios
-      .post(url, { form })
-      .then((response) => console.log(`LOG response.data: `, response.data))
-      .catch((err) => console.log(`Ошибка: `, err))
+    if (validate()) {
+      const url = props?.signup ? `/api/user/signup` : `/api/user/signin`
+      axios
+        .post(url, { form })
+        .then((response) => console.log(`LOG response.data: `, response.data))
+        .catch((err) => console.log(`Ошибка: `, err))
+    }
   }
 
   return (
-    <Grid container spacing={2} className={classes.root}>
-      <Grid item xs={12} md={6}>
-        <Box
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            minHeight: '100%',
-            color: isSignUp ? pink[500] : teal[500],
-            background: `url(${
-              isSignUp ? signup : signin
-            }) center/cover no-repeat`,
-          }}
-        >
-          <Typography className={classes.greeting} variant='h5'>
-            {isSignUp ? 'Создайте учетную запись' : 'Добро пожаловать'}
-          </Typography>
-        </Box>
-      </Grid>
+    <Grid container className={classes.root}>
+      <Hidden only='xs'>
+        <Grid item xs={12} sm={7}>
+          <Box
+            className={classes.leftSide}
+            style={{
+              color: props?.signup ? pink[500] : teal[500],
+              background: `url(${
+                props?.signup ? signup : signin
+              }) center/cover no-repeat`,
+            }}
+          >
+            <Typography className={classes.greeting} variant='h5'>
+              {props?.signup ? 'Создайте учетную запись' : 'Добро пожаловать'}
+            </Typography>
+          </Box>
+        </Grid>
+      </Hidden>
 
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} sm={5}>
         <Grid
           container
           spacing={5}
@@ -143,11 +174,11 @@ export const Sign = (props) => {
               color='primary'
               aria-label='text primary button group'
             >
-              <Button onClick={() => setIsSignUp(false)}>
+              <Button onClick={() => history.push('/signin')}>
                 <Typography
                   style={{
                     color: teal[600],
-                    boxShadow: !isSignUp && `0 1px 0px ${teal[600]}`,
+                    boxShadow: !props?.signup && `0 1px 0px ${teal[600]}`,
                   }}
                   variant='button'
                   display='block'
@@ -155,11 +186,12 @@ export const Sign = (props) => {
                   вход
                 </Typography>
               </Button>
-              <Button onClick={() => setIsSignUp(true)}>
+
+              <Button onClick={() => history.push('/signup')}>
                 <Typography
                   style={{
                     color: pink[600],
-                    boxShadow: isSignUp && `0 1px 0px ${pink[600]}`,
+                    boxShadow: props?.signup && `0 1px 0px ${pink[600]}`,
                   }}
                   variant='button'
                   display='block'
@@ -169,28 +201,35 @@ export const Sign = (props) => {
               </Button>
             </ButtonGroup>
           </Grid>
-          <Grid item style={{ width: '65%' }}>
+          <Grid item style={{ width: '90%' }}>
             <Grid container spacing={7} direction='column' wrap='nowrap'>
               <Grid item>
                 <TextField
-                  error={false}
-                  helperText={errors?.username.join('; ')}
+                  autoFocus
+                  error={!!errors?.username.length}
+                  helperText={
+                    !!errors?.username.length
+                      ? errors?.username.join(' и ')
+                      : ''
+                  }
                   value={form.username}
                   onChange={HandleFormDataChange}
-                  onBlur={HandleOnBlur}
                   name='username'
                   label='Логин'
                   fullWidth
                   variant='outlined'
                 />
               </Grid>
-              {/* <Grid item>
+              <Grid item>
                 <TextField
-                  error={errors.length}
-                  helperText={errors.join('; ')}
+                  error={!!errors?.password.length}
+                  helperText={
+                    !!errors?.password.length
+                      ? errors?.password.join(' и ')
+                      : ''
+                  }
                   value={form.password}
                   onChange={HandleFormDataChange}
-                  onBlur={HandleOnBlur}
                   name='password'
                   label='Пароль'
                   type='password'
@@ -198,14 +237,17 @@ export const Sign = (props) => {
                   variant='outlined'
                 />
               </Grid>
-              {isSignUp && (
+              {props?.signup && (
                 <Grid item>
                   <TextField
-                    error={errors.length}
-                    helperText={errors.join('; ')}
+                    error={!!errors?.repassword.length}
+                    helperText={
+                      !!errors?.repassword.length
+                        ? errors?.repassword.join(' и ')
+                        : ''
+                    }
                     value={form.repassword}
                     onChange={HandleFormDataChange}
-                    onBlur={HandleOnBlur}
                     name='repassword'
                     label='Повтор пароля'
                     type='password'
@@ -213,25 +255,17 @@ export const Sign = (props) => {
                     variant='outlined'
                   />
                 </Grid>
-              )} */}
+              )}
             </Grid>
           </Grid>
 
           <Grid item xs={12} className={classes.doneButton}>
-            {isSignUp ? (
-              <SignUpButton
-                disabled={errors}
-                variant='contained'
-                onClick={() => handleSign}
-              >
+            {props?.signup ? (
+              <SignUpButton variant='contained' onClick={() => handleSign()}>
                 Зарегистрироваться
               </SignUpButton>
             ) : (
-              <SignInButton
-                disabled={errors}
-                variant='contained'
-                onClick={() => handleSign}
-              >
+              <SignInButton variant='contained' onClick={() => handleSign()}>
                 Войти
               </SignInButton>
             )}
