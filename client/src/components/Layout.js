@@ -27,9 +27,10 @@ export const Layout = ({ children }) => {
   const classes = useStyles()
   const [info, setInfo] = useState(null)
   const childrenClone = cloneElement(children, { setInfo })
+  const authorizedUser = { _id: '60330e0de96e077b16b6690e' }
 
   return (
-    <Context.Provider value={{ setInfo }}>
+    <Context.Provider value={{ setInfo, authorizedUser }}>
       <div className={classes.root}>
         <Header appName={process.env.REACT_APP_NAME} />
         <Container className={classes.content}>{childrenClone}</Container>

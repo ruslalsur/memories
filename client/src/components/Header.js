@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { AccountCircle } from '@material-ui/icons'
 import { Container, AppBar, Toolbar, IconButton, Box } from '@material-ui/core'
-import { blueGrey } from '@material-ui/core/colors'
+import { teal } from '@material-ui/core/colors'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     height: '48px',
     justifyContent: 'center',
-    backgroundColor: blueGrey[500],
+    backgroundColor: teal[600],
   },
   button: {
     color: 'white',
@@ -45,7 +45,7 @@ export const Header = ({ appName }) => {
             </Link>
           </Box>
           <Box className={classes.toolbar__right}>
-            <Link to='/auth' className={classes.button}>
+            <Link to='/signin' className={classes.button}>
               <IconButton
                 aria-label='account of current user'
                 aria-controls='menu-appbar'

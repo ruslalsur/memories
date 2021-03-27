@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const MemoriesPage = () => {
   const classes = useStyles()
-  const { setInfo } = useContext(Context)
+  const { setInfo, authorizedUser } = useContext(Context)
 
   const [loading, setLoading] = useState(true)
   const [allMemoriesCount, setAllMemoriesCount] = useState(0)

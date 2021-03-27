@@ -15,7 +15,7 @@ class UserController {
     }
   }
 
-  async register(req, res) {
+  async signUp(req, res) {
     try {
       const validationErrors = validationResult(req)
       if (!validationErrors.isEmpty()) {
@@ -56,7 +56,7 @@ class UserController {
     }
   }
 
-  async login(req, res) {
+  async signIn(req, res) {
     try {
       const { username, password } = req.body
       const user = await User.findOne({ username })

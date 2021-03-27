@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { MainPage } from './pages/MainPage'
 import { MemoriesPage } from './pages/MemoriesPage'
-import { SignIn } from './components/SignIn'
+import { Sign } from './components/Sign'
 import { SignUp } from './components/SignUp'
 import { Layout } from './components/Layout'
 
@@ -20,14 +20,14 @@ export const App = () => {
             <MemoriesPage />
           </Layout>
         </Route>
-        <Route path='/auth'>
+        <Route path='/signup'>
           <Layout>
-            <SignIn />
+            <Sign signup />
           </Layout>
         </Route>
-        <Route path='/reg'>
+        <Route path='/signin'>
           <Layout>
-            <SignUp />
+            <Sign />
           </Layout>
         </Route>
       </Switch>

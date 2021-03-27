@@ -8,23 +8,27 @@ router.get('/', UserController.getUsers)
 // router.get('/', rolesOnly(['USER']), UserController.getUsers)
 
 router.post(
-  '/register',
+  '/signup',
   [
     check('username', 'Имя не может быть пустым').trim().notEmpty(),
+    check('password', 'Пароль не может быть пустым').exists(),
     check('password', 'Минимальная длина пароля 3 символа').isLength({
       min: 3,
     }),
   ],
-  UserController.register
+  UserController.signUp
 )
 
 router.post(
-  '/login',
+  '/signin',
   [
     check('username', 'Имя не может быть пустым').trim().notEmpty(),
     check('password', 'Пароль не может быть пустым').exists(),
+    check('password', 'Минимальная длина пароля 3 символа').isLength({
+      min: 3,
+    }),
   ],
-  UserController.login
+  UserController.signIn
 )
 
 module.exports = router
