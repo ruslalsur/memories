@@ -89,7 +89,6 @@ export const Sign = (props) => {
     },
   }))(Button)
 
-  // const [isSignUp, setIsSignUp] = useState(props.hasOwnProperty('signup'))
   const [form, setForm] = useState({
     username: '',
     password: '',
@@ -98,9 +97,9 @@ export const Sign = (props) => {
   const [errors, setErrors] = useState(null)
 
   useEffect(() => {
-    setForm({ ...form, password: '', repassword: '' })
     setErrors(null)
-  }, [])
+    setForm({ ...form, password: '', repassword: '' })
+  }, [props.signup])
 
   const validate = () => {
     let errorMsg = {
@@ -115,12 +114,14 @@ export const Sign = (props) => {
     if (!form.password) errorMsg.password.push('не может быть пустым')
     if (form.password.length < 3) errorMsg.password.push('не менее 3 символов')
 
-    if (props?.signup) {
+    if (props.signup) {
       if (!form.repassword) errorMsg.repassword.push('не может быть пустым')
       if (form.repassword.length < 3)
         errorMsg.repassword.push('не менее 3 символов')
-      if (form.password !== form.repassword)
+      if (form.password !== form.repassword) {
+        errorMsg.password.push('пароли не совпадают')
         errorMsg.repassword.push('пароли не совпадают')
+      }
     }
 
     if (Object.values(errorMsg).every((item) => item.length === 0)) {
