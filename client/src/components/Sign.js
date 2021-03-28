@@ -5,8 +5,10 @@ import signin from '../assets/images/signin.jpg'
 import signup from '../assets/images/signup.jpg'
 import { teal } from '@material-ui/core/colors'
 import { pink } from '@material-ui/core/colors'
+import HomeIcon from '@material-ui/icons/Home'
 import {
   Button,
+  IconButton,
   TextField,
   Typography,
   ButtonGroup,
@@ -22,9 +24,15 @@ const useStyles = makeStyles((theme) => ({
     overflowX: 'hidden',
   },
   leftSide: {
+    position: 'relative',
     display: 'flex',
     justifyContent: 'center',
     minHeight: '100%',
+  },
+  backBtn: {
+    position: 'absolute',
+    top: 1,
+    left: 1,
   },
   rightSide: {
     minWidth: '100%',
@@ -151,6 +159,11 @@ export const Sign = (props) => {
               }) center/cover no-repeat`,
             }}
           >
+            <Box className={classes.backBtn}>
+              <IconButton onClick={() => history.push('/')} aria-label='back'>
+                <HomeIcon />
+              </IconButton>
+            </Box>
             <Typography className={classes.greeting} variant='h5'>
               {props?.signup ? 'Создайте учетную запись' : 'Добро пожаловать'}
             </Typography>
