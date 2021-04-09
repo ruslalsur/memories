@@ -8,16 +8,15 @@ module.exports = (allowedRoles) => {
     }
 
     try {
-      const token = req.headers.authorization.split(' ')[1]
+      const token = req.headers.authorization.split(' ')[1] // "Bearer TOKEN"
 
       if (!token) {
-        return res.status(401).json({ message: 'Отсутствует токен доступа' })
+        return res.status(401).json({ message: 'Токена в заголовке нету' })
       }
 
-      const {
-        user: { roles, _id, username },
-      } = jwt.verify(token, jvtSecret)
-      req.user = { roles, _id, username }
+      const { authorizedUser } = jwt.verify(token, jvtSecret)
+
+      req.authorizedUser = authorizedUser
 
       let isAllowed = false
 
@@ -29,9 +28,9 @@ module.exports = (allowedRoles) => {
 
       if (!isAllowed) {
         return res.status(403).json({
-          message: `Пользователю ${req.user.username} нужны привилегии: ${
-            allowedRoles + ''
-          }`,
+          message: `Пользователю ${
+            req.authorizedUser.username
+          } нужны привилегии: ${allowedRoles + ''}`,
         })
       }
 

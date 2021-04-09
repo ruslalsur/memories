@@ -6,7 +6,7 @@ const validate = require('../middleware/validateMiddleware')
 const upload = require('../middleware/uploadMiddleware')
 
 router.get(
-  '/user/:id/page/:page/perPage/:perPage',
+  '/user/:id/search/:search/share/:share/page/:page/perPage/:perPage',
   [
     check('id')
       .isMongoId()
@@ -26,6 +26,17 @@ router.get(
   ],
   validate(),
   MemoryController.getMemory
+)
+
+router.get(
+  '/stat/:id',
+  [
+    check('id', 'Неправильный формат идентификатора документа')
+      .matches(/^[random]{1}|[0-9a-fA-F]{24}$/)
+      .trim(),
+  ],
+  validate(),
+  MemoryController.getStat
 )
 
 router.post(

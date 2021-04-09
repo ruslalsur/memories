@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Redirect } from 'react-router-dom'
 import axios from 'axios'
 import { MemoryCrud } from '../components/MemoryCrud'
 import { Memories } from '../components/Memories'
@@ -48,20 +48,22 @@ const useStyles = makeStyles((theme) => ({
 
 export const MemoriesPage = () => {
   const classes = useStyles()
-  const { setInfo, authorizedUser } = useContext(Context)
+  const { setInfo, search, authorizedUser, login } = useContext(Context)
 
   const [loading, setLoading] = useState(true)
   const [allMemoriesCount, setAllMemoriesCount] = useState(0)
   const [memories, setMemories] = useState([])
   const [selected, select] = useState(0)
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(5)
-  const { userId } = useParams()
+  const [totalPages, setTotalPages] = useState(1)
+  const { userId, share } = useParams()
 
-  const fetchMemories = async (p) => {
+  const fetchMemories = async (srch = 'none', sha = 'all', p) => {
     try {
       const response = await axios.get(
-        `/api/memory/user/${userId}/page/${p}/perPage/${MEM_PER_PAGE}`
+        `/api/memory/user/${userId}/search/${
+          srch || 'none'
+        }/share/${sha}/page/${p}/perPage/${MEM_PER_PAGE}`
       )
       setMemories(response.data.memories)
       setAllMemoriesCount(response.data.allMemoriesCount)
@@ -69,9 +71,9 @@ export const MemoriesPage = () => {
       setLoading(false)
     } catch (err) {
       if (err.response) {
-        setInfo(err.response.data.message)
+        setInfo({ type: 'error', msg: err.response.data.message })
       } else {
-        setInfo(err.message)
+        setInfo({ type: 'error', msg: err.message })
       }
       setLoading(false)
       setMemories([])
@@ -79,13 +81,14 @@ export const MemoriesPage = () => {
   }
 
   useEffect(() => {
-    fetchMemories(page)
+    fetchMemories(search, share)
     select(0)
-  }, [])
+    console.log(`LOG memories: `, memories)
+  }, [search])
 
   const handlePagination = (value) => {
     select(0)
-    fetchMemories(value)
+    fetchMemories(search, share, value)
     setPage(value)
   }
 
@@ -121,10 +124,18 @@ export const MemoriesPage = () => {
     }
   }
 
+  if (!memories.length)
+    return (
+      <MemoryCrud
+        data={memories[selected]}
+        setCrudedData={updateMemoriesState}
+      />
+    )
+
   return (
     <Grid container spacing={2} className={classes.root}>
       {!memories.length ? (
-        ''
+        <Redirect to='/profile' />
       ) : (
         <>
           <Grid item xs={12}>
@@ -143,7 +154,13 @@ export const MemoriesPage = () => {
             <Paper className={classes.memList}>
               <Grid container justify='center' spacing={1}>
                 <Grid item xs={12}>
-                  <Memories select={select} memories={memories} />
+                  {!loading && (
+                    <Memories
+                      select={select}
+                      memories={memories}
+                      current={selected}
+                    />
+                  )}
                 </Grid>
                 <Grid item>
                   <Grid container justify='center'>

@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
+import axios from 'axios'
 import { makeStyles, withStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
-import { useValidate } from '../hooks/validate'
 import signin from '../assets/images/signin.jpg'
 import signup from '../assets/images/signup.jpg'
 import { teal } from '@material-ui/core/colors'
 import { pink } from '@material-ui/core/colors'
 import HomeIcon from '@material-ui/icons/Home'
+import { LOCALSTORAGE_NAME } from '../config.js'
+import { Context } from '../context'
 import {
   Button,
   IconButton,
@@ -17,7 +19,6 @@ import {
   Box,
   Hidden,
 } from '@material-ui/core'
-import axios from 'axios'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,7 +54,8 @@ const useStyles = makeStyles((theme) => ({
 export const Sign = (props) => {
   const classes = useStyles()
   let history = useHistory()
-  const { errors, setErrors, rules, validate } = useValidate()
+  const { login, setInfo } = useContext(Context)
+  const isSignUp = props.hasOwnProperty('signup')
 
   const SignInButton = withStyles((theme) => ({
     root: {
@@ -85,16 +87,50 @@ export const Sign = (props) => {
     },
   }))(Button)
 
-  const [form, setForm] = useState({
+  const init = {
     username: '',
     password: '',
     repassword: '',
-  })
+  }
+
+  const [form, setForm] = useState(init)
+  const [errors, setErrors] = useState(init)
 
   useEffect(() => {
-    setErrors({})
     setForm({ ...form, password: '', repassword: '' })
   }, [props.signup])
+
+  useEffect(() => {}, [])
+
+  const rules = {
+    set1: {
+      rule: /^[a-z0-9_-]{3,16}$/,
+      msg: 'от 3 до 16 латинских букв/цифр в нижнем регистре',
+    },
+    set2: {
+      rule: /^[A-Za-z0-9_-]{3,8}$/,
+      msg: 'от 3 до 8 латинских букв/цифр',
+    },
+    set3: {
+      rule: (pass1, pass2) => pass1 === pass2,
+      msg: 'пароли не совпадают',
+    },
+  }
+
+  const validate = (form) => {
+    const err = {
+      username: rules.set1.rule.test(form.username) ? '' : rules.set1.msg,
+      password: rules.set2.rule.test(form.password) ? '' : rules.set2.msg,
+      repassword: isSignUp
+        ? rules.set3.rule(form.password, form.repassword)
+          ? ''
+          : rules.set3.msg
+        : '',
+    }
+
+    setErrors(err)
+    return Object.values(err).every((item) => item === '')
+  }
 
   const HandleFormDataChange = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value })
@@ -102,11 +138,23 @@ export const Sign = (props) => {
 
   const handleSign = () => {
     if (validate(form)) {
-      const url = props.signup ? `/api/user/signup` : `/api/user/signin`
+      const url = isSignUp ? `/api/user/signup` : `/api/user/signin`
       axios
-        .post(url, { form })
-        .then((response) => console.log(`LOG response.data: `, response.data))
-        .catch((err) => console.log(`Ошибка: `, err))
+        .post(url, form)
+        .then((response) => {
+          if (isSignUp) {
+            setInfo({ type: 'success', msg: response.data.message })
+            history.push('/signin')
+          } else {
+            login(response.data.authorizedUser, response.data.token)
+
+            history.push('/profile')
+          }
+        })
+        .catch((err) => {
+          console.log(`Ошибка регистрации/авторизации: `, err)
+          setInfo({ type: 'error', msg: err.response.data.message })
+        })
     }
   }
 
@@ -117,14 +165,14 @@ export const Sign = (props) => {
           <Box
             className={classes.leftSide}
             style={{
-              color: props?.signup ? pink[500] : teal[500],
+              color: isSignUp ? pink[500] : teal[500],
               background: `url(${
-                props?.signup ? signup : signin
+                isSignUp ? signup : signin
               }) center/cover no-repeat`,
             }}
           >
             <Typography className={classes.greeting} variant='h5'>
-              {props?.signup ? 'Создайте учетную запись' : 'Добро пожаловать'}
+              {isSignUp ? 'Создайте учетную запись' : 'Добро пожаловать'}
             </Typography>
           </Box>
         </Grid>
@@ -155,7 +203,7 @@ export const Sign = (props) => {
                 <Typography
                   style={{
                     color: teal[600],
-                    boxShadow: !props?.signup && `0 1px 0px ${teal[600]}`,
+                    boxShadow: !isSignUp && `0 1px 0px ${teal[600]}`,
                   }}
                   variant='button'
                   display='block'
@@ -168,7 +216,7 @@ export const Sign = (props) => {
                 <Typography
                   style={{
                     color: pink[600],
-                    boxShadow: props?.signup && `0 1px 0px ${pink[600]}`,
+                    boxShadow: isSignUp && `0 1px 0px ${pink[600]}`,
                   }}
                   variant='button'
                   display='block'
@@ -182,7 +230,7 @@ export const Sign = (props) => {
             <Grid container spacing={7} direction='column' wrap='nowrap'>
               <Grid item>
                 <TextField
-                  error={errors.username}
+                  error={!!errors.username}
                   helperText={errors.username}
                   value={form.username}
                   onChange={HandleFormDataChange}
@@ -194,7 +242,7 @@ export const Sign = (props) => {
               </Grid>
               <Grid item>
                 <TextField
-                  error={errors.password}
+                  error={!!errors.password}
                   helperText={errors.password}
                   value={form.password}
                   onChange={HandleFormDataChange}
@@ -205,10 +253,10 @@ export const Sign = (props) => {
                   variant='outlined'
                 />
               </Grid>
-              {props?.signup && (
+              {isSignUp && (
                 <Grid item>
                   <TextField
-                    error={errors.repassword}
+                    error={!!errors.repassword}
                     helperText={errors.repassword}
                     value={form.repassword}
                     onChange={HandleFormDataChange}
@@ -224,7 +272,7 @@ export const Sign = (props) => {
           </Grid>
 
           <Grid item xs={12} className={classes.doneButton}>
-            {props?.signup ? (
+            {isSignUp ? (
               <SignUpButton variant='contained' onClick={() => handleSign()}>
                 Зарегистрироваться
               </SignUpButton>

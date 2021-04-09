@@ -2,7 +2,8 @@ const { Router } = require('express')
 const router = Router()
 const { check } = require('express-validator')
 const UserController = require('../controllers/UserController')
-const rolesOnly = require('../middleware/roleMiddleware')
+const rolesOnly = require('../middleware/authMiddleware')
+const upload = require('../middleware/uploadMiddleware')
 
 router.get('/', UserController.getUsers)
 // router.get('/', rolesOnly(['USER']), UserController.getUsers)
@@ -30,5 +31,7 @@ router.post(
   ],
   UserController.signIn
 )
+
+router.patch('/:id', upload.single('file'), UserController.updateAvatar)
 
 module.exports = router

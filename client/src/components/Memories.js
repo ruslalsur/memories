@@ -1,6 +1,8 @@
 import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { IMAGES_PATH, NO_IMAGE } from '../config'
+import LockIcon from '@material-ui/icons/Lock'
+import { teal, deepOrange } from '@material-ui/core/colors'
 import { GridList, GridListTile, GridListTileBar } from '@material-ui/core'
 import { Context } from '../context'
 
@@ -16,20 +18,22 @@ const useStyles = makeStyles((theme) => ({
   gridListTile: {
     overflow: 'hidden',
     cursor: 'pointer',
-    filter: 'grayscale(100%) opacity(80%) sepia(0%)',
-    transition: '0.3s ease-in-out',
+    opacity: 0.9,
+    transition: '0.2s ease-in-out',
     '& .MuiGridListTile-tile': {
       borderRadius: 5,
     },
     '&:hover': {
       transform: 'scale(1.03)',
-      filter: 'grayscale(0%) opacity(95%) grayscale(20%)',
     },
-    '&:active': { transform: 'scale(0.97)' },
+    '&:active': { transform: 'scale(0.97)', cursor: 'grabbing' },
+  },
+  icon: {
+    marginRight: 10,
   },
 }))
 
-export const Memories = ({ memories, select }) => {
+export const Memories = ({ memories, select, current }) => {
   const classes = useStyles()
   const { setInfo } = useContext(Context)
 
@@ -41,7 +45,7 @@ export const Memories = ({ memories, select }) => {
   if (memories.length) {
     return (
       <GridList
-        spacing={5}
+        spacing={10}
         cellHeight={145}
         cols={3}
         className={classes.gridList}
@@ -51,12 +55,31 @@ export const Memories = ({ memories, select }) => {
             key={memory._id}
             onClick={() => handlleMemoryClick(index)}
             className={classes.gridListTile}
+            style={
+              memories[current]._id === memory._id && {
+                opacity: 1,
+                boxShadow: `inset 0 0 0 3px ${deepOrange['A400']}`,
+                borderRadius: 7,
+              }
+            }
           >
             <img
               src={IMAGES_PATH + (memory.imgName || NO_IMAGE)}
               alt={memory.imgName}
             />
-            <GridListTileBar title={memory.title} />
+
+            <GridListTileBar
+              title={memory.title}
+              actionIcon={
+                !memory.shared && (
+                  <LockIcon
+                    fontSize='small'
+                    color='error'
+                    className={classes.icon}
+                  />
+                )
+              }
+            />
           </GridListTile>
         ))}
       </GridList>

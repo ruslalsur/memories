@@ -3,3 +3,4 @@ export const IMAGES_PATH = '/images/'
 export const NO_IMAGE = 'noimage.jpg'
 export const NO_AVATAR = 'noavatar.jpg'
 export const RND_MEMORY_INTERVAL = 7000
+export const LOCALSTORAGE_NAME = 'authorizedUserData'

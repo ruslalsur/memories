@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link, Redirect } from 'react-router-dom'
+import { Link, useHistory, Redirect } from 'react-router-dom'
 import axios from 'axios'
 import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications'
 import { blueGrey } from '@material-ui/core/colors'
@@ -19,6 +19,7 @@ import {
   ListItemIcon,
   ListItem,
   ListItemText,
+  Tooltip,
 } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
@@ -59,10 +60,12 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: '55vh',
     filter: 'opacity(0.9)',
+    cursor: 'pointer',
     '&:hover': {
       filter: 'opacity(1)',
       transition: '0.5s ease-in-out',
     },
+    '&:active': { transform: 'scale(0.97)', cursor: 'grabbing' },
   },
   loading: {
     marginLeft: '0.5rem',
@@ -74,6 +77,7 @@ export const MainPage = () => {
   const [memory, setMemory] = useState({})
   const classes = useStyles()
   const { setInfo } = useContext(Context)
+  let history = useHistory()
 
   useEffect(() => {
     const cleanUp = () => {
@@ -81,15 +85,21 @@ export const MainPage = () => {
       id = false
     }
 
-    const getRandomMemory = async () => {
-      await axios
+    const getRandomMemory = () => {
+      axios
         .get('api/memory/random')
         .then((response) => {
           id && setMemory(response.data)
         })
         .catch((err) => {
           setMemory(null)
-          id && setInfo(err.message)
+          id &&
+            setInfo({
+              type: 'error',
+              msg: 'Нет публичных воспоминаний ни у кого',
+            })
+          cleanUp()
+          history.push('/')
         })
     }
 
@@ -104,7 +114,7 @@ export const MainPage = () => {
   }, [])
 
   if (memory === null) {
-    return <Redirect to='/memories/60330e0de96e077b16b6690e' />
+    return <Redirect to='/memories/60330e0de96e077b16b6690e' /> //TODO: убрать хардкор
   } else {
     return (
       <Grid container spacing={2}>
@@ -131,11 +141,17 @@ export const MainPage = () => {
                   фотографии и связанные с ними высказывания c заголовком.
                 </p>
                 <p>
-                  На этой странице, для примера, показыаются случайным образом
-                  выбранные воспоминания пользователей, из набора доступных для
-                  всеобщего просмотра, нажав на которое можно будет увидеть
-                  остальные, разрешенные для просмотра, воспоминания этого
-                  пользователя.
+                  На этой странице, для примера, через некоторый интервал
+                  времени, показыаются случайным образом выбранные воспоминания
+                  пользователей, из набора доступных для всеобщего просмотра,
+                  нажав на которое можно будет увидеть остальные, разрешенные
+                  для просмотра, воспоминания пользователя, которому оно
+                  принадлежало.
+                </p>
+                <p>
+                  Для воспоминаний реализованы CRUD-операции, доступные после
+                  авторизации, а также поиск по подстроке входящей либо в
+                  название, либо в описание.
                 </p>
               </Paper>
             </Grid>
@@ -205,6 +221,17 @@ export const MainPage = () => {
                       <Grid item>
                         <a
                           className={classes.paperListLink}
+                          href='https://ru.wikipedia.org/wiki/%D0%9E%D0%B4%D0%BD%D0%BE%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%87%D0%BD%D0%BE%D0%B5_%D0%BF%D1%80%D0%B8%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5'
+                        >
+                          <ListItem button>
+                            <ListItemIcon>
+                              <SettingsApplicationsIcon />
+                            </ListItemIcon>
+                            <ListItemText primary='SPA' />
+                          </ListItem>
+                        </a>
+                        <a
+                          className={classes.paperListLink}
                           href='https://ru.reactjs.org/'
                         >
                           <ListItem button>
@@ -243,15 +270,24 @@ export const MainPage = () => {
           >
             {memory.user && (
               <Link
-                to={`/memories/${memory.user._id}`}
+                to={`/memories/${memory.user._id}/public`}
                 className={classes.card}
               >
                 <Card>
                   <CardActionArea>
-                    <CardMedia
-                      className={classes.media}
-                      image={IMAGES_PATH + (memory.imgName || NO_IMAGE)}
-                    />
+                    <Tooltip
+                      title={
+                        <Typography variant='body2'>
+                          {`Показать все разрешенные воспоминания пользователя "${memory.user.username}"`}
+                        </Typography>
+                      }
+                      placement='bottom'
+                    >
+                      <CardMedia
+                        className={classes.media}
+                        image={IMAGES_PATH + (memory.imgName || NO_IMAGE)}
+                      />
+                    </Tooltip>
                     <CardContent>
                       <Typography
                         gutterBottom

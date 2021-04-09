@@ -5,17 +5,61 @@ const { storage_dir } = require('config')
 
 class MemoryController {
   async getMemories(req, res) {
-    const { id, page, perPage } = req.params
+    const { id, search, share, page, perPage } = req.params
+
+    let key = { $in: [true, false] }
+    switch (share) {
+      case 'private':
+        key = false
+        break
+      case 'public':
+        key = true
+        break
+
+      default:
+        break
+    }
 
     try {
       const memories = await Memory.find({
         user: { _id: id },
-        shared: true,
+        shared: key,
+        $or: [
+          {
+            title: {
+              $regex: search === 'none' ? `\w*` : `${search}`,
+              $options: 'i',
+            },
+          },
+          {
+            description: {
+              $regex: search === 'none' ? `\w*` : `${search}`,
+              $options: 'i',
+            },
+          },
+        ],
       })
         .limit(+perPage)
         .skip((+page - 1) * +perPage)
 
-      const allMemoriesCount = await Memory.countDocuments()
+      const allMemoriesCount = await Memory.countDocuments({
+        user: { _id: id },
+        shared: key,
+        $or: [
+          {
+            title: {
+              $regex: search === 'none' ? `\w*` : `${search}`,
+              $options: 'i',
+            },
+          },
+          {
+            description: {
+              $regex: search === 'none' ? `\w*` : `${search}`,
+              $options: 'i',
+            },
+          },
+        ],
+      })
 
       if (!memories.length) throw new Error(`Нет воспоминаний!`)
 
@@ -51,6 +95,34 @@ class MemoryController {
 
       return res.status(200).json(memory)
     } catch (err) {
+      console.log('Ошибка: ', err)
+      return res.status(400).json({
+        message: err.message || 'Ошибка!',
+      })
+    }
+  }
+
+  async getStat(req, res) {
+    const { id } = req.params
+
+    try {
+      const memoriesCount = await Memory.countDocuments({
+        user: { _id: id },
+      })
+      const publicMemoriesCount = await Memory.countDocuments({
+        user: { _id: id },
+        shared: true,
+      })
+      const privateMemoriesCount = memoriesCount - publicMemoriesCount
+
+      if (!memoriesCount) throw new Error(`Нет воспоминаний!`)
+
+      return res.status(200).json({
+        memoriesCount,
+        publicMemoriesCount,
+        privateMemoriesCount,
+      })
+    } catch (err) {
       console.log(err)
       return res.status(400).json({
         message: err.message || 'Ошибка',
@@ -62,7 +134,9 @@ class MemoryController {
     const { imgName } = req.body
 
     try {
-      const candidate = await Memory.findOne({ title: req.body.title })
+      const candidate = await Memory.findOne({
+        title: req.body.title,
+      })
       if (candidate) {
         if (imgName) {
           await unlink(path.join(storage_dir, imgName), (err) => {
@@ -71,13 +145,12 @@ class MemoryController {
         }
 
         return res.status(409).json({
-          message: `Воспоминание с названием ${req.body.title} уже существует`,
+          message: `Воспоминание с названием ${req.body.title} уже существует у ${candidate.user.username}`,
         })
       }
 
       const newMemory = new Memory({
         ...req.body,
-        user: '60330e0de96e077b16b6690e', //TODO: заменить на текущего пользователя
       })
 
       const result = await newMemory.save()

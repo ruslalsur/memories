@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
+import { useHistory } from 'react-router-dom'
 import { Context } from '../context'
 import { DropzoneArea } from 'material-ui-dropzone'
+import { useStorage } from '../hooks/storage.hook'
 import { makeStyles } from '@material-ui/core/styles'
 import { IMAGES_PATH, NO_IMAGE, NO_AVATAR } from '../config'
+import noavatar from '../assets/images/noavatar.jpg'
 import {
+  Typography,
+  Tooltip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -31,10 +36,10 @@ const useStyles = makeStyles((theme) => ({
     height: '50vh',
     paddingTop: '56.25%', // 16:9
     cursor: 'pointer',
-    filter: 'sepia(100%)',
+    opacity: 1,
+    transition: '0.3s ease-in-out',
     '&:hover': {
-      filter: 'sepia(0%)',
-      transition: '0.5s ease-in-out',
+      opacity: 0.8,
     },
   },
   expand: {
@@ -69,6 +74,8 @@ const useStyles = makeStyles((theme) => ({
 
 export const MemoryCrud = ({ data, setCrudedData }) => {
   const classes = useStyles()
+  let history = useHistory()
+  const { uploadImage } = useStorage()
   const initFormData = {
     title: '',
     description: '',
@@ -80,7 +87,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState(initFormData)
   const [imgFile, setImgFile] = useState(undefined)
-  const { setInfo } = useContext(Context)
+  const { setInfo, authorizedUser } = useContext(Context)
 
   useEffect(() => {
     if (!data) {
@@ -120,12 +127,13 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
   const createUpdateMemory = async (isCreate) => {
     setInfo(null)
     setOpen(false)
-    let newState = formData
 
     try {
+      let newState = { ...formData, user: authorizedUser }
+
       if (formData.imgName) {
         const uploadedImgName = await uploadImage(imgFile)
-        newState = { ...formData, imgName: uploadedImgName }
+        newState.imgName = uploadedImgName
       }
 
       let todo = 'создано'
@@ -137,16 +145,16 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
         setCrudedData('update', newState)
         todo = 'изменено'
       }
-      setInfo(`Воспоминание с заголовком "${newState.title}" было ${todo}`)
+
+      setInfo({
+        type: 'success',
+        msg: `Воспоминание с заголовком "${newState.title}" было ${todo}`,
+      })
     } catch (err) {
       if (err.response) {
-        setInfo(err.response.data.message)
+        setInfo({ type: 'error', msg: err.response.data.message })
       } else {
-        if (err.response) {
-          setInfo(err.response.data.message)
-        } else {
-          setInfo(err.message)
-        }
+        setInfo({ type: 'error', msg: err.message })
       }
     }
   }
@@ -156,29 +164,14 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
 
     try {
       const deleted = await axios.delete(`/api/memory/${data._id}`)
-      setInfo(`Воспоминание с заголовком "${deleted.data.title}" было удалено`)
-      setCrudedData('delete')
-    } catch (err) {
-      setInfo(err.message)
-    }
-  }
-
-  const uploadImage = async (file) => {
-    const fd = new FormData()
-    fd.append('file', file)
-
-    try {
-      const response = await axios({
-        url: '/api/memory/upload',
-        method: 'POST',
-        data: fd,
-        headers: { 'Content-Type': 'multipart/form-data' },
-        responseType: 'text',
+      setInfo({
+        type: 'success',
+        msg: `Воспоминание с заголовком "${deleted.data.title}" было удалено`,
       })
 
-      return response.data
+      setCrudedData('delete')
     } catch (err) {
-      console.log(`Попытка загрузки файла не удалась: `, err.response)
+      setInfo(err.response.data.message)
     }
   }
 
@@ -190,7 +183,9 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
             avatar={
               <Avatar
                 alt='avatar'
-                src={IMAGES_PATH + (data.user.avatar || NO_AVATAR)}
+                src={
+                  data.user?.avatar ? IMAGES_PATH + data.user.avatar : noavatar
+                }
                 aria-label='avatar'
                 className={classes.avatar}
               />
@@ -198,12 +193,17 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
             title={data.title}
             subheader={data.description}
           />
-          <CardMedia
-            className={classes.media}
-            image={IMAGES_PATH + (data.imgName || NO_IMAGE)}
-            title='Увеличить'
-            onClick={() => setBackdropOpen(true)}
-          />
+          <Tooltip
+            title={<Typography variant='body1'>Крупнее</Typography>}
+            placement='bottom'
+          >
+            <CardMedia
+              className={classes.media}
+              image={IMAGES_PATH + (data.imgName || NO_IMAGE)}
+              onClick={() => setBackdropOpen(true)}
+            />
+          </Tooltip>
+
           <CardActions disableSpacing>
             <ButtonGroup
               className={classes.btnGroup}
@@ -211,9 +211,26 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
               size='small'
               aria-label='outlined primary button group'
             >
-              <Button onClick={() => handleShowCrudForm(false)}>Создать</Button>
-              <Button onClick={() => handleShowCrudForm(true)}>Изменить</Button>
-              <Button color='secondary' onClick={() => deleteMemory()}>
+              <Button
+                disabled={authorizedUser?._id !== data.user._id}
+                onClick={() => handleShowCrudForm(false)}
+              >
+                Создать
+              </Button>
+              <Button
+                disabled={authorizedUser?._id !== data.user._id}
+                onClick={() => handleShowCrudForm(true)}
+              >
+                Изменить
+              </Button>
+              <Button
+                disabled={
+                  authorizedUser?._id !== data.user._id &&
+                  authorizedUser?.username !== 'admin'
+                }
+                color='secondary'
+                onClick={() => deleteMemory()}
+              >
                 Удалить
               </Button>
             </ButtonGroup>

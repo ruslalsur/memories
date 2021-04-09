@@ -1,8 +1,9 @@
-import React, { useState, cloneElement } from 'react'
+import React, { useContext, cloneElement } from 'react'
 import { Container } from '@material-ui/core'
-import { Alert, AlertTitle } from '@material-ui/lab'
 import { Header } from './Header'
 import { makeStyles } from '@material-ui/core/styles'
+import { Snackbar } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
 import { Context } from '../context'
 
 const useStyles = makeStyles((theme) => ({
@@ -21,30 +22,38 @@ const useStyles = makeStyles((theme) => ({
     flex: '1 1 100%',
     paddingTop: '1rem',
   },
-  footer: {
-    marginTop: 10,
-  },
 }))
 
-export const Layout = ({ children }) => {
+export const Layout = ({ children, sign }) => {
   const classes = useStyles()
-  const [info, setInfo] = useState(null)
-  const childrenClone = cloneElement(children, { setInfo })
-  // const authorizedUser = { _id: '60330e0de96e077b16b6690e' }
-  const authorizedUser = null
+  const { info, setInfo } = useContext(Context)
+
+  const childrenClone = cloneElement(children)
 
   return (
-    <Context.Provider value={{ setInfo, authorizedUser }}>
-      <div className={classes.root}>
-        <Header appName={process.env.REACT_APP_NAME} />
-        <Container className={classes.content}>{childrenClone}</Container>
-        {info && (
-          <Alert className={classes.footer} severity='warning'>
-            <AlertTitle>Внимание!</AlertTitle>
-            {info}
-          </Alert>
-        )}
-      </div>
-    </Context.Provider>
+    <div className={classes.root}>
+      {sign ? (
+        childrenClone
+      ) : (
+        <>
+          <Header appName={process.env.REACT_APP_NAME} />
+          <Container className={classes.content}>{childrenClone}</Container>
+        </>
+      )}
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transitionDuration={200}
+        open={!!info}
+        autoHideDuration={5000}
+        onClose={() => setInfo(null)}
+      >
+        <Alert elevation={6} variant='filled' severity={info?.type || 'info'}>
+          {info?.msg || ''}
+        </Alert>
+      </Snackbar>
+    </div>
   )
 }

@@ -4,6 +4,10 @@ const jwt = require('jsonwebtoken')
 const { jvtSecret } = require('config')
 const Role = require('../models/Role')
 const User = require('../models/User')
+const { Error } = require('mongoose')
+const path = require('path')
+const { stat, unlink } = require('fs').promises
+const { storage_dir } = require('config')
 
 class UserController {
   async getUsers(req, res) {
@@ -30,7 +34,7 @@ class UserController {
 
       if (candidate) {
         return res
-          .status(400)
+          .status(409)
           .json({ message: `Пользователь ${username} уже существует` })
       }
 
@@ -48,8 +52,8 @@ class UserController {
       return res
         .status(201)
         .json({ message: `Был создан новый пользователь ${username}` })
-    } catch (e) {
-      console.log(e)
+    } catch (err) {
+      console.log(Error)
       res.status(500).json({
         message: `Ошибка в процессе создания нового пользователя ${username}`,
       })
@@ -62,25 +66,57 @@ class UserController {
       const user = await User.findOne({ username })
 
       if (!user) {
-        return res.status(400).json({ message: 'Несуществующий пользователь' })
+        return res
+          .status(400)
+          .json({ message: 'Незарегистрированый пользователь' })
       }
 
       const paswordIsValid = bcrypt.compareSync(password, user.password)
 
       if (!paswordIsValid) {
-        return res.status(400).json({ message: 'Несуществующий пароль' })
+        return res.status(400).json({ message: 'Неверный пароль' })
       }
 
       const token = jwt.sign({ user }, jvtSecret, {
         expiresIn: '1h',
       })
 
-      return res.json({ token })
-    } catch (e) {
-      console.log(e)
+      const authorizedUser = JSON.parse(JSON.stringify(user))
+      delete authorizedUser.password
+
+      return res.json({ token, authorizedUser })
+    } catch (err) {
+      console.log(err)
       res.status(500).json({
         message: 'Возникли проблемы в процессе авторизации пользователя',
       })
+    }
+  }
+
+  async updateAvatar(req, res) {
+    const { id } = req.params
+    const { avatarSrc } = req.body
+
+    let user = {}
+    let avatar = ''
+
+    try {
+      user = await User.findById(id)
+      avatar = user.avatar
+
+      await unlink(path.join(storage_dir, avatar))
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        res.status(500).json({
+          message:
+            err.message || `Ошибка в процессе изменения изображения аватара`,
+        })
+      }
+    } finally {
+      user.avatar = avatarSrc
+      user.save()
+
+      return res.status(200).json({ user })
     }
   }
 }
