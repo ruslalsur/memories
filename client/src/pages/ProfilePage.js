@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: 15,
   },
   details__data: {
+    marginLeft: '0.5rem',
     color: blueGrey[500],
     fontFamily: 'Yanone Kaffeesatz',
     fontSize: '1.3rem',
@@ -171,7 +172,7 @@ export const ProfilePage = () => {
                     component='h2'
                     className={classes.details__name}
                   >
-                    логин:{' '}
+                    логин:
                     <span className={classes.details__data}>
                       {authorizedUser.username}
                     </span>
@@ -183,7 +184,7 @@ export const ProfilePage = () => {
                     component='h2'
                     className={classes.details__name}
                   >
-                    роли:{' '}
+                    роли:
                     <span className={classes.details__data}>
                       {authorizedUser.roles.map((item) => item.role).join(', ')}
                     </span>
@@ -195,7 +196,7 @@ export const ProfilePage = () => {
                     component='h2'
                     className={classes.details__name}
                   >
-                    идентификатор:{' '}
+                    идентификатор:
                     <span className={classes.details__data}>
                       {authorizedUser._id}
                     </span>
@@ -215,7 +216,7 @@ export const ProfilePage = () => {
                     component='h2'
                     className={classes.details__name}
                   >
-                    email:{' '}
+                    email:
                     {!editShow && (
                       <Tooltip
                         title={

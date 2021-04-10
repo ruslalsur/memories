@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.3rem',
   },
   memsUserName: {
+    marginLeft: '0.5rem',
     color: theme.palette.secondary.light,
     fontFamily: 'Comfortaa',
   },
@@ -125,12 +126,14 @@ export const MemoriesPage = () => {
   }
 
   if (!memories.length)
-    return (
-      <MemoryCrud
-        data={memories[selected]}
-        setCrudedData={updateMemoriesState}
-      />
-    )
+    // return (
+    //   <MemoryCrud
+    //     data={memories[selected]}
+    //     setCrudedData={updateMemoriesState}
+    //   />
+    // )
+
+    return null
 
   return (
     <Grid container spacing={2} className={classes.root}>
@@ -144,7 +147,7 @@ export const MemoriesPage = () => {
               component='h2'
               className={classes.memListTitle}
             >
-              Воспоминания пользователя{' '}
+              Воспоминания пользователя
               <span className={classes.memsUserName}>
                 {memories[0].user.username}
               </span>

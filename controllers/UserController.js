@@ -39,7 +39,7 @@ class UserController {
       }
 
       const hashPassword = bcrypt.hashSync(password, 5)
-      const userRole = await Role.findOne({ role: 'USER' })
+      const userRole = await Role.findOne({ role: 'пользователь' })
 
       const user = new User({
         username,

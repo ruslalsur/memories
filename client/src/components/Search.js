@@ -4,7 +4,7 @@ import { Paper, InputAdornment } from '@material-ui/core'
 import InputBase from '@material-ui/core/InputBase'
 import IconButton from '@material-ui/core/IconButton'
 import SearchIcon from '@material-ui/icons/Search'
-import { teal } from '@material-ui/core/colors'
+import { blueGrey } from '@material-ui/core/colors'
 import ClearIcon from '@material-ui/icons/Clear'
 import { Context } from '../context'
 
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: 250,
-    backgroundColor: teal[100],
+    backgroundColor: blueGrey[200],
   },
   input: {
     marginLeft: theme.spacing(1),
