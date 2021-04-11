@@ -5,8 +5,9 @@ import { Context } from '../context'
 import { DropzoneArea } from 'material-ui-dropzone'
 import { useStorage } from '../hooks/storage.hook'
 import { makeStyles } from '@material-ui/core/styles'
-import { IMAGES_PATH, NO_IMAGE, NO_AVATAR } from '../config'
+import { IMAGES_PATH } from '../config'
 import noavatar from '../assets/images/noavatar.jpg'
+import noimage from '../assets/images/noimage.jpg'
 import {
   Typography,
   Tooltip,
@@ -199,7 +200,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
           >
             <CardMedia
               className={classes.media}
-              image={IMAGES_PATH + (data.imgName || NO_IMAGE)}
+              image={data.imgName ? IMAGES_PATH + data.imgName : noimage}
               onClick={() => setBackdropOpen(true)}
             />
           </Tooltip>
@@ -244,7 +245,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
           className={classes.backdrop}
           style={{
             background: `url(${
-              IMAGES_PATH + (data.imgName || NO_IMAGE)
+              IMAGES_PATH + (data.imgName || noimage)
             }) center/contain no-repeat`,
           }}
           open={backdropOpen}
@@ -306,14 +307,14 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
         <DialogActions>
           <Button
             onClick={() =>
-              formData.hasOwnProperty('user')
+              formData?.user
                 ? createUpdateMemory(false)
                 : createUpdateMemory(true)
             }
             disabled={!formData.title}
             color='primary'
           >
-            {formData.hasOwnProperty('user') ? 'Изменить' : 'Создать'}
+            {formData?.user ? 'Изменить' : 'Создать'}
           </Button>
 
           <Button onClick={() => setOpen(false)} color='primary'>

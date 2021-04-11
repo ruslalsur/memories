@@ -84,7 +84,6 @@ export const MemoriesPage = () => {
   useEffect(() => {
     fetchMemories(search, share)
     select(0)
-    console.log(`LOG memories: `, memories)
   }, [search])
 
   const handlePagination = (value) => {
@@ -125,15 +124,9 @@ export const MemoriesPage = () => {
     }
   }
 
+  if (loading) return null
   if (!memories.length)
-    // return (
-    //   <MemoryCrud
-    //     data={memories[selected]}
-    //     setCrudedData={updateMemoriesState}
-    //   />
-    // )
-
-    return null
+    return <MemoryCrud data={null} setCrudedData={updateMemoriesState} />
 
   return (
     <Grid container spacing={2} className={classes.root}>

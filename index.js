@@ -30,8 +30,8 @@ const start = async () => {
     })
 
     app.listen(port, () => console.log(`PORT = ${port}\nMODE = ${appMode}`))
-  } catch (e) {
-    console.log(`Ошибка: `, e.message)
+  } catch (err) {
+    console.log(`Ошибка: `, err.message)
     process.exit(1)
   }
 }

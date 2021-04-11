@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { IMAGES_PATH, NO_IMAGE } from '../config'
+import { IMAGES_PATH } from '../config'
+import noimage from '../assets/images/noimage.jpg'
 import LockIcon from '@material-ui/icons/Lock'
-import { teal, deepOrange } from '@material-ui/core/colors'
+import { deepOrange } from '@material-ui/core/colors'
 import { GridList, GridListTile, GridListTileBar } from '@material-ui/core'
 import { Context } from '../context'
 
@@ -64,8 +65,8 @@ export const Memories = ({ memories, select, current }) => {
             }
           >
             <img
-              src={IMAGES_PATH + (memory.imgName || NO_IMAGE)}
-              alt={memory.imgName}
+              src={memory.imgName ? IMAGES_PATH + memory.imgName : noimage}
+              alt={memory.imgName ? IMAGES_PATH + memory.imgName : noimage}
             />
 
             <GridListTileBar
