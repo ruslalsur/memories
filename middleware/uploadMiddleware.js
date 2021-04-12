@@ -1,6 +1,6 @@
 const multer = require('multer')
 const path = require('path')
-const { storage_dir } = require('config')
+const { storage_dir, upload_file_size } = require('config')
 
 const multerConfig = {
   storage: multer.diskStorage({
@@ -27,7 +27,7 @@ const multerConfig = {
     }
   },
 
-  limits: 1024 * 1024 * 3,
+  limits: { fileSize: +upload_file_size },
 }
 
 module.exports = multer(multerConfig)

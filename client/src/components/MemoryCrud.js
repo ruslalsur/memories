@@ -5,7 +5,7 @@ import { Context } from '../context'
 import { DropzoneArea } from 'material-ui-dropzone'
 import { useStorage } from '../hooks/storage.hook'
 import { makeStyles } from '@material-ui/core/styles'
-import { IMAGES_PATH } from '../config'
+import { IMAGES_PATH, UPLOAD_FILE_SIZE } from '../config'
 import noavatar from '../assets/images/noavatar.jpg'
 import noimage from '../assets/images/noimage.jpg'
 import {
@@ -66,10 +66,16 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: theme.spacing(1.5),
     },
   },
-  dropZone: {},
+  dropZone: {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    width: '80%',
+  },
   dropParagrarh: {
-    color: '#777',
-    fontSize: '1.2rem',
+    color: '#555',
+    fontSize: '1rem',
+    marginLeft: '2rem',
+    marginRight: '2rem',
   },
 }))
 
@@ -89,6 +95,11 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
   const [formData, setFormData] = useState(initFormData)
   const [imgFile, setImgFile] = useState(undefined)
   const { setInfo, authorizedUser } = useContext(Context)
+  const maxUploadImageSize = authorizedUser.roles.some(
+    (item) => item.role === 'PHOTO'
+  )
+    ? 3145728
+    : UPLOAD_FILE_SIZE
 
   useEffect(() => {
     if (!data) {
@@ -107,11 +118,28 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
   }
 
   const handleImageChange = (files) => {
-    setImgFile(files.length ? files[0] : undefined)
-    setFormData({
-      ...formData,
-      imgName: files.length ? files[0].name : '',
-    })
+    if (!files.length) {
+      setImgFile(undefined)
+      setFormData({
+        ...formData,
+        imgName: '',
+      })
+    } else if (files.length && files[0].size <= maxUploadImageSize) {
+      setImgFile(files[0])
+      setFormData({
+        ...formData,
+        imgName: files[0].name,
+      })
+    } else {
+      if (files.length && files[0].size > maxUploadImageSize) {
+        setInfo({
+          type: 'warning',
+          msg: `Размер картинки превышен на ${
+            files[0].size - maxUploadImageSize
+          } байт`,
+        })
+      }
+    }
   }
 
   const handleShowCrudForm = (isUpdate) => {
@@ -179,78 +207,80 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
   return (
     <>
       {data && (
-        <Card className={classes.cardRoot}>
-          <CardHeader
-            avatar={
-              <Avatar
-                alt='avatar'
-                src={
-                  data.user?.avatar ? IMAGES_PATH + data.user.avatar : noavatar
-                }
-                aria-label='avatar'
-                className={classes.avatar}
-              />
-            }
-            title={data.title}
-            subheader={data.description}
-          />
-          <Tooltip
-            title={<Typography variant='body1'>Крупнее</Typography>}
-            placement='bottom'
-          >
-            <CardMedia
-              className={classes.media}
-              image={data.imgName ? IMAGES_PATH + data.imgName : noimage}
-              onClick={() => setBackdropOpen(true)}
+        <>
+          <Card className={classes.cardRoot}>
+            <CardHeader
+              avatar={
+                <Avatar
+                  alt='avatar'
+                  src={
+                    data.user?.avatar
+                      ? IMAGES_PATH + data.user.avatar
+                      : noavatar
+                  }
+                  aria-label='avatar'
+                  className={classes.avatar}
+                />
+              }
+              title={data.title}
+              subheader={data.description}
             />
-          </Tooltip>
-
-          <CardActions disableSpacing>
-            <ButtonGroup
-              className={classes.btnGroup}
-              color='primary'
-              size='small'
-              aria-label='outlined primary button group'
+            <Tooltip
+              title={<Typography variant='body1'>Крупнее</Typography>}
+              placement='bottom'
             >
-              <Button
-                disabled={authorizedUser?._id !== data.user._id}
-                onClick={() => handleShowCrudForm(false)}
-              >
-                Создать
-              </Button>
-              <Button
-                disabled={authorizedUser?._id !== data.user._id}
-                onClick={() => handleShowCrudForm(true)}
-              >
-                Изменить
-              </Button>
-              <Button
-                disabled={
-                  authorizedUser?._id !== data.user._id &&
-                  authorizedUser?.username !== 'admin'
-                }
-                color='secondary'
-                onClick={() => deleteMemory()}
-              >
-                Удалить
-              </Button>
-            </ButtonGroup>
-          </CardActions>
-        </Card>
-      )}
+              <CardMedia
+                className={classes.media}
+                image={data.imgName ? IMAGES_PATH + data.imgName : noimage}
+                onClick={() => setBackdropOpen(true)}
+              />
+            </Tooltip>
 
-      {data && (
-        <Backdrop
-          transitionDuration={1000}
-          className={classes.backdrop}
-          style={{
-            background: `url(${
-              IMAGES_PATH + (data.imgName || noimage)
-            }) center/contain no-repeat`,
-          }}
-          open={backdropOpen}
-          onClick={() => setBackdropOpen(false)}
-        />
+            <CardActions disableSpacing>
+              <ButtonGroup
+                className={classes.btnGroup}
+                color='primary'
+                size='small'
+                aria-label='outlined primary button group'
+              >
+                <Button
+                  disabled={authorizedUser?._id !== data.user._id}
+                  onClick={() => handleShowCrudForm(false)}
+                >
+                  Создать
+                </Button>
+                <Button
+                  disabled={authorizedUser?._id !== data.user._id}
+                  onClick={() => handleShowCrudForm(true)}
+                >
+                  Изменить
+                </Button>
+                <Button
+                  disabled={
+                    authorizedUser?._id !== data.user._id &&
+                    authorizedUser?.username !== 'admin'
+                  }
+                  color='secondary'
+                  onClick={() => deleteMemory()}
+                >
+                  Удалить
+                </Button>
+              </ButtonGroup>
+            </CardActions>
+          </Card>
+
+          <Backdrop
+            transitionDuration={1000}
+            className={classes.backdrop}
+            style={{
+              background: `url(${
+                IMAGES_PATH + (data.imgName || noimage)
+              }) center/contain no-repeat`,
+            }}
+            open={backdropOpen}
+            onClick={() => setBackdropOpen(false)}
+          />
+        </>
       )}
 
       <Dialog open={open} aria-labelledby='form-dialog-title'>
@@ -293,7 +323,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
           />
           <DropzoneArea
             onChange={handleImageChange}
-            dropzoneText='Добавить изображение'
+            dropzoneText={`Изображение (до ${maxUploadImageSize} байт)`}
             acceptedFiles={['image/*']}
             filesLimit={1}
             showAlerts={['error']}

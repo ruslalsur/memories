@@ -16,10 +16,7 @@ export const useStorage = () => {
 
       return response.data
     } catch (err) {
-      console.log(
-        `Попытка загрузки файла не удалась: `,
-        err.response.data.message
-      )
+      throw Error('Попытка загрузки файла не удалась (проверте размер)')
     }
   }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link, useHistory, Redirect } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import axios from 'axios'
 import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications'
 import { blueGrey } from '@material-ui/core/colors'
@@ -118,7 +118,7 @@ export const MainPage = () => {
     return cleanUp
   }, [])
 
-  // if (loading) return null
+  if (loading) return null
 
   return (
     <Grid container spacing={2}>
@@ -153,6 +153,11 @@ export const MainPage = () => {
                 Для воспоминаний реализованы CRUD-операции, доступные после
                 авторизации, а также поиск по подстроке входящей либо в
                 название, либо в описание.
+              </p>
+              <p>
+                После добавления пользователем информации о своем адресе
+                электронной почты в личном кабинете, ему отправляется письмо с
+                благодарностью.
               </p>
             </Paper>
           </Grid>

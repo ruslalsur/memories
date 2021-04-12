@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { useParams, Redirect } from 'react-router-dom'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
+import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { MemoryCrud } from '../components/MemoryCrud'
 import { Memories } from '../components/Memories'
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const MemoriesPage = () => {
   const classes = useStyles()
-  const { setInfo, search, authorizedUser, login } = useContext(Context)
+  const { setInfo, search } = useContext(Context)
 
   const [loading, setLoading] = useState(true)
   const [allMemoriesCount, setAllMemoriesCount] = useState(0)
@@ -59,13 +59,15 @@ export const MemoriesPage = () => {
   const [totalPages, setTotalPages] = useState(1)
   const { userId, share } = useParams()
 
-  const fetchMemories = async (srch = 'none', sha = 'all', p) => {
+  const fetchMemories = useCallback(async (srch = 'none', sha = 'all', p) => {
     try {
       const response = await axios.get(
         `/api/memory/user/${userId}/search/${
           srch || 'none'
         }/share/${sha}/page/${p}/perPage/${MEM_PER_PAGE}`
       )
+      if (!response.data.memories.length)
+        setInfo({ type: 'warning', msg: 'Нет воспоминаний' })
       setMemories(response.data.memories)
       setAllMemoriesCount(response.data.allMemoriesCount)
       setTotalPages(Math.ceil(response.data.allMemoriesCount / MEM_PER_PAGE))
@@ -79,7 +81,7 @@ export const MemoriesPage = () => {
       setLoading(false)
       setMemories([])
     }
-  }
+  }, [])
 
   useEffect(() => {
     fetchMemories(search, share)
@@ -93,7 +95,8 @@ export const MemoriesPage = () => {
   }
 
   const updateMemoriesState = (crudOps, crudedData) => {
-    const balance = allMemoriesCount % MEM_PER_PAGE
+    const balance = allMemoriesCount ? allMemoriesCount % MEM_PER_PAGE : 1
+
     switch (crudOps) {
       case 'update':
         setMemories(
@@ -112,10 +115,13 @@ export const MemoriesPage = () => {
         select(0)
         break
       case 'delete':
-        if (memories.length !== 1) {
-          handlePagination(page)
-        } else {
+        if (memories.length) {
+          setAllMemoriesCount(0)
+        }
+        if (memories.length === 1) {
           handlePagination(page - 1)
+        } else {
+          handlePagination(page)
         }
         select(0)
         break
@@ -125,69 +131,69 @@ export const MemoriesPage = () => {
   }
 
   if (loading) return null
-  if (!memories.length)
-    return <MemoryCrud data={null} setCrudedData={updateMemoriesState} />
+  if (!memories.length && search) return null
+  if (!memories.length && !allMemoriesCount)
+    return (
+      <MemoryCrud
+        data={memories[selected]}
+        setCrudedData={updateMemoriesState}
+      />
+    )
 
   return (
-    <Grid container spacing={2} className={classes.root}>
-      {!memories.length ? (
-        <Redirect to='/profile' />
-      ) : (
-        <>
-          <Grid item xs={12}>
-            <Typography
-              variant='h6'
-              component='h2'
-              className={classes.memListTitle}
-            >
-              Воспоминания пользователя
-              <span className={classes.memsUserName}>
-                {memories[0].user.username}
-              </span>
-            </Typography>
-          </Grid>
-          <Grid item xs={12} md={5}>
-            <Paper className={classes.memList}>
-              <Grid container justify='center' spacing={1}>
-                <Grid item xs={12}>
-                  {!loading && (
-                    <Memories
-                      select={select}
-                      memories={memories}
-                      current={selected}
+    memories.length && (
+      <Grid container spacing={2} className={classes.root}>
+        <Grid item xs={12}>
+          <Typography
+            variant='h6'
+            component='h2'
+            className={classes.memListTitle}
+          >
+            Воспоминания пользователя
+            <span className={classes.memsUserName}>
+              {memories[0].user?.username}
+            </span>
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={5}>
+          <Paper className={classes.memList}>
+            <Grid container justify='center' spacing={1}>
+              <Grid item xs={12}>
+                {!loading && (
+                  <Memories
+                    select={select}
+                    memories={memories}
+                    current={selected}
+                  />
+                )}
+              </Grid>
+              <Grid item>
+                <Grid container justify='center'>
+                  {totalPages > 1 && (
+                    <Pagination
+                      count={totalPages}
+                      page={page}
+                      onChange={(event, value) => handlePagination(value)}
+                      variant='outlined'
+                      color='secondary'
+                      size='small'
                     />
                   )}
                 </Grid>
-                <Grid item>
-                  <Grid container justify='center'>
-                    {totalPages > 1 && (
-                      <Pagination
-                        count={totalPages}
-                        page={page}
-                        onChange={(event, value) => handlePagination(value)}
-                        variant='outlined'
-                        color='secondary'
-                        size='small'
-                      />
-                    )}
-                  </Grid>
-                </Grid>
               </Grid>
-            </Paper>
-          </Grid>
-        </>
-      )}
+            </Grid>
+          </Paper>
+        </Grid>
 
-      <Grid item xs={12} md={7}>
-        <Grid container justify='center'>
-          {!loading && (
+        <Grid item xs={12} md={7}>
+          <Grid container justify='center'>
             <MemoryCrud
               data={memories[selected]}
               setCrudedData={updateMemoriesState}
             />
-          )}
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    )
   )
 }

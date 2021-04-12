@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 export const Header = ({ appName }) => {
   const classes = useStyles()
   let history = useHistory()
-  const { setInfo, authorizedUser } = useContext(Context)
+  const { authorizedUser } = useContext(Context)
 
   const handleProfileBtn = () => {
     history.push(authorizedUser ? '/profile' : '/signin')

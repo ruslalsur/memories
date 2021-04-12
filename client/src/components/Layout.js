@@ -1,8 +1,7 @@
 import React, { useContext, cloneElement } from 'react'
-import { Container } from '@material-ui/core'
+import { Container, Snackbar } from '@material-ui/core'
 import { Header } from './Header'
 import { makeStyles } from '@material-ui/core/styles'
-import { Snackbar } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import { Context } from '../context'
 
@@ -43,7 +42,7 @@ export const Layout = ({ children, sign }) => {
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'center',
+          horizontal: 'left',
         }}
         transitionDuration={200}
         open={!!info}

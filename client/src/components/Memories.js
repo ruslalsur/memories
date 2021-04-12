@@ -43,49 +43,46 @@ export const Memories = ({ memories, select, current }) => {
     select(index)
   }
 
-  if (memories.length) {
-    return (
-      <GridList
-        spacing={10}
-        cellHeight={145}
-        cols={3}
-        className={classes.gridList}
-      >
-        {memories.map((memory, index) => (
-          <GridListTile
-            key={memory._id}
-            onClick={() => handlleMemoryClick(index)}
-            className={classes.gridListTile}
-            style={
-              memories[current]._id === memory._id && {
-                opacity: 1,
-                boxShadow: `inset 0 0 0 3px ${deepOrange['A400']}`,
-                borderRadius: 7,
-              }
+  if (!memories.length) return null
+  return (
+    <GridList
+      spacing={10}
+      cellHeight={145}
+      cols={3}
+      className={classes.gridList}
+    >
+      {memories.map((memory, index) => (
+        <GridListTile
+          key={memory._id}
+          onClick={() => handlleMemoryClick(index)}
+          className={classes.gridListTile}
+          style={
+            memories[current]._id === memory._id && {
+              opacity: 1,
+              boxShadow: `inset 0 0 0 3px ${deepOrange['A400']}`,
+              borderRadius: 7,
             }
-          >
-            <img
-              src={memory.imgName ? IMAGES_PATH + memory.imgName : noimage}
-              alt={memory.imgName ? IMAGES_PATH + memory.imgName : noimage}
-            />
+          }
+        >
+          <img
+            src={memory.imgName ? IMAGES_PATH + memory.imgName : noimage}
+            alt={memory.imgName ? IMAGES_PATH + memory.imgName : noimage}
+          />
 
-            <GridListTileBar
-              title={memory.title}
-              actionIcon={
-                !memory.shared && (
-                  <LockIcon
-                    fontSize='small'
-                    color='error'
-                    className={classes.icon}
-                  />
-                )
-              }
-            />
-          </GridListTile>
-        ))}
-      </GridList>
-    )
-  } else {
-    return null
-  }
+          <GridListTileBar
+            title={memory.title}
+            actionIcon={
+              !memory.shared && (
+                <LockIcon
+                  fontSize='small'
+                  color='error'
+                  className={classes.icon}
+                />
+              )
+            }
+          />
+        </GridListTile>
+      ))}
+    </GridList>
+  )
 }

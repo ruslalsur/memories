@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import axios from 'axios'
 import noavatar from '../assets/images/noavatar.jpg'
 import { blue, blueGrey, deepOrange } from '@material-ui/core/colors'
 import { useStorage } from '../hooks/storage.hook'
-import { LOCALSTORAGE_NAME, IMAGES_PATH } from '../config.js'
+import { IMAGES_PATH } from '../config.js'
 import { Context } from '../context'
+import { LOCALSTORAGE_NAME } from '../config.js'
 import {
   Tooltip,
   TextField,
@@ -52,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '0.5rem',
     color: blueGrey[500],
     fontFamily: 'Yanone Kaffeesatz',
-    fontSize: '1.3rem',
+    fontSize: '1.2rem',
     letterSpacing: 2,
   },
   details__data_link: {
@@ -71,11 +72,8 @@ export const ProfilePage = () => {
   const classes = useStyles()
   const { uploadImage } = useStorage()
   const {
-    search,
-    login,
     logout,
     token,
-    setToken,
     setInfo,
     authorizedUser,
     setAuthorizedUser,
@@ -83,7 +81,8 @@ export const ProfilePage = () => {
 
   const [stat, setStat] = useState(null)
   const [editShow, setEditShow] = useState(false)
-  const [emailValue, setEmailValue] = useState('')
+  const [emailValue, setEmailValue] = useState(authorizedUser?.email || '')
+  const [error, setError] = useState(false)
 
   const handleEmailClick = (e) => {
     setEditShow(true)
@@ -92,8 +91,39 @@ export const ProfilePage = () => {
     setEmailValue(e.target.value)
   }
   const handleEmailBlur = (e) => {
-    setAuthorizedUser({ ...authorizedUser, email: emailValue })
-    setEditShow(false)
+    if (/^$|^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailValue)) {
+      setError(false)
+      axios
+        .patch(
+          `api/user/${authorizedUser._id}`,
+          { email: emailValue },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
+        .then((response) => {
+          setAuthorizedUser({ ...authorizedUser, email: emailValue })
+          localStorage.setItem(
+            LOCALSTORAGE_NAME,
+            JSON.stringify({
+              authorizedUser: { ...authorizedUser, email: emailValue },
+              token,
+            })
+          )
+          setInfo({ type: 'success', msg: response.data.message })
+          // console.log(`LOG response: `, response)
+        })
+        .catch((err) => {
+          setInfo({
+            type: 'error',
+            msg: err.message || 'Ошибка при изменении почты',
+          })
+        })
+
+      setEditShow(false)
+    } else {
+      setError(true)
+    }
   }
 
   useEffect(() => {
@@ -102,7 +132,9 @@ export const ProfilePage = () => {
         .get(`api/memory/stat/${authorizedUser._id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
-        .then((response) => setStat(response.data))
+        .then((response) => {
+          setStat(response.data)
+        })
         .catch((err) =>
           setInfo({ type: 'error', msg: err.response.data.message })
         )
@@ -121,6 +153,13 @@ export const ProfilePage = () => {
       )
 
       setAuthorizedUser({ ...authorizedUser, avatar: avatarSrc })
+      localStorage.setItem(
+        LOCALSTORAGE_NAME,
+        JSON.stringify({
+          authorizedUser: { ...authorizedUser, avatar: avatarSrc },
+          token,
+        })
+      )
     } catch (err) {
       setInfo({ type: 'error', msg: err.response.data.message })
     }
@@ -186,7 +225,9 @@ export const ProfilePage = () => {
                   >
                     роли:
                     <span className={classes.details__data}>
-                      {authorizedUser.roles.map((item) => item.role).join(', ')}
+                      {authorizedUser.roles
+                        .map((item) => item.description)
+                        .join(', ')}
                     </span>
                   </Typography>
                 </Box>
@@ -242,6 +283,8 @@ export const ProfilePage = () => {
                       label='введите email'
                       value={emailValue}
                       autoFocus
+                      error={error}
+                      helperText={error ? 'неверный формат' : ''}
                     />
                   )}
                 </Box>

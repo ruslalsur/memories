@@ -40,7 +40,7 @@ class MemoryController {
         ],
       })
         .limit(+perPage)
-        .skip((+page - 1) * +perPage)
+        .skip((+page !== 0 ? +page - 1 : 1) * +perPage)
 
       const allMemoriesCount = await Memory.countDocuments({
         user: { _id: id },
@@ -60,8 +60,6 @@ class MemoryController {
           },
         ],
       })
-
-      if (!memories.length) throw new Error(`Нет воспоминаний!`)
 
       return res.status(200).json({
         memories,
@@ -114,8 +112,6 @@ class MemoryController {
         shared: true,
       })
       const privateMemoriesCount = memoriesCount - publicMemoriesCount
-
-      if (!memoriesCount) throw new Error(`Нет воспоминаний!`)
 
       return res.status(200).json({
         memoriesCount,

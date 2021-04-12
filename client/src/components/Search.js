@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
 
 export const Search = () => {
   const classes = useStyles()
-  // const [value, setValue] = useState('')
   const { search, setSearch } = useContext(Context)
 
   const handleOnChange = (e) => {
@@ -55,14 +54,6 @@ export const Search = () => {
           </InputAdornment>
         }
       />
-      {/* <IconButton
-        className={classes.iconButton}
-        aria-label='search'
-        size='small'
-        onClick={() => setSearch(value)}
-      >
-        <SearchIcon />
-      </IconButton> */}
     </Paper>
   )
 }

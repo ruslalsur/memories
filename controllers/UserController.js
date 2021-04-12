@@ -4,10 +4,10 @@ const jwt = require('jsonwebtoken')
 const { jvtSecret } = require('config')
 const Role = require('../models/Role')
 const User = require('../models/User')
-const { Error } = require('mongoose')
 const path = require('path')
-const { stat, unlink } = require('fs').promises
+const { unlink } = require('fs').promises
 const { storage_dir } = require('config')
+const transporter = require('../helpers/transporter')
 
 class UserController {
   async getUsers(req, res) {
@@ -39,7 +39,7 @@ class UserController {
       }
 
       const hashPassword = bcrypt.hashSync(password, 5)
-      const userRole = await Role.findOne({ role: 'пользователь' })
+      const userRole = await Role.findOne({ role: 'USER' })
 
       const user = new User({
         username,
@@ -53,7 +53,7 @@ class UserController {
         .status(201)
         .json({ message: `Был создан новый пользователь ${username}` })
     } catch (err) {
-      console.log(Error)
+      console.log(err)
       res.status(500).json({
         message: `Ошибка в процессе создания нового пользователя ${username}`,
       })
@@ -93,30 +93,50 @@ class UserController {
     }
   }
 
-  async updateAvatar(req, res) {
+  async updateUser(req, res) {
     const { id } = req.params
-    const { avatarSrc } = req.body
-
-    let user = {}
-    let avatar = ''
+    const { avatarSrc, email } = req.body
+    let msg = ''
 
     try {
-      user = await User.findById(id)
-      avatar = user.avatar
+      const user = await User.findById(id)
 
-      await unlink(path.join(storage_dir, avatar))
-    } catch (err) {
-      if (err.code !== 'ENOENT') {
-        res.status(500).json({
-          message:
-            err.message || `Ошибка в процессе изменения изображения аватара`,
-        })
+      if (avatarSrc) {
+        if (user.avatar) await unlink(path.join(storage_dir, user.avatar))
+        user.avatar = avatarSrc
+        msg = 'Аватар был изменен'
       }
-    } finally {
-      user.avatar = avatarSrc
-      user.save()
+      if (email !== undefined) {
+        user.email = email
 
-      return res.status(200).json({ user })
+        if (email) {
+          const letter = {
+            from: 'rugesuruge@gmail.com',
+            to: email,
+            subject: 'Воспоминания',
+            html: `<h4><span style="color: red;">${user.username}</span>, cпасибо за предоставление дополнительной информации о себе!</h4>`,
+          }
+
+          transporter.sendMail(letter, function (error, info) {
+            if (error) {
+              console.log(error)
+            } else {
+              console.log('Email sent: ' + info.response)
+            }
+          })
+          msg = `На новый адрес ${email} отправлено письмо`
+        } else {
+          msg = `Благодарим за попытку добавить информацию`
+        }
+      }
+
+      await user.save()
+      return res.status(200).json({ message: msg, user })
+    } catch (err) {
+      console.log(`LOG err: `, err)
+      return res.status(500).json({
+        message: err.message,
+      })
     }
   }
 }

@@ -7,7 +7,6 @@ import signup from '../assets/images/signup.jpg'
 import { teal } from '@material-ui/core/colors'
 import { pink } from '@material-ui/core/colors'
 import HomeIcon from '@material-ui/icons/Home'
-import { LOCALSTORAGE_NAME } from '../config.js'
 import { Context } from '../context'
 import {
   Button,

@@ -5,8 +5,7 @@ const UserController = require('../controllers/UserController')
 const rolesOnly = require('../middleware/authMiddleware')
 const upload = require('../middleware/uploadMiddleware')
 
-router.get('/', UserController.getUsers)
-// router.get('/', rolesOnly(['USER']), UserController.getUsers)
+router.get('/', rolesOnly(['Администратор']), UserController.getUsers)
 
 router.post(
   '/signup',
@@ -32,6 +31,6 @@ router.post(
   UserController.signIn
 )
 
-router.patch('/:id', upload.single('file'), UserController.updateAvatar)
+router.patch('/:id', upload.single('file'), UserController.updateUser)
 
 module.exports = router
