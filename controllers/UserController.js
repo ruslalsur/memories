@@ -7,7 +7,7 @@ const User = require('../models/User')
 const path = require('path')
 const { unlink } = require('fs').promises
 const { storage_dir } = require('config')
-const transporter = require('../helpers/transporter')
+const mailSender = require('../helpers/mailSender')
 
 class UserController {
   async getUsers(req, res) {
@@ -110,21 +110,8 @@ class UserController {
         user.email = email
 
         if (email) {
-          const letter = {
-            from: 'rugesuruge@gmail.com',
-            to: email,
-            subject: 'Воспоминания',
-            html: `<h4><span style="color: red;">${user.username}</span>, cпасибо за предоставление дополнительной информации о себе!</h4>`,
-          }
-
-          transporter.sendMail(letter, function (error, info) {
-            if (error) {
-              console.log(error)
-            } else {
-              console.log('Email sent: ' + info.response)
-            }
-          })
-          msg = `На новый адрес ${email} отправлено письмо`
+          mailSender(user)
+          msg = `На адрес ${email} отправлено письмо`
         } else {
           msg = `Благодарим за попытку добавить информацию`
         }
