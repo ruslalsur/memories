@@ -8,11 +8,12 @@ const User = new Schema({
     type: String,
     trim: true,
     lowercase: true,
-    unique: true,
     match: [
       /^$|^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Неверный формат электронной почты',
     ],
+    unique: false,
+    default: '',
   },
   roles: [{ type: Schema.Types.ObjectId, ref: 'Role', autopopulate: true }],
 })

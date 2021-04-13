@@ -111,7 +111,6 @@ export const ProfilePage = () => {
             })
           )
           setInfo({ type: 'success', msg: response.data.message })
-          // console.log(`LOG response: `, response)
         })
         .catch((err) => {
           setInfo({

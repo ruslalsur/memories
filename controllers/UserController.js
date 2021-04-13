@@ -20,6 +20,7 @@ class UserController {
   }
 
   async signUp(req, res) {
+    const { username, password } = req.body
     try {
       const validationErrors = validationResult(req)
       if (!validationErrors.isEmpty()) {
@@ -29,7 +30,6 @@ class UserController {
         })
       }
 
-      const { username, password } = req.body
       const candidate = await User.findOne({ username })
 
       if (candidate) {
@@ -46,6 +46,7 @@ class UserController {
         password: hashPassword,
       })
       user.roles.push(userRole)
+      console.log(`LOG username: `, username)
 
       await user.save()
 

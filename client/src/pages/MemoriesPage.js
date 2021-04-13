@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { MemoryCrud } from '../components/MemoryCrud'
+import { Empty } from '../components/Empty'
 import { Memories } from '../components/Memories'
 import { makeStyles } from '@material-ui/core/styles'
 import { blueGrey } from '@material-ui/core/colors'
@@ -11,6 +12,11 @@ import { MEM_PER_PAGE } from '../config.js'
 import { Context } from '../context'
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    minHeight: '100%',
+    minWidth: '100%',
+  },
   memList: {
     backgroundColor: theme.palette.background.paper,
     paddingBottom: 10,
@@ -70,7 +76,9 @@ export const MemoriesPage = () => {
         setInfo({ type: 'warning', msg: 'Нет воспоминаний' })
       setMemories(response.data.memories)
       setAllMemoriesCount(response.data.allMemoriesCount)
-      setTotalPages(Math.ceil(response.data.allMemoriesCount / MEM_PER_PAGE))
+      setTotalPages(
+        Math.ceil(response.data.allMemoriesCount / MEM_PER_PAGE) || 1
+      )
       setLoading(false)
     } catch (err) {
       if (err.response) {
@@ -79,7 +87,7 @@ export const MemoriesPage = () => {
         setInfo({ type: 'error', msg: err.message })
       }
       setLoading(false)
-      setMemories([])
+      // setMemories([])
     }
   }, [])
 
@@ -89,9 +97,9 @@ export const MemoriesPage = () => {
   }, [search])
 
   const handlePagination = (value) => {
-    select(0)
     fetchMemories(search, share, value)
     setPage(value)
+    select(0)
   }
 
   const updateMemoriesState = (crudOps, crudedData) => {
@@ -112,6 +120,7 @@ export const MemoriesPage = () => {
         } else {
           handlePagination(totalPages + 1)
         }
+
         select(0)
         break
       case 'delete':
@@ -131,69 +140,65 @@ export const MemoriesPage = () => {
   }
 
   if (loading) return null
-  if (!memories.length && search) return null
-  if (!memories.length && !allMemoriesCount)
-    return (
-      <MemoryCrud
-        data={memories[selected]}
-        setCrudedData={updateMemoriesState}
-      />
-    )
 
   return (
-    memories.length && (
-      <Grid container spacing={2} className={classes.root}>
-        <Grid item xs={12}>
-          <Typography
-            variant='h6'
-            component='h2'
-            className={classes.memListTitle}
-          >
-            Воспоминания пользователя
-            <span className={classes.memsUserName}>
-              {memories[0].user?.username}
-            </span>
-          </Typography>
-        </Grid>
-        <Grid item xs={12} md={5}>
-          <Paper className={classes.memList}>
-            <Grid container justify='center' spacing={1}>
-              <Grid item xs={12}>
-                {!loading && (
-                  <Memories
-                    select={select}
-                    memories={memories}
-                    current={selected}
-                  />
-                )}
-              </Grid>
-              <Grid item>
-                <Grid container justify='center'>
-                  {totalPages > 1 && (
-                    <Pagination
-                      count={totalPages}
-                      page={page}
-                      onChange={(event, value) => handlePagination(value)}
-                      variant='outlined'
-                      color='secondary'
-                      size='small'
+    <Grid container spacing={2} className={classes.root}>
+      {!memories.length ? (
+        <Empty />
+      ) : (
+        <>
+          <Grid item xs={12}>
+            <Typography
+              variant='h6'
+              component='h2'
+              className={classes.memListTitle}
+            >
+              Воспоминания пользователя
+              <span className={classes.memsUserName}>
+                {memories[0].user?.username}
+              </span>
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={5}>
+            <Paper className={classes.memList}>
+              <Grid container justify='center' spacing={1}>
+                <Grid item xs={12}>
+                  {!loading && (
+                    <Memories
+                      select={select}
+                      memories={memories}
+                      current={selected}
                     />
                   )}
                 </Grid>
+                <Grid item>
+                  <Grid container justify='center'>
+                    {totalPages > 1 && (
+                      <Pagination
+                        count={totalPages}
+                        page={page}
+                        onChange={(event, value) => handlePagination(value)}
+                        variant='outlined'
+                        color='secondary'
+                        size='small'
+                      />
+                    )}
+                  </Grid>
+                </Grid>
               </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} md={7}>
-          <Grid container justify='center'>
-            <MemoryCrud
-              data={memories[selected]}
-              setCrudedData={updateMemoriesState}
-            />
+            </Paper>
           </Grid>
+        </>
+      )}
+
+      <Grid item xs={12} md={7}>
+        <Grid container justify='center'>
+          <MemoryCrud
+            data={memories[selected]}
+            setCrudedData={updateMemoriesState}
+          />
         </Grid>
       </Grid>
-    )
+    </Grid>
   )
 }

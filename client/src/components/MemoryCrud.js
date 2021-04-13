@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
-import { useHistory } from 'react-router-dom'
 import { Context } from '../context'
 import { DropzoneArea } from 'material-ui-dropzone'
 import { useStorage } from '../hooks/storage.hook'
 import { makeStyles } from '@material-ui/core/styles'
-import { IMAGES_PATH, UPLOAD_FILE_SIZE } from '../config'
+import { IMAGES_PATH, UPLOAD_FILE_SIZE, UPLOAD_FILE_SIZE_VIP } from '../config'
 import noavatar from '../assets/images/noavatar.jpg'
 import noimage from '../assets/images/noimage.jpg'
 import {
@@ -81,7 +80,6 @@ const useStyles = makeStyles((theme) => ({
 
 export const MemoryCrud = ({ data, setCrudedData }) => {
   const classes = useStyles()
-  let history = useHistory()
   const { uploadImage } = useStorage()
   const initFormData = {
     title: '',
@@ -94,17 +92,17 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState(initFormData)
   const [imgFile, setImgFile] = useState(undefined)
-  const { setInfo, authorizedUser } = useContext(Context)
-  const maxUploadImageSize = authorizedUser.roles.some(
+  const { setInfo, authorizedUser, search } = useContext(Context)
+  const maxUploadImageSize = authorizedUser?.roles.some(
     (item) => item.role === 'PHOTO'
   )
-    ? 3145728
+    ? UPLOAD_FILE_SIZE_VIP
     : UPLOAD_FILE_SIZE
 
   useEffect(() => {
     if (!data) {
       setFormData(initFormData)
-      setOpen(true)
+      if (!search) setOpen(true)
     }
   }, [data])
 
