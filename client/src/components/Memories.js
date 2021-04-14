@@ -8,11 +8,9 @@ import { GridList, GridListTile, GridListTileBar } from '@material-ui/core'
 import { Context } from '../context'
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
-
   gridList: {
     width: 'auto',
-    height: 'auto%',
+    height: 'auto',
     padding: 7,
   },
 

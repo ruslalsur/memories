@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 30,
   },
   media: {
-    height: '50vh',
+    height: '45vh',
     paddingTop: '56.25%', // 16:9
     cursor: 'pointer',
     opacity: 1,
@@ -104,7 +104,6 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
       setFormData(initFormData)
       if (!search) setOpen(true)
     }
-    console.log(`LOG: `, data.user.avatar)
   }, [data])
 
   const handleFormChange = (event) => {

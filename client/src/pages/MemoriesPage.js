@@ -6,7 +6,7 @@ import { Empty } from '../components/Empty'
 import { Memories } from '../components/Memories'
 import { makeStyles } from '@material-ui/core/styles'
 import { blueGrey } from '@material-ui/core/colors'
-import { Typography, Grid, Paper, Box } from '@material-ui/core'
+import { Typography, Grid, Paper, Box, Badge } from '@material-ui/core'
 import { Pagination } from '@material-ui/lab'
 import { MEM_PER_PAGE } from '../config.js'
 import { Context } from '../context'
@@ -30,6 +30,11 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '0.5rem',
     color: theme.palette.secondary.light,
     fontFamily: 'Comfortaa',
+  },
+  userMemCount: {
+    color: blueGrey[500],
+    fontFamily: 'Yanone Kaffeesatz',
+    fontSize: '1rem',
   },
   paginationTitle: {
     marginRight: '0.5rem',
@@ -169,7 +174,13 @@ export const MemoriesPage = () => {
               >
                 Воспоминания пользователя
                 <span className={classes.memsUserName}>
-                  {memories[0].user?.username}
+                  <Badge
+                    badgeContent={String(allMemoriesCount || 'нет')}
+                    color='default'
+                    classes={{ badge: classes.userMemCount }}
+                  >
+                    <Box mr={1}>{memories[0].user?.username}</Box>
+                  </Badge>
                 </span>
               </Typography>
             </Box>

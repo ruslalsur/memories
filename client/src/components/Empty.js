@@ -32,7 +32,7 @@ export const Empty = () => {
             variant='contained'
             size='small'
           >
-            Создать
+            <Box>Ok</Box>
           </Button>
         )}
       </Box>
