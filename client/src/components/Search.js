@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '2px 4px',
     display: 'flex',
     alignItems: 'center',
-    width: 250,
+    maxWidth: 250,
     backgroundColor: blueGrey[200],
   },
   input: {
@@ -39,7 +39,6 @@ export const Search = () => {
         className={classes.input}
         placeholder='Поиск воспоминаний'
         inputProps={{ 'aria-label': 'search for memories' }}
-        type='search'
         value={search}
         onChange={handleOnChange}
         endAdornment={

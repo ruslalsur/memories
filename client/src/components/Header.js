@@ -123,7 +123,7 @@ export const Header = ({ appName }) => {
                 {authorizedUser ? (
                   <Avatar
                     className={classes.avatar}
-                    alt='avatar'
+                    alt={authorizedUser.username.toUpperCase()}
                     src={
                       authorizedUser.avatar
                         ? IMAGES_PATH + authorizedUser.avatar

@@ -6,7 +6,7 @@ import { Empty } from '../components/Empty'
 import { Memories } from '../components/Memories'
 import { makeStyles } from '@material-ui/core/styles'
 import { blueGrey } from '@material-ui/core/colors'
-import { Typography, Grid, Paper } from '@material-ui/core'
+import { Typography, Grid, Paper, Box } from '@material-ui/core'
 import { Pagination } from '@material-ui/lab'
 import { MEM_PER_PAGE } from '../config.js'
 import { Context } from '../context'
@@ -30,6 +30,14 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '0.5rem',
     color: theme.palette.secondary.light,
     fontFamily: 'Comfortaa',
+  },
+  paginationTitle: {
+    marginRight: '0.5rem',
+    color: theme.palette.secondary.light,
+    fontFamily: 'Comfortaa',
+    fontSize: '0.9rem',
+    fontWeight: 600,
+    letterSpacing: -0.7,
   },
   gridList: {
     width: 'auto',
@@ -142,26 +150,33 @@ export const MemoriesPage = () => {
   if (loading) return null
 
   return (
-    <Grid container spacing={2} className={classes.root}>
+    <Grid
+      container
+      spacing={2}
+      alignContent='flex-start'
+      className={classes.root}
+    >
       {!memories.length ? (
         <Empty />
       ) : (
         <>
-          <Grid item xs={12}>
-            <Typography
-              variant='h6'
-              component='h2'
-              className={classes.memListTitle}
-            >
-              Воспоминания пользователя
-              <span className={classes.memsUserName}>
-                {memories[0].user?.username}
-              </span>
-            </Typography>
+          <Grid item xs={12} style={{}}>
+            <Box ml={1}>
+              <Typography
+                variant='h6'
+                component='h2'
+                className={classes.memListTitle}
+              >
+                Воспоминания пользователя
+                <span className={classes.memsUserName}>
+                  {memories[0].user?.username}
+                </span>
+              </Typography>
+            </Box>
           </Grid>
           <Grid item xs={12} md={5}>
             <Paper className={classes.memList}>
-              <Grid container justify='center' spacing={1}>
+              <Grid container spacing={1} justify='flex-end'>
                 <Grid item xs={12}>
                   {!loading && (
                     <Memories
@@ -172,16 +187,27 @@ export const MemoriesPage = () => {
                   )}
                 </Grid>
                 <Grid item>
-                  <Grid container justify='center'>
+                  <Grid container>
                     {totalPages > 1 && (
-                      <Pagination
-                        count={totalPages}
-                        page={page}
-                        onChange={(event, value) => handlePagination(value)}
-                        variant='outlined'
-                        color='secondary'
-                        size='small'
-                      />
+                      <Box display='flex' alignItems='center' mr={1}>
+                        <Typography
+                          variant='h6'
+                          component='h6'
+                          className={classes.paginationTitle}
+                        >
+                          Страница :
+                        </Typography>
+                        <Pagination
+                          count={totalPages}
+                          page={page}
+                          onChange={(event, value) => handlePagination(value)}
+                          variant='outlined'
+                          color='secondary'
+                          size='small'
+                          hideNextButton
+                          hidePrevButton
+                        />
+                      </Box>
                     )}
                   </Grid>
                 </Grid>
@@ -192,7 +218,7 @@ export const MemoriesPage = () => {
       )}
 
       <Grid item xs={12} md={7}>
-        <Grid container justify='center'>
+        <Grid container>
           <MemoryCrud
             data={memories[selected]}
             setCrudedData={updateMemoriesState}

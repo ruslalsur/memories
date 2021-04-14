@@ -184,7 +184,7 @@ export const ProfilePage = () => {
       </Grid>
       <Grid item>
         <Grid container spacing={4}>
-          <Grid item xs={12} sm={6} component='label'>
+          <Grid item xs={12} md={6} component='label'>
             <Tooltip
               title={<Typography variant='body2'>Смена аватара</Typography>}
               placement='bottom-end'
@@ -201,7 +201,7 @@ export const ProfilePage = () => {
               </Box>
             </Tooltip>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} md={6}>
             <Grid container direction='column' spacing={5}>
               <Grid item>
                 <Box ml={1} mt={1}>

@@ -104,6 +104,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
       setFormData(initFormData)
       if (!search) setOpen(true)
     }
+    console.log(`LOG: `, data.user.avatar)
   }, [data])
 
   const handleFormChange = (event) => {
@@ -210,10 +211,10 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
             <CardHeader
               avatar={
                 <Avatar
-                  alt='avatar'
+                  alt={data?.user?.username.toUpperCase()}
                   src={
-                    data.user?.avatar
-                      ? IMAGES_PATH + data.user.avatar
+                    data?.user?.avatar
+                      ? IMAGES_PATH + data?.user?.avatar
                       : noavatar
                   }
                   aria-label='avatar'

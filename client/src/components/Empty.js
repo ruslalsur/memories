@@ -19,13 +19,13 @@ const useStyles = makeStyles((theme) => ({
 
 export const Empty = () => {
   const classes = useStyles()
-  const { authorizedUser } = useContext(Context)
+  const { authorizedUser, search } = useContext(Context)
 
   return (
     <Box className={classes.root}>
       Воспоминаний нет
       <Box ml={2}>
-        {authorizedUser && (
+        {authorizedUser && !search && (
           <Button
             href={`/memories/${authorizedUser?._id}/all`}
             color='secondary'
