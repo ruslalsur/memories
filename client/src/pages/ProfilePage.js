@@ -8,6 +8,7 @@ import { useStorage } from '../hooks/storage.hook'
 import { IMAGES_PATH } from '../config.js'
 import { Context } from '../context'
 import { MemoriesIndicator } from '../components/MemoriesIndicator'
+import { Loading } from '../components/Loading'
 import { LOCALSTORAGE_NAME } from '../config.js'
 import {
   Tooltip,
@@ -84,6 +85,7 @@ export const ProfilePage = () => {
   const [editShow, setEditShow] = useState(false)
   const [emailValue, setEmailValue] = useState(authorizedUser?.email || '')
   const [error, setError] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleEmailClick = (e) => {
     setEditShow(true)
@@ -143,6 +145,7 @@ export const ProfilePage = () => {
 
   const handleFileInputChange = async (e) => {
     try {
+      setLoading(true)
       const avatarSrc = await uploadImage(e.target.files[0])
       await axios.patch(
         `/api/user/${authorizedUser._id}`,
@@ -160,8 +163,10 @@ export const ProfilePage = () => {
           token,
         })
       )
+      setLoading(false)
     } catch (err) {
       setInfo({ type: 'error', msg: err.response.data.message })
+      setLoading(false)
     }
   }
 
@@ -186,21 +191,25 @@ export const ProfilePage = () => {
       <Grid item>
         <Grid container spacing={4}>
           <Grid item xs={12} md={6} component='label'>
-            <Tooltip
-              title={<Typography variant='body2'>Смена аватара</Typography>}
-              placement='bottom-end'
-            >
-              <Box
-                className={classes.avatar}
-                style={{
-                  background: `url(${
-                    IMAGES_PATH + authorizedUser.avatar
-                  }) center/cover no-repeat, url(${noavatar}) center/cover no-repeat`,
-                }}
+            {loading ? (
+              <Loading />
+            ) : (
+              <Tooltip
+                title={<Typography variant='body2'>Смена аватара</Typography>}
+                placement='bottom-end'
               >
-                <input type='file' hidden onChange={handleFileInputChange} />
-              </Box>
-            </Tooltip>
+                <Box
+                  className={classes.avatar}
+                  style={{
+                    background: `url(${
+                      IMAGES_PATH + authorizedUser.avatar
+                    }) center/cover no-repeat, url(${noavatar}) center/cover no-repeat`,
+                  }}
+                >
+                  <input type='file' hidden onChange={handleFileInputChange} />
+                </Box>
+              </Tooltip>
+            )}
           </Grid>
           <Grid item xs={12} md={6}>
             <Grid container direction='column' spacing={5}>
