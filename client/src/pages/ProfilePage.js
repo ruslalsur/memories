@@ -323,10 +323,10 @@ export const ProfilePage = () => {
                         публичных
                       </Box>
                       <MemoriesIndicator
-                        value={
+                        value={Math.round(
                           (100 / stat?.memoriesCount) *
-                          stat?.publicMemoriesCount
-                        }
+                            stat?.publicMemoriesCount
+                        )}
                         color='primary'
                       />
                     </Button>
@@ -347,10 +347,10 @@ export const ProfilePage = () => {
                         приватных
                       </Box>
                       <MemoriesIndicator
-                        value={
+                        value={Math.round(
                           (100 / stat?.memoriesCount) *
-                          stat?.privateMemoriesCount
-                        }
+                            stat?.privateMemoriesCount
+                        )}
                         color='secondary'
                       />
                     </Button>
