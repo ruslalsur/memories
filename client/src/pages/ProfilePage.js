@@ -7,6 +7,7 @@ import { blue, blueGrey, deepOrange } from '@material-ui/core/colors'
 import { useStorage } from '../hooks/storage.hook'
 import { IMAGES_PATH } from '../config.js'
 import { Context } from '../context'
+import { MemoriesIndicator } from '../components/MemoriesIndicator'
 import { LOCALSTORAGE_NAME } from '../config.js'
 import {
   Tooltip,
@@ -301,7 +302,9 @@ export const ProfilePage = () => {
                       color='primary'
                       href={`/memories/${authorizedUser._id}/all`}
                     >
-                      воспоминаний
+                      <Box height={40} display='flex' alignItems='center'>
+                        воспоминаний
+                      </Box>
                     </Button>
                   </Badge>
                 </Box>
@@ -316,7 +319,16 @@ export const ProfilePage = () => {
                       color='primary'
                       href={`/memories/${authorizedUser._id}/public`}
                     >
-                      публичных
+                      <Box height={40} display='flex' alignItems='center'>
+                        публичных
+                      </Box>
+                      <MemoriesIndicator
+                        value={
+                          (100 / stat?.memoriesCount) *
+                          stat?.publicMemoriesCount
+                        }
+                        color='primary'
+                      />
                     </Button>
                   </Badge>
                 </Box>
@@ -331,7 +343,16 @@ export const ProfilePage = () => {
                       color='secondary'
                       href={`/memories/${authorizedUser._id}/private`}
                     >
-                      приватных
+                      <Box height={40} display='flex' alignItems='center'>
+                        приватных
+                      </Box>
+                      <MemoriesIndicator
+                        value={
+                          (100 / stat?.memoriesCount) *
+                          stat?.privateMemoriesCount
+                        }
+                        color='secondary'
+                      />
                     </Button>
                   </Badge>
                 </Box>
