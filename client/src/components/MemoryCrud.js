@@ -3,11 +3,12 @@ import axios from 'axios'
 import { Context } from '../context'
 import { DropzoneArea } from 'material-ui-dropzone'
 import { useStorage } from '../hooks/storage.hook'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, withStyles } from '@material-ui/core/styles'
 import { IMAGES_PATH, UPLOAD_FILE_SIZE, UPLOAD_FILE_SIZE_VIP } from '../config'
 import noavatar from '../assets/images/noavatar.jpg'
 import noimage from '../assets/images/noimage.jpg'
 import {
+  Box,
   Typography,
   Tooltip,
   Dialog,
@@ -25,6 +26,7 @@ import {
   ButtonGroup,
   Button,
   Backdrop,
+  LinearProgress,
 } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
@@ -79,6 +81,21 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export const MemoryCrud = ({ data, setCrudedData }) => {
+  const BorderLinearProgress = withStyles((theme) => ({
+    root: {
+      height: 15,
+      borderRadius: 5,
+    },
+    colorPrimary: {
+      backgroundColor:
+        theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
+    },
+    bar: {
+      borderRadius: 5,
+      backgroundColor: '#1a90ff',
+    },
+  }))(LinearProgress)
+
   const classes = useStyles()
   const { uploadImage } = useStorage()
   const initFormData = {
@@ -88,6 +105,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
     shared: true,
   }
 
+  const [loading, setLoading] = useState(false)
   const [backdropOpen, setBackdropOpen] = useState(false)
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState(initFormData)
@@ -156,6 +174,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
     setOpen(false)
 
     try {
+      setLoading(true)
       let newState = { ...formData, user: authorizedUser }
 
       if (formData.imgName) {
@@ -177,12 +196,14 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
         type: 'success',
         msg: `Воспоминание с заголовком "${newState.title}" было ${todo}`,
       })
+      setLoading(false)
     } catch (err) {
       if (err.response) {
         setInfo({ type: 'error', msg: err.response.data.message })
       } else {
         setInfo({ type: 'error', msg: err.message })
       }
+      setLoading(false)
     }
   }
 
@@ -190,6 +211,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
     setInfo(null)
 
     try {
+      setLoading(true)
       const deleted = await axios.delete(`/api/memory/${data._id}`)
       setInfo({
         type: 'success',
@@ -197,8 +219,10 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
       })
 
       setCrudedData('delete')
+      setLoading(false)
     } catch (err) {
       setInfo(err.response.data.message)
+      setLoading(false)
     }
   }
 
@@ -264,6 +288,11 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
                   Удалить
                 </Button>
               </ButtonGroup>
+              {loading && (
+                <Box width='100%' px={5}>
+                  <BorderLinearProgress />
+                </Box>
+              )}
             </CardActions>
           </Card>
 
