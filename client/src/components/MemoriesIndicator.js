@@ -6,7 +6,7 @@ export const MemoriesIndicator = (props) => {
   return (
     <Box ml={1} position='relative' display='inline-flex'>
       <CircularProgress
-        variant='static'
+        variant='determinate'
         value={props.value}
         color={props.color}
       />

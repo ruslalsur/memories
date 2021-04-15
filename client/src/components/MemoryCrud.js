@@ -301,7 +301,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
             className={classes.backdrop}
             style={{
               background: `url(${
-                IMAGES_PATH + (data.imgName || noimage)
+                data?.imgName ? IMAGES_PATH + data?.imgName : noimage
               }) center/contain no-repeat`,
             }}
             open={backdropOpen}

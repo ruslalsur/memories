@@ -5,11 +5,10 @@ import axios from 'axios'
 import noavatar from '../assets/images/noavatar.jpg'
 import { blue, blueGrey, deepOrange } from '@material-ui/core/colors'
 import { useStorage } from '../hooks/storage.hook'
-import { IMAGES_PATH } from '../config.js'
+import { IMAGES_PATH, UPLOAD_FILE_SIZE, LOCALSTORAGE_NAME } from '../config.js'
 import { Context } from '../context'
 import { MemoriesIndicator } from '../components/MemoriesIndicator'
 import { Loading } from '../components/Loading'
-import { LOCALSTORAGE_NAME } from '../config.js'
 import {
   Tooltip,
   TextField,
@@ -144,9 +143,14 @@ export const ProfilePage = () => {
   }, [])
 
   const handleFileInputChange = async (e) => {
+    const file = e.target.files[0]
     try {
+      if (file.size > UPLOAD_FILE_SIZE)
+        throw Error(
+          `Превышен размер файла на ${file.size - UPLOAD_FILE_SIZE} байт`
+        )
       setLoading(true)
-      const avatarSrc = await uploadImage(e.target.files[0])
+      const avatarSrc = await uploadImage(file)
       await axios.patch(
         `/api/user/${authorizedUser._id}`,
         { avatarSrc },
@@ -165,7 +169,7 @@ export const ProfilePage = () => {
       )
       setLoading(false)
     } catch (err) {
-      setInfo({ type: 'error', msg: err.response.data.message })
+      setInfo({ type: 'error', msg: err.message || 'файл не был загружен' })
       setLoading(false)
     }
   }
@@ -195,7 +199,11 @@ export const ProfilePage = () => {
               <Loading />
             ) : (
               <Tooltip
-                title={<Typography variant='body2'>Смена аватара</Typography>}
+                title={
+                  <Typography variant='body2'>
+                    Смена аватара (max: {UPLOAD_FILE_SIZE}) байт
+                  </Typography>
+                }
                 placement='bottom-end'
               >
                 <Box
