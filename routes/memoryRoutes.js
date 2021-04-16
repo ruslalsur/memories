@@ -32,11 +32,25 @@ router.get(
   '/stat/:id',
   [
     check('id', 'Неправильный формат идентификатора документа')
-      .matches(/^[random]{1}|[0-9a-fA-F]{24}$/)
+      .matches(/^[0-9a-fA-F]{24}$/)
       .trim(),
   ],
   validate(),
   MemoryController.getStat
+)
+
+router.get(
+  '/chartdata/user/:id/year/:year',
+  [
+    check('id', 'Неправильный формат идентификатора документа')
+      .matches(/^[0-9a-fA-F]{24}$/)
+      .trim(),
+    check('year', 'Неправильный формат года')
+      .matches(/^[0-9]{4}$/)
+      .trim(),
+  ],
+  validate(),
+  MemoryController.getChartData
 )
 
 router.post(

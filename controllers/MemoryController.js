@@ -100,6 +100,33 @@ class MemoryController {
     }
   }
 
+  async getChartData(req, res) {
+    const { id, year } = req.params
+
+    try {
+      const lastMonth = new Date().getMonth()
+      const currentYear = new Date().getFullYear()
+      const memories = await Memory.find({
+        user: { _id: id },
+        date: {
+          $gte: `${year}-01-01`,
+          $lte: `${year}-${
+            year !== currentYear ? '12-31' : lastMonth + 1 + '-01'
+          }`,
+        },
+      })
+
+      return res
+        .status(200)
+        .json({ memories, lastMonth: +year !== +currentYear ? 11 : lastMonth })
+    } catch (err) {
+      console.log(err)
+      return res.status(400).json({
+        message: err.message || 'Ошибка при запросе данных для графика',
+      })
+    }
+  }
+
   async getStat(req, res) {
     const { id } = req.params
 

@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { MemoriesChart } from '../components/MemoriesChart'
 import axios from 'axios'
 import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications'
 import { blueGrey } from '@material-ui/core/colors'
@@ -55,12 +56,11 @@ const useStyles = makeStyles((theme) => ({
   mediaCardContainer: {},
   card: {
     minWidth: '100%',
-    minHeight: '100%',
-    marginBottom: 10,
+    height: '400px',
     textDecoration: 'none',
   },
   media: {
-    height: '400px',
+    height: '370px',
     filter: 'opacity(0.9)',
     cursor: 'pointer',
     '&:hover': {
@@ -81,7 +81,6 @@ export const MainPage = () => {
 
   const classes = useStyles()
   const { setInfo } = useContext(Context)
-  let history = useHistory()
 
   useEffect(() => {
     const cleanUp = () => {
@@ -97,15 +96,13 @@ export const MainPage = () => {
           setLoading(false)
         })
         .catch((err) => {
-          setMemory(null)
+          setLoading(false)
           id &&
             setInfo({
               type: 'error',
               msg: 'Нет воспоминаний для отображения',
             })
           cleanUp()
-          history.push('/')
-          setLoading(false)
         })
     }
 
@@ -279,56 +276,58 @@ export const MainPage = () => {
       </Grid>
 
       <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-        <Grid
-          container
-          justify='center'
-          alignContent='center'
-          className={classes.mediaCardContainer}
-        >
-          {memory?.user && (
-            <Link
-              to={`/memories/${memory.user._id}/public`}
-              className={classes.card}
-            >
-              <Card>
-                <CardActionArea>
-                  <Tooltip
-                    title={
-                      <Typography variant='body2'>
-                        {`Показать все разрешенные воспоминания пользователя "${memory.user.username}"`}
-                      </Typography>
-                    }
-                    placement='bottom'
-                  >
-                    <CardMedia
-                      className={classes.media}
-                      image={
-                        memory.imgName ? IMAGES_PATH + memory.imgName : noimage
+        <Grid container spacing={3} className={classes.mediaCardContainer}>
+          <Grid item xs={12}>
+            {memory?.user && (
+              <Link
+                to={`/memories/${memory.user._id}/public`}
+                className={classes.card}
+              >
+                <Card>
+                  <CardActionArea>
+                    <Tooltip
+                      title={
+                        <Typography variant='body2'>
+                          {`Показать все разрешенные воспоминания пользователя "${memory.user.username}"`}
+                        </Typography>
                       }
-                    />
-                  </Tooltip>
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      variant='h5'
-                      component='h5'
-                      style={{ fontFamily: 'Yanone Kaffeesatz' }}
+                      placement='bottom'
                     >
-                      {memory.title}
-                    </Typography>
-                    <Typography
-                      variant='body1'
-                      color='textSecondary'
-                      component='p'
-                      style={{ fontFamily: 'Comfortaa' }}
-                    >
-                      {memory.description}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Link>
-          )}
+                      <CardMedia
+                        className={classes.media}
+                        image={
+                          memory.imgName
+                            ? IMAGES_PATH + memory.imgName
+                            : noimage
+                        }
+                      />
+                    </Tooltip>
+                    <CardContent>
+                      <Typography
+                        gutterBottom
+                        variant='h5'
+                        component='h5'
+                        style={{ fontFamily: 'Yanone Kaffeesatz' }}
+                      >
+                        {memory.title}
+                      </Typography>
+                      <Typography
+                        variant='body1'
+                        color='textSecondary'
+                        component='p'
+                        style={{ fontFamily: 'Comfortaa' }}
+                      >
+                        {memory.description}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </Link>
+            )}
+          </Grid>
+          <Grid item xs={12}>
+            <MemoriesChart memory={memory} />
+          </Grid>
         </Grid>
       </Grid>
     </Grid>

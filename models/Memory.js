@@ -6,6 +6,10 @@ const Memory = new Schema({
   imgName: { type: String, default: '' },
   shared: { type: Boolean, default: false },
   user: { type: Schema.Types.ObjectId, ref: 'User', autopopulate: true },
+  date: {
+    type: Date,
+    default: Date.now(),
+  },
 })
 
 Memory.plugin(require('mongoose-autopopulate'))
