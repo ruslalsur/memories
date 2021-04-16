@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
 import { MemoriesChart } from '../components/MemoriesChart'
@@ -304,7 +304,6 @@ export const MainPage = () => {
                     </Tooltip>
                     <CardContent>
                       <Typography
-                        gutterBottom
                         variant='h5'
                         component='h5'
                         style={{ fontFamily: 'Yanone Kaffeesatz' }}
@@ -314,7 +313,7 @@ export const MainPage = () => {
                       <Typography
                         variant='body1'
                         color='textSecondary'
-                        component='p'
+                        component='div'
                         style={{ fontFamily: 'Comfortaa' }}
                       >
                         {memory.description}

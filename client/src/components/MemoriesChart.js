@@ -50,10 +50,10 @@ export const MemoriesChart = ({ memory }) => {
       )
 
       const publicMemories = response.data.memories.filter(
-        (item) => item.shared === false
+        (item) => item.shared === true
       )
       const privateMemories = response.data.memories.filter(
-        (item) => item.shared === true
+        (item) => item.shared === false
       )
 
       const publicArr = genChartData(publicMemories, response.data.lastMonth)
