@@ -17,7 +17,6 @@ import {
 } from '@material-ui/core'
 import { blueGrey } from '@material-ui/core/colors'
 import { Context } from '../context'
-import { Search } from './Search'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -92,11 +91,7 @@ export const Header = ({ appName }) => {
               </Link>
             </Tooltip>
           </Box>
-          {history.location.pathname.split('/')[1] === 'memories' && (
-            <Box className={classes.toolbar__center}>
-              <Search />
-            </Box>
-          )}
+
           <Box className={classes.toolbar__right}>
             <span className={classes.userName}>
               {authorizedUser?.username || ''}

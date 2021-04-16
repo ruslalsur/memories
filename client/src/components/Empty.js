@@ -25,7 +25,7 @@ export const Empty = () => {
     <Box className={classes.root}>
       Воспоминаний нет
       <Box ml={2}>
-        {authorizedUser && !search && (
+        {authorizedUser && (
           <Button
             href={`/memories/${authorizedUser?._id}/all`}
             color='secondary'

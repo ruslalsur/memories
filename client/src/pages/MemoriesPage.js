@@ -10,6 +10,7 @@ import { Typography, Grid, Paper, Box, Badge } from '@material-ui/core'
 import { Pagination } from '@material-ui/lab'
 import { MEM_PER_PAGE } from '../config.js'
 import { Context } from '../context'
+import { Search } from '../components/Search'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -196,33 +197,37 @@ export const MemoriesPage = () => {
                   />
                 )}
 
-                {totalPages > 1 && (
-                  <Box
-                    display='flex'
-                    alignItems='center'
-                    justifyContent='flex-end'
-                    mr={1}
-                    my={1}
-                  >
-                    <Typography
-                      variant='h6'
-                      component='h6'
-                      className={classes.paginationTitle}
-                    >
-                      Страница :
-                    </Typography>
-                    <Pagination
-                      count={totalPages}
-                      page={page}
-                      onChange={(event, value) => handlePagination(value)}
-                      variant='outlined'
-                      color='secondary'
-                      size='small'
-                      hideNextButton
-                      hidePrevButton
-                    />
+                <Box
+                  display='flex'
+                  alignItems='center'
+                  justifyContent='space-between'
+                  m={1}
+                >
+                  <Box>
+                    <Search />
                   </Box>
-                )}
+                  {totalPages > 1 && (
+                    <Box display='flex' alignItems='center'>
+                      <Typography
+                        variant='h6'
+                        component='h6'
+                        className={classes.paginationTitle}
+                      >
+                        Страница :
+                      </Typography>
+                      <Pagination
+                        count={totalPages}
+                        page={page}
+                        onChange={(event, value) => handlePagination(value)}
+                        variant='outlined'
+                        color='secondary'
+                        size='small'
+                        hideNextButton
+                        hidePrevButton
+                      />
+                    </Box>
+                  )}
+                </Box>
               </Box>
             </Paper>
           </Grid>
