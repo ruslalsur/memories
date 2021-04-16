@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: 'none',
   },
   media: {
-    height: '55vh',
+    height: '400px',
     filter: 'opacity(0.9)',
     cursor: 'pointer',
     '&:hover': {

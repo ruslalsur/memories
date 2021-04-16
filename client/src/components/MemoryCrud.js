@@ -32,10 +32,9 @@ import {
 const useStyles = makeStyles((theme) => ({
   cardRoot: {
     minWidth: '100%',
-    marginBottom: 30,
   },
   media: {
-    height: '45vh',
+    height: '400px',
     paddingTop: '56.25%', // 16:9
     cursor: 'pointer',
     opacity: 1,

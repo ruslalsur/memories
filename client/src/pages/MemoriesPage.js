@@ -17,10 +17,6 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '100%',
     minWidth: '100%',
   },
-  memList: {
-    backgroundColor: theme.palette.background.paper,
-    paddingBottom: 10,
-  },
   memListTitle: {
     color: blueGrey[700],
     fontFamily: 'Yanone Kaffeesatz',
@@ -100,7 +96,6 @@ export const MemoriesPage = () => {
         setInfo({ type: 'error', msg: err.message })
       }
       setLoading(false)
-      // setMemories([])
     }
   }, [])
 
@@ -186,43 +181,49 @@ export const MemoriesPage = () => {
             </Box>
           </Grid>
           <Grid item xs={12} md={5}>
-            <Paper className={classes.memList}>
-              <Grid container spacing={1} justify='flex-end'>
-                <Grid item xs={12}>
-                  {!loading && (
-                    <Memories
-                      select={select}
-                      memories={memories}
-                      current={selected}
+            <Paper>
+              <Box
+                display='flex'
+                flexDirection='column'
+                justifyContent='space-between'
+                minHeight='518px'
+              >
+                {!loading && (
+                  <Memories
+                    select={select}
+                    memories={memories}
+                    current={selected}
+                  />
+                )}
+
+                {totalPages > 1 && (
+                  <Box
+                    display='flex'
+                    alignItems='center'
+                    justifyContent='flex-end'
+                    mr={1}
+                    my={1}
+                  >
+                    <Typography
+                      variant='h6'
+                      component='h6'
+                      className={classes.paginationTitle}
+                    >
+                      Страница :
+                    </Typography>
+                    <Pagination
+                      count={totalPages}
+                      page={page}
+                      onChange={(event, value) => handlePagination(value)}
+                      variant='outlined'
+                      color='secondary'
+                      size='small'
+                      hideNextButton
+                      hidePrevButton
                     />
-                  )}
-                </Grid>
-                <Grid item>
-                  <Grid container>
-                    {totalPages > 1 && (
-                      <Box display='flex' alignItems='center' mr={1}>
-                        <Typography
-                          variant='h6'
-                          component='h6'
-                          className={classes.paginationTitle}
-                        >
-                          Страница :
-                        </Typography>
-                        <Pagination
-                          count={totalPages}
-                          page={page}
-                          onChange={(event, value) => handlePagination(value)}
-                          variant='outlined'
-                          color='secondary'
-                          size='small'
-                          hideNextButton
-                          hidePrevButton
-                        />
-                      </Box>
-                    )}
-                  </Grid>
-                </Grid>
-              </Grid>
+                  </Box>
+                )}
+              </Box>
             </Paper>
           </Grid>
         </>
