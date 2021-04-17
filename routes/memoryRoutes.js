@@ -4,6 +4,7 @@ const { check } = require('express-validator')
 const MemoryController = require('../controllers/MemoryController')
 const validate = require('../middleware/validateMiddleware')
 const upload = require('../middleware/uploadMiddleware')
+const roleOnly = require('../middleware/authMiddleware')
 
 router.get(
   '/user/:id/search/:search/share/:share/page/:page/perPage/:perPage',
@@ -35,6 +36,7 @@ router.get(
       .matches(/^[0-9a-fA-F]{24}$/)
       .trim(),
   ],
+  roleOnly('USER'),
   validate(),
   MemoryController.getStat
 )
@@ -56,11 +58,17 @@ router.get(
 router.post(
   '/',
   [check('title', 'Название не может быть пустым').trim().notEmpty()],
+  roleOnly('USER'),
   validate(),
   MemoryController.createMemory
 )
 
-router.post('/upload', upload.single('file'), MemoryController.upload)
+router.post(
+  '/upload',
+  roleOnly('USER'),
+  upload.single('file'),
+  MemoryController.upload
+)
 
 router.patch(
   '/:id',
@@ -71,6 +79,7 @@ router.patch(
       .trim(),
   ],
   validate(),
+  roleOnly('USER'),
   MemoryController.updateMemory
 )
 
@@ -82,6 +91,7 @@ router.delete(
       .trim(),
   ],
   validate(),
+  roleOnly('USER'),
   MemoryController.deleteMemory
 )
 

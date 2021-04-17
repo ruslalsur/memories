@@ -162,9 +162,7 @@ class MemoryController {
       })
       if (candidate) {
         if (imgName) {
-          await unlink(path.join(storage_dir, imgName), (err) => {
-            if (err) console.log(`Ошибка при удалении ${imgName}: `, err)
-          })
+          await unlink(path.join(storage_dir, imgName))
         }
 
         return res.status(409).json({
@@ -195,9 +193,7 @@ class MemoryController {
 
       const { imgName } = willUpdate
       if (imgName) {
-        await unlink(path.join(storage_dir, imgName), (err) => {
-          if (err) console.log(`Ошибка при удалении ${imgName}: `, err)
-        })
+        await unlink(path.join(storage_dir, imgName))
       }
 
       const updated = await Memory.updateOne({ _id: id }, { ...req.body })
@@ -231,9 +227,7 @@ class MemoryController {
 
       const { imgName } = deleted
       if (imgName) {
-        await unlink(path.join(storage_dir, imgName), (err) => {
-          if (err) console.log(`Ошибка при удалении ${imgName}: `, err)
-        })
+        await unlink(path.join(storage_dir, imgName))
       }
 
       return res.status(200).json(deleted)

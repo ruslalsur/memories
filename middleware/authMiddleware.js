@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { jvtSecret } = require('config')
 
-module.exports = (allowedRoles) => {
+module.exports = (allowedRole) => {
   return (req, res, next) => {
     if (req.method === 'OPTIONS') {
       return next()
@@ -14,29 +14,23 @@ module.exports = (allowedRoles) => {
         return res.status(401).json({ message: 'Токена в заголовке нету' })
       }
 
-      const { authorizedUser } = jwt.verify(token, jvtSecret)
+      const { user } = jwt.verify(token, jvtSecret)
+      req.authorizedUser = user
 
-      req.authorizedUser = authorizedUser
+      const { roles } = user
+      const allow = roles.some((item) => item.role === allowedRole)
 
-      let isAllowed = false
-
-      roles.forEach((role) => {
-        if (allowedRoles.includes(role)) {
-          isAllowed = true
-        }
-      })
-
-      if (!isAllowed) {
-        return res.status(403).json({
-          message: `Пользователю ${
-            req.authorizedUser.username
-          } нужны привилегии: ${allowedRoles + ''}`,
-        })
+      if (!allow) {
+        throw new Error(
+          `Пользователю ${user.username} нужны привилегии: ${allowedRole}`
+        )
       }
 
       next()
-    } catch (e) {
-      res.status(401).json({ message: 'Неудачная попытка авторизации' })
+    } catch (err) {
+      res
+        .status(403)
+        .json({ message: err.message || 'Неудачная попытка авторизации' })
     }
   }
 }

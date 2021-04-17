@@ -46,7 +46,6 @@ class UserController {
         password: hashPassword,
       })
       user.roles.push(userRole)
-      console.log(`LOG username: `, username)
 
       await user.save()
 

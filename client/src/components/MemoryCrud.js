@@ -109,7 +109,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState(initFormData)
   const [imgFile, setImgFile] = useState(undefined)
-  const { setInfo, authorizedUser, search } = useContext(Context)
+  const { token, setInfo, authorizedUser, search } = useContext(Context)
   const maxUploadImageSize = authorizedUser?.roles.some(
     (item) => item.role === 'PHOTO'
   )
@@ -183,10 +183,14 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
 
       let todo = 'создано'
       if (isCreate) {
-        const response = await axios.post(`/api/memory`, newState)
+        const response = await axios.post(`/api/memory`, newState, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         setCrudedData('create', response.data)
       } else {
-        await axios.patch(`/api/memory/${formData._id}`, newState)
+        await axios.patch(`/api/memory/${formData._id}`, newState, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         setCrudedData('update', newState)
         todo = 'изменено'
       }
@@ -211,7 +215,9 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
 
     try {
       setLoading(true)
-      const deleted = await axios.delete(`/api/memory/${data._id}`)
+      const deleted = await axios.delete(`/api/memory/${data._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       setInfo({
         type: 'success',
         msg: `Воспоминание с заголовком "${deleted.data.title}" было удалено`,
@@ -220,8 +226,8 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
       setCrudedData('delete')
       setLoading(false)
     } catch (err) {
-      setInfo(err.response.data.message)
       setLoading(false)
+      setInfo({ type: 'error', msg: err.response.data.message || 'ой' })
     }
   }
 

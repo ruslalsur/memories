@@ -2,10 +2,10 @@ const { Router } = require('express')
 const router = Router()
 const { check } = require('express-validator')
 const UserController = require('../controllers/UserController')
-const rolesOnly = require('../middleware/authMiddleware')
+const roleOnly = require('../middleware/authMiddleware')
 const upload = require('../middleware/uploadMiddleware')
 
-router.get('/', rolesOnly(['Администратор']), UserController.getUsers)
+router.get('/', roleOnly('ADMIN'), UserController.getUsers)
 
 router.post(
   '/signup',
@@ -31,6 +31,11 @@ router.post(
   UserController.signIn
 )
 
-router.patch('/:id', upload.single('file'), UserController.updateUser)
+router.patch(
+  '/:id',
+  roleOnly('USER'),
+  upload.single('file'),
+  UserController.updateUser
+)
 
 module.exports = router
