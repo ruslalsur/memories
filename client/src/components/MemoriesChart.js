@@ -112,12 +112,12 @@ export const MemoriesChart = ({ memory }) => {
         году
       </Box>
       <Paper>
-        <Box display='flex' justifyContent='center' minWidth={320} height={150}>
+        <Box minWidth={320} height={150}>
           <ResponsiveContainer>
             <LineChart
               className={classes.chart}
               data={chartData}
-              margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
+              margin={{ top: 10, right: 15, left: 15, bottom: 0 }}
             >
               <XAxis dataKey='date' />
               <Tooltip />
