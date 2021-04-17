@@ -5,7 +5,12 @@ import axios from 'axios'
 import noavatar from '../assets/images/noavatar.jpg'
 import { blue, blueGrey, deepOrange } from '@material-ui/core/colors'
 import { useStorage } from '../hooks/storage.hook'
-import { IMAGES_PATH, UPLOAD_FILE_SIZE, LOCALSTORAGE_NAME } from '../config.js'
+import {
+  IMAGES_PATH,
+  UPLOAD_FILE_SIZE,
+  UPLOAD_FILE_SIZE_VIP,
+  LOCALSTORAGE_NAME,
+} from '../config.js'
 import { Context } from '../context'
 import { MemoriesIndicator } from '../components/MemoriesIndicator'
 import { Loading } from '../components/Loading'
@@ -85,6 +90,12 @@ export const ProfilePage = () => {
   const [emailValue, setEmailValue] = useState(authorizedUser?.email || '')
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  const maxUploadImageSize = authorizedUser?.roles.some(
+    (item) => item.role === 'PHOTO'
+  )
+    ? UPLOAD_FILE_SIZE_VIP
+    : UPLOAD_FILE_SIZE
 
   const handleEmailClick = (e) => {
     setEditShow(true)
@@ -201,7 +212,7 @@ export const ProfilePage = () => {
               <Tooltip
                 title={
                   <Typography variant='body2'>
-                    Смена аватара (max: {UPLOAD_FILE_SIZE}) байт
+                    Смена аватара (max: {maxUploadImageSize}) байт
                   </Typography>
                 }
                 placement='bottom-end'
