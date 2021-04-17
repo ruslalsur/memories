@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
-import { LineChart, Line, CartesianGrid, Legend, XAxis } from 'recharts'
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  Legend,
+  XAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 import { makeStyles } from '@material-ui/core/styles'
-import { Box, Tooltip, Paper } from '@material-ui/core'
+import { Box, Paper } from '@material-ui/core'
 import axios from 'axios'
 import { Context } from '../context'
 import { blueGrey } from '@material-ui/core/colors'
@@ -104,31 +112,31 @@ export const MemoriesChart = ({ memory }) => {
         году
       </Box>
       <Paper>
-        <Box display='flex' justifyContent='center'>
-          <LineChart
-            className={classes.chart}
-            width={500}
-            height={150}
-            data={chartData}
-            margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
-          >
-            <XAxis dataKey='date' />
-            <Tooltip />
-            <Legend verticalAlign='top' align='right' height={20} />
-            <CartesianGrid stroke='#f5f5f5' strokeDasharray='5 5' />
-            <Line
-              type='monotone'
-              dataKey='public'
-              stroke='#1976d2'
-              yAxisId={1}
-            />
-            <Line
-              type='monotone'
-              dataKey='private'
-              stroke='#dc004e'
-              yAxisId={0}
-            />
-          </LineChart>
+        <Box display='flex' justifyContent='center' minWidth={320} height={150}>
+          <ResponsiveContainer>
+            <LineChart
+              className={classes.chart}
+              data={chartData}
+              margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
+            >
+              <XAxis dataKey='date' />
+              <Tooltip />
+              <Legend verticalAlign='top' align='right' height={20} />
+              <CartesianGrid stroke='#f5f5f5' strokeDasharray='5 5' />
+              <Line
+                type='monotone'
+                dataKey='public'
+                stroke='#1976d2'
+                yAxisId={1}
+              />
+              <Line
+                type='monotone'
+                dataKey='private'
+                stroke='#dc004e'
+                yAxisId={0}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </Box>
       </Paper>
     </>
