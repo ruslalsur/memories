@@ -152,7 +152,7 @@ export const Sign = (props) => {
         })
         .catch((err) => {
           console.log(`Ошибка регистрации/авторизации: `, err)
-          setInfo({ type: 'error', msg: err.response.data.message })
+          setInfo({ type: 'error', msg: err.response?.data?.message })
         })
     }
   }
