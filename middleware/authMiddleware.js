@@ -14,17 +14,21 @@ module.exports = (allowedRole) => {
         return res.status(401).json({ message: 'Токена в заголовке нету' })
       }
 
-      const { user } = jwt.verify(token, jvtSecret)
-      req.authorizedUser = user
+      jwt.verify(token, jvtSecret, (err, decoded) => {
+        if (err) throw new Error('Токен не действителен')
 
-      const { roles } = user
-      const allow = roles.some((item) => item.role === allowedRole)
+        const { user } = decoded
+        req.authorizedUser = user
 
-      if (!allow) {
-        throw new Error(
-          `Пользователю ${user.username} нужны привилегии: ${allowedRole}`
-        )
-      }
+        const { roles } = user
+        const allow = roles.some((item) => item.role === allowedRole)
+
+        if (!allow) {
+          throw new Error(
+            `Пользователю ${user.username} нужны привилегии: ${allowedRole}`
+          )
+        }
+      })
 
       next()
     } catch (err) {

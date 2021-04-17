@@ -46,6 +46,7 @@ export const App = () => {
     setToken(null)
     setAuthorizedUser(null)
     localStorage.removeItem(LOCALSTORAGE_NAME)
+    window.location.href = '/signin'
   }
 
   useEffect(() => {

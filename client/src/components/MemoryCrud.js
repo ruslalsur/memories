@@ -109,7 +109,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState(initFormData)
   const [imgFile, setImgFile] = useState(undefined)
-  const { token, setInfo, authorizedUser, search } = useContext(Context)
+  const { token, setInfo, authorizedUser, search, logout } = useContext(Context)
   const maxUploadImageSize = authorizedUser?.roles.some(
     (item) => item.role === 'PHOTO'
   )
@@ -201,8 +201,9 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
       })
       setLoading(false)
     } catch (err) {
+      if (err?.response?.status === 403) logout()
       if (err.response) {
-        setInfo({ type: 'error', msg: err.response.data.message })
+        setInfo({ type: 'error', msg: err.response?.data?.message })
       } else {
         setInfo({ type: 'error', msg: err.message })
       }
@@ -227,6 +228,7 @@ export const MemoryCrud = ({ data, setCrudedData }) => {
       setLoading(false)
     } catch (err) {
       setLoading(false)
+      if (err?.response?.status === 403) logout()
       setInfo({ type: 'error', msg: err.response.data.message || 'ой' })
     }
   }

@@ -22,7 +22,7 @@ export const useStorage = () => {
 
       return response.data
     } catch (err) {
-      throw Error('Попытка загрузки файла не удалась (проверте размер)')
+      throw err
     }
   }
 

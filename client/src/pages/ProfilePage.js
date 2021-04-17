@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Redirect } from 'react-router-dom'
 import axios from 'axios'
 import noavatar from '../assets/images/noavatar.jpg'
 import { blue, blueGrey, deepOrange } from '@material-ui/core/colors'
@@ -126,6 +125,7 @@ export const ProfilePage = () => {
           setInfo({ type: 'success', msg: response.data.message })
         })
         .catch((err) => {
+          if (err?.response?.status === 403) logout()
           setInfo({
             type: 'error',
             msg: err.message || 'Ошибка при изменении почты',
@@ -147,9 +147,10 @@ export const ProfilePage = () => {
         .then((response) => {
           setStat(response.data)
         })
-        .catch((err) =>
+        .catch((err) => {
+          if (err?.response?.status === 403) logout()
           setInfo({ type: 'error', msg: err.response.data.message })
-        )
+        })
     }
   }, [])
 
@@ -180,15 +181,13 @@ export const ProfilePage = () => {
       )
       setLoading(false)
     } catch (err) {
-      setInfo({ type: 'error', msg: err.message || 'файл не был загружен' })
       setLoading(false)
+      if (err?.response?.status === 403) logout()
+      setInfo({ type: 'error', msg: err.message || 'файл не был загружен' })
     }
   }
 
-  if (!authorizedUser) {
-    return <Redirect to='/' />
-  }
-
+  if (!authorizedUser) return null
   return (
     <Grid container spacing={3} direction='column' className={classes.root}>
       <Grid item>
