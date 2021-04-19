@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken')
-const { jvtSecret } = require('config')
 
 module.exports = (allowedRole) => {
   return (req, res, next) => {
@@ -14,7 +13,7 @@ module.exports = (allowedRole) => {
         return res.status(401).json({ message: 'Токена в заголовке нету' })
       }
 
-      jwt.verify(token, jvtSecret, (err, decoded) => {
+      jwt.verify(token, process.env.jwtSecret, (err, decoded) => {
         if (err) throw new Error('Токен не действителен')
 
         const { user } = decoded

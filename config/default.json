@@ -2,8 +2,5 @@
   "storage_dir": "storage",
   "port": 5001,
   "mongoUri": "mongodb://localhost:27017/memories",
-  "jvtSecret": "R604658ANsfD78OM",
-  "mailUser": "rugesuruge@gmail.com",
-  "mailPass": "1qaZ0okM",
   "upload_file_size": "3145728"
 }

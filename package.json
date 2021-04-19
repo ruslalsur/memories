@@ -4,10 +4,10 @@
   "description": "project for portfolio",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node index.js",
-    "server:dev": "cross-env NODE_ENV=development nodemon index.js",
+    "start": "cross-env NODE_ENV=production node -r dotenv/config index.js",
+    "server:dev": "cross-env NODE_ENV=development nodemon -r dotenv/config index.js",
     "client:dev": "cross-env NODE_ENV=development npm run start --prefix client",
-    "client:build": "export NODE_OPTIONS=--max_old_space_size=4096 && npm run build --prefix client",
+    "client:build": "export NODE_OPTIONS=--max_old_space_size=2048 && npm run build --prefix client",
     "client:install": "npm install --prefix client",
     "dev": "cross-env NODE_ENV=development concurrently \"npm run server:dev\" \"npm run client:dev\"",
     "heroku-postbuild": "npm install && npm run client:install && npm run client:build"
@@ -34,6 +34,7 @@
     "config": "^3.3.4",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
     "jsonwebtoken": "^8.5.1",
