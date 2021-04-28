@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { Box, Button } from '@material-ui/core'
 import { blueGrey } from '@material-ui/core/colors'
+import { Context } from '../context'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 export const Empty = () => {
   const classes = useStyles()
   const { userId } = useParams()
+  const { token } = useContext(Context)
 
   return (
     <Box className={classes.root}>
@@ -27,7 +29,7 @@ export const Empty = () => {
       <Box ml={2}>
         {userId && (
           <Button
-            href={`/memories/${userId}/all`}
+            href={`/memories/${userId}/${token ? 'all' : 'public'}`}
             color='secondary'
             variant='contained'
             size='small'

@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const MemoriesPage = () => {
   const classes = useStyles()
-  const { setInfo, search } = useContext(Context)
+  const { setInfo, search, token } = useContext(Context)
 
   const [loading, setLoading] = useState(true)
   const [allMemoriesCount, setAllMemoriesCount] = useState(0)
@@ -75,30 +75,33 @@ export const MemoriesPage = () => {
   const [totalPages, setTotalPages] = useState(1)
   const { userId, share } = useParams()
 
-  const fetchMemories = useCallback(async (srch = 'none', sha = 'all', p) => {
-    try {
-      const response = await axios.get(
-        `/api/memory/user/${userId}/search/${
-          srch || 'none'
-        }/share/${sha}/page/${p}/perPage/${MEM_PER_PAGE}`
-      )
-      if (!response.data.memories.length)
-        setInfo({ type: 'warning', msg: 'Нет воспоминаний' })
-      setMemories(response.data.memories)
-      setAllMemoriesCount(response.data.allMemoriesCount)
-      setTotalPages(
-        Math.ceil(response.data.allMemoriesCount / MEM_PER_PAGE) || 1
-      )
-      setLoading(false)
-    } catch (err) {
-      if (err.response) {
-        setInfo({ type: 'error', msg: err.response.data.message })
-      } else {
-        setInfo({ type: 'error', msg: err.message })
+  const fetchMemories = useCallback(
+    async (srch = 'none', sha = token ? 'all' : 'public', p) => {
+      try {
+        const response = await axios.get(
+          `/api/memory/user/${userId}/search/${
+            srch || 'none'
+          }/share/${sha}/page/${p}/perPage/${MEM_PER_PAGE}`
+        )
+        if (!response.data.memories.length)
+          setInfo({ type: 'warning', msg: 'Нет воспоминаний' })
+        setMemories(response.data.memories)
+        setAllMemoriesCount(response.data.allMemoriesCount)
+        setTotalPages(
+          Math.ceil(response.data.allMemoriesCount / MEM_PER_PAGE) || 1
+        )
+        setLoading(false)
+      } catch (err) {
+        if (err.response) {
+          setInfo({ type: 'error', msg: err.response.data.message })
+        } else {
+          setInfo({ type: 'error', msg: err.message })
+        }
+        setLoading(false)
       }
-      setLoading(false)
-    }
-  }, [])
+    },
+    []
+  )
 
   useEffect(() => {
     fetchMemories(search, share)
